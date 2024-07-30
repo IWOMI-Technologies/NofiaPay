@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: NOFIAPAY
+  datasource: # db config seems not to be used
+    url: jdbc:mysql://localhost:3308/authentication?serverTimezone=Africa/Douala
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+server:
+  port: 8082
+
+eureka:
+  instance:
+    leaseRenewalIntervalInSeconds: 2
+    leaseExpirationDurationInSeconds: 5
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/  # where to register this client
+    #    healthcheck: this causes an error check later
+    #      enabled: true
+    lease:
+      duration: 5
+    enabled: true  # false value disables discovery request.
+
+externals:
+  base-url:
+    auth: http://AUTH/api/v1/users
+
+#logging:
+#  level:
+#    com.example.howtodoinjava: DEBUG
