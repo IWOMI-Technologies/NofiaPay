@@ -1,4 +1,4 @@
-package com.iwomi.authms.frameworks.data.entities;
+package com.iwomi.nofiaPay.frameworks.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iwomi.authms.core.constants.AppConst;
