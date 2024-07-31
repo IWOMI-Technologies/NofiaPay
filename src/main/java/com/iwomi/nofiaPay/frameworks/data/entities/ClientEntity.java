@@ -1,6 +1,7 @@
 package com.iwomi.nofiaPay.frameworks.data.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.iwomi.nofiaPay.core.constants.AppConst;
 import com.iwomi.nofiaPay.core.enums.IdTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,13 +38,13 @@ public class ClientEntity extends BaseEntity  {
     private Date businessCreationDate;
     private String address;
 
-    @JsonFormat(pattern = com.iwomi.authms.core.constants.AppConst.DATEFORMAT, timezone = com.iwomi.authms.core.constants.AppConst.BACKEND_TIME_ZONE)
+    @JsonFormat(pattern = AppConst.DATEFORMAT, timezone = AppConst.BACKEND_TIME_ZONE)
     @Temporal(TemporalType.DATE)
     private Date idDeliveryDate;
-    @JsonFormat(pattern = com.iwomi.authms.core.constants.AppConst.DATEFORMAT, timezone = com.iwomi.authms.core.constants.AppConst.BACKEND_TIME_ZONE)
+    @JsonFormat(pattern = AppConst.DATEFORMAT, timezone = AppConst.BACKEND_TIME_ZONE)
     @Temporal(TemporalType.DATE)
     private Date idExpirationDate;
-    @JsonFormat(pattern = com.iwomi.authms.core.constants.AppConst.DATEFORMAT, timezone = com.iwomi.authms.core.constants.AppConst.BACKEND_TIME_ZONE)
+    @JsonFormat(pattern = AppConst.DATEFORMAT, timezone = AppConst.BACKEND_TIME_ZONE)
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
