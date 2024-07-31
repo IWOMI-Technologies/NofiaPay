@@ -2,7 +2,7 @@ spring:
   application:
     name: NOFIAPAY
   datasource: # db config seems not to be used
-    url: jdbc:mysql://localhost:3308/authentication?serverTimezone=Africa/Douala
+    url: jdbc:mysql://localhost:3308/nofia?serverTimezone=Africa/Douala
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,7 +12,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
 
 server:
   port: 8082
@@ -28,7 +28,7 @@ eureka:
     #      enabled: true
     lease:
       duration: 5
-    enabled: true  # false value disables discovery request.
+    enabled: false  # false value disables discovery request.
 
 externals:
   base-url:

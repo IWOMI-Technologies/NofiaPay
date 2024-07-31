@@ -11,7 +11,7 @@ import org.hibernate.annotations.Where;
 @Setter
 @Builder(toBuilder = true)
 @Entity(name = "branches")
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE branches SET deleted = true WHERE id=?")
 @Where(clause = "deleted=false")
 public class BranchEntity extends BaseEntity {
     private String name;
