@@ -1,9 +1,11 @@
-package com.iwomi.authms.core.errors;
+package com.iwomi.nofiaPay.core.errors;
 
-import com.iwomi.authms.core.errors.exceptions.UnAuthorizedException;
-import com.iwomi.authms.core.errors.exceptions.UserAlreadyExistsException;
-import com.iwomi.authms.core.errors.exceptions.UserNotFoundException;
-import com.iwomi.authms.core.errors.exceptions.WrongVerificationCodeException;
+
+
+import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
+import com.iwomi.nofiaPay.core.errors.exceptions.UserAlreadyExistsException;
+import com.iwomi.nofiaPay.core.errors.exceptions.UserNotFoundException;
+import com.iwomi.nofiaPay.core.errors.exceptions.WrongVerificationCodeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

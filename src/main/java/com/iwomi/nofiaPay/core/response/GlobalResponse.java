@@ -1,4 +1,4 @@
-package com.iwomi.authms.core.response;
+package com.iwomi.nofiaPay.core.response;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

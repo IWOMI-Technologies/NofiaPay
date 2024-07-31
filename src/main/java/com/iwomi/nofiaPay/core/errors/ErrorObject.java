@@ -1,4 +1,4 @@
-package com.iwomi.authms.core.errors;
+package com.iwomi.nofiaPay.core.errors;
 
 import lombok.Data;
 

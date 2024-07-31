@@ -1,4 +1,4 @@
-﻿package com.iwomi.nofiaPay;
+package com.iwomi.nofiaPay;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

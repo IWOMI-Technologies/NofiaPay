@@ -1,4 +1,4 @@
-package com.iwomi.authms.core.errors.exceptions;
+package com.iwomi.nofiaPay.core.errors.exceptions;
 
 public class UnAuthorizedException extends RuntimeException {
     private static final long serialVerisionUID = 1;
