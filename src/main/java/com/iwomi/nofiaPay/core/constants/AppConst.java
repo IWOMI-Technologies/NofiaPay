@@ -1,4 +1,4 @@
-package com.iwomi.authms.core.constants;
+package com.iwomi.nofiaPay.core.constants;
 
 public class AppConst {
     public static String ISO_8601_DATE = "yyyy-MM-dd'T'";
