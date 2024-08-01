@@ -1,10 +1,8 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
-import com.iwomi.nofiaPay.dtos.EnrollDto;
 import com.iwomi.nofiaPay.dtos.TransactionDto;
-import com.iwomi.nofiaPay.dtos.response.Enroll;
-import com.iwomi.nofiaPay.dtos.response.Transaction;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

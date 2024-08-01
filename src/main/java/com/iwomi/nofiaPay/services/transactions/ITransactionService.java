@@ -1,8 +1,7 @@
 package com.iwomi.nofiaPay.services.transactions;
 
-import com.iwomi.nofiaPay.dtos.EnrollDto;
 import com.iwomi.nofiaPay.dtos.TransactionDto;
-import com.iwomi.nofiaPay.dtos.response.Transaction;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
 
 import java.util.List;
 import java.util.UUID;

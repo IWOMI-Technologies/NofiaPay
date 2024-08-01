@@ -2,7 +2,7 @@ package com.iwomi.nofiaPay.services.accounts;
 
 
 import com.iwomi.nofiaPay.dtos.AccountDto;
-import com.iwomi.nofiaPay.dtos.response.Account;
+import com.iwomi.nofiaPay.dtos.responses.Account;
 
 import java.util.List;
 import java.util.UUID;

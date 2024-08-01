@@ -2,9 +2,7 @@ package com.iwomi.nofiaPay.controllers;
 
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
-import com.iwomi.nofiaPay.dtos.response.Account;
-import com.iwomi.nofiaPay.dtos.response.AccountHistory;
-import com.iwomi.nofiaPay.dtos.response.Enroll;
+import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

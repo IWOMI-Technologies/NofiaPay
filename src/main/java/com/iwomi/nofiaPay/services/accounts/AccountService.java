@@ -2,7 +2,7 @@ package com.iwomi.nofiaPay.services.accounts;
 
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.dtos.AccountDto;
-import com.iwomi.nofiaPay.dtos.response.Account;
+import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.IAccountRepository;
 import lombok.RequiredArgsConstructor;

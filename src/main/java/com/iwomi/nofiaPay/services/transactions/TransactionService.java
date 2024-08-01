@@ -1,10 +1,8 @@
 package com.iwomi.nofiaPay.services.transactions;
 
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
-import com.iwomi.nofiaPay.dtos.EnrollDto;
 import com.iwomi.nofiaPay.dtos.TransactionDto;
-import com.iwomi.nofiaPay.dtos.response.Enroll;
-import com.iwomi.nofiaPay.dtos.response.Transaction;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

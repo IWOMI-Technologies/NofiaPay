@@ -1,10 +1,7 @@
 package com.iwomi.nofiaPay.services.accounthistory;
 
 import com.iwomi.nofiaPay.core.mappers.IAccountHistoryMapper;
-import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
-import com.iwomi.nofiaPay.dtos.AccountDto;
-import com.iwomi.nofiaPay.dtos.response.Account;
-import com.iwomi.nofiaPay.dtos.response.AccountHistory;
+import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory.AccountHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
