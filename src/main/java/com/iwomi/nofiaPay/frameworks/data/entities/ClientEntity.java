@@ -21,9 +21,9 @@ import java.util.Date;
 public class ClientEntity extends BaseEntity  {
 
     private String institutionCode; //code etablissement
-    private String branchId;
+    @Column(name = "branch_id") private String branchId;
 
-    private String matricule;//code unique code
+    private String clientCode;//code unique code
     private String phoneNumber;//tel cl pr connexion
     private String email;//email du client
     private String firstName;

@@ -2,7 +2,7 @@ package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.EnrollDto;
-import com.iwomi.nofiaPay.dtos.response.Enroll;
+import com.iwomi.nofiaPay.dtos.responses.Enroll;
 import com.iwomi.nofiaPay.services.enrollments.EnrollService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -1,9 +1,7 @@
 package com.iwomi.nofiaPay.services.enrollments;
 
 import com.iwomi.nofiaPay.dtos.EnrollDto;
-import com.iwomi.nofiaPay.dtos.response.Enroll;
-import com.iwomi.nofiaPay.frameworks.data.entities.EnrollEntity;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import com.iwomi.nofiaPay.dtos.responses.Enroll;
 
 import java.util.List;
 import java.util.UUID;

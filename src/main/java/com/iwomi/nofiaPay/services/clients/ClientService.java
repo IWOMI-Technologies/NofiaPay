@@ -2,9 +2,8 @@ package com.iwomi.nofiaPay.services.clients;
 
 import com.iwomi.nofiaPay.core.mappers.IBranchMapper;
 import com.iwomi.nofiaPay.core.mappers.IClientMapper;
-import com.iwomi.nofiaPay.domain.entities.Branch;
-import com.iwomi.nofiaPay.domain.entities.Client;
-import com.iwomi.nofiaPay.dtos.BranchDto;
+import com.iwomi.nofiaPay.dtos.responses.Branch;
+import com.iwomi.nofiaPay.dtos.responses.Client;
 import com.iwomi.nofiaPay.frameworks.data.repositories.branches.BranchRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,9 @@ import java.util.UUID;
 public class ClientService implements IClientService {
 
     private final ClientRepository clientRepository;
+    private final BranchRepository branchRepository;
     private final IClientMapper mapper;
+    private final IBranchMapper branchMapper;
 
     @Override
     public List<Client> findAllClient() {
@@ -46,5 +47,15 @@ public class ClientService implements IClientService {
     @Override
     public void deleteOne(UUID uuid) {
         clientRepository.deleteAccount(uuid);
+    }
+
+    @Override
+    public Client viewOneByBranchAndClientCode(String branchId, String code) {
+        UUID uuid = UUID.fromString(branchId);
+        Branch branch = branchMapper.mapToModel(branchRepository.getOne(uuid));
+        Client client = mapper.mapToModel(clientRepository.getOneByBranchAndClientCode(branchId, code));
+        client.setBranch(branch);
+
+        return client;
     }
 }

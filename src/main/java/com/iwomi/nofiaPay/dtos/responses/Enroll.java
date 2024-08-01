@@ -1,4 +1,4 @@
-package com.iwomi.nofiaPay.dtos.response;
+package com.iwomi.nofiaPay.dtos.responses;
 
 import java.util.UUID;
 

@@ -38,4 +38,9 @@ public class ClientRepository {
     public void deleteAccount(UUID uuid) {
         repository.deleteById(uuid);
     }
+
+    public ClientEntity getOneByBranchAndClientCode(String branchId, String code) {
+        return repository.findByBranchIdAndClientCode(branchId, code)
+                .orElseThrow(() -> new GeneralException("Client not found."));
+    }
 }

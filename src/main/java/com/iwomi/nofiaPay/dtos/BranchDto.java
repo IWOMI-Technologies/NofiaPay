@@ -8,6 +8,7 @@ public record BranchDto(
         @NotNull(message = "branch name is mandatory")
         @NotBlank(message = "branch name is mandatory")
         @Size(min = 4, max = 14, message = "branch name must be between 3 to 14 characters")
-        String name
+        String name,
+        String code
 ) {
 }

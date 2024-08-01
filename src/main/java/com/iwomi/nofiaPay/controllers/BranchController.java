@@ -1,7 +1,7 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
-import com.iwomi.nofiaPay.domain.entities.Branch;
+import com.iwomi.nofiaPay.dtos.responses.Branch;
 import com.iwomi.nofiaPay.dtos.BranchDto;
 import com.iwomi.nofiaPay.services.branches.BranchService;
 import io.swagger.v3.oas.annotations.Operation;

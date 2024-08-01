@@ -1,7 +1,7 @@
 package com.iwomi.nofiaPay.core.mappers;
 
 import com.iwomi.nofiaPay.dtos.EnrollDto;
-import com.iwomi.nofiaPay.dtos.response.Enroll;
+import com.iwomi.nofiaPay.dtos.responses.Enroll;
 import com.iwomi.nofiaPay.frameworks.data.entities.EnrollEntity;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

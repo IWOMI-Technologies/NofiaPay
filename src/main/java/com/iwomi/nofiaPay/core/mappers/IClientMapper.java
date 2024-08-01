@@ -1,6 +1,6 @@
 package com.iwomi.nofiaPay.core.mappers;
 
-import com.iwomi.nofiaPay.domain.entities.Client;
+import com.iwomi.nofiaPay.dtos.responses.Client;
 import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import org.mapstruct.Mapper;
 

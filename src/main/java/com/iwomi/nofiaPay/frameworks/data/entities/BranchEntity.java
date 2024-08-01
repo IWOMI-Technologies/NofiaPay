@@ -15,6 +15,7 @@ import org.hibernate.annotations.Where;
 @Where(clause = "deleted=false")
 public class BranchEntity extends BaseEntity {
     private String name;
+    private String code;
 
     private boolean deleted = Boolean.FALSE;
 }

@@ -1,16 +1,18 @@
-package com.iwomi.nofiaPay.domain.entities;
+package com.iwomi.nofiaPay.dtos.responses;
 
 import com.iwomi.nofiaPay.core.enums.IdTypeEnum;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 public class Client {
+    private UUID uuid;
     private String institutionCode; //code etablissement
-    private String branchId;
+    private Branch branch;
 
-    private String matricule;
+    private String clientCode;
     private String phoneNumber;
     private String email;
     private String firstName;
@@ -28,4 +30,7 @@ public class Client {
     private Date idDeliveryDate;
     private Date idExpirationDate;
     private Date dateOfBirth;
+
+    private Date createdAt;
+    private Date updatedAt;
 }

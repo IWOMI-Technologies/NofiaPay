@@ -3,7 +3,7 @@ package com.iwomi.nofiaPay.services.enrollments;
 
 import com.iwomi.nofiaPay.core.mappers.IEnrollMapper;
 import com.iwomi.nofiaPay.dtos.EnrollDto;
-import com.iwomi.nofiaPay.dtos.response.Enroll;
+import com.iwomi.nofiaPay.dtos.responses.Enroll;
 import com.iwomi.nofiaPay.frameworks.data.repositories.enrollments.EnrollRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.iwomi.nofiaPay.services.branches;
 
 import com.iwomi.nofiaPay.core.mappers.IBranchMapper;
-import com.iwomi.nofiaPay.domain.entities.Branch;
+import com.iwomi.nofiaPay.dtos.responses.Branch;
 import com.iwomi.nofiaPay.dtos.BranchDto;
 import com.iwomi.nofiaPay.frameworks.data.repositories.branches.BranchRepository;
 import lombok.RequiredArgsConstructor;

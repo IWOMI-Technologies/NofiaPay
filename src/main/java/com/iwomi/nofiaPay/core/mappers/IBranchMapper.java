@@ -1,6 +1,6 @@
 package com.iwomi.nofiaPay.core.mappers;
 
-import com.iwomi.nofiaPay.domain.entities.Branch;
+import com.iwomi.nofiaPay.dtos.responses.Branch;
 import com.iwomi.nofiaPay.dtos.BranchDto;
 import com.iwomi.nofiaPay.frameworks.data.entities.BranchEntity;
 import org.mapstruct.BeanMapping;

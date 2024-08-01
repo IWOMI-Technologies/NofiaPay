@@ -1,16 +1,13 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
-import com.iwomi.nofiaPay.domain.entities.Branch;
-import com.iwomi.nofiaPay.domain.entities.Client;
-import com.iwomi.nofiaPay.dtos.BranchDto;
-import com.iwomi.nofiaPay.services.branches.BranchService;
+import com.iwomi.nofiaPay.dtos.responses.Branch;
+import com.iwomi.nofiaPay.dtos.responses.Client;
 import com.iwomi.nofiaPay.services.clients.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +29,7 @@ public class ClientController {
             responses = {
                     @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
                     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Branch.class))}),
+                            schema = @Schema(implementation = Client.class))}),
             }
     )
     public ResponseEntity<?> index() {
@@ -70,5 +67,22 @@ public class ClientController {
     public ResponseEntity<?> destroy(@PathVariable UUID id) {
         clientService.deleteOne(id);
         return GlobalResponse.responseBuilder("Client deleted", HttpStatus.OK, HttpStatus.OK.value(), null);
+    }
+
+    @GetMapping("/specific")
+    @Operation(
+            description = "Find client by branchid and client code",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Client.class))}),
+            }
+    )
+    public ResponseEntity<?> specificByBranchAndCode(
+            @RequestParam("branchId") String uuid,
+            @RequestParam("clientCode") String code
+    ) {
+        Client result = clientService.viewOneByBranchAndClientCode(uuid, code);
+        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 }

@@ -1,6 +1,6 @@
 package com.iwomi.nofiaPay.services.branches;
 
-import com.iwomi.nofiaPay.domain.entities.Branch;
+import com.iwomi.nofiaPay.dtos.responses.Branch;
 import com.iwomi.nofiaPay.dtos.BranchDto;
 
 import java.util.List;
