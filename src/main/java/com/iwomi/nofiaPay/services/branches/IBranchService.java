@@ -10,6 +10,7 @@ public interface IBranchService {
     List<Branch> findAllBranches();
     Branch saveBranch(BranchDto dto);
     Branch viewOne(UUID uuid);
+
     Branch update(UUID uuid, BranchDto dto);
     void deleteOne(UUID uuid);
 }

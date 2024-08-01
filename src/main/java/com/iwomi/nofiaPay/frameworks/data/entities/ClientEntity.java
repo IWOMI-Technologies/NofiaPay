@@ -29,7 +29,8 @@ public class ClientEntity extends BaseEntity  {
     private String firstName;
     private String lastName;
     private String idNumber;    // from CNI, PASSPORT, etc
-    @Enumerated(EnumType.STRING) private IdTypeEnum idType; // enum
+    @Enumerated(EnumType.STRING)
+    private IdTypeEnum idType; // enum
     private String idDeliveryPlace;
     private String idDeliveryAuthority;
     private String placeOfBirth;
