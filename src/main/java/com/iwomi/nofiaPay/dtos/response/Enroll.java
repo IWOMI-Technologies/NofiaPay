@@ -3,7 +3,7 @@ package com.iwomi.nofiaPay.dtos.response;
 import java.util.UUID;
 
 public record Enroll(
-       UUID uuid,
+        UUID uuid,
         String email,
         String password,
         String sex,

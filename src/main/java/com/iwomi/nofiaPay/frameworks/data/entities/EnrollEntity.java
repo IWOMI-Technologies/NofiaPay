@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder(toBuilder = true)
-@Entity(name = "potential-client")
+@Entity(name = "potential-clients")
 public class EnrollEntity extends BaseEntity {
 
     @Column(name = "first-name")
