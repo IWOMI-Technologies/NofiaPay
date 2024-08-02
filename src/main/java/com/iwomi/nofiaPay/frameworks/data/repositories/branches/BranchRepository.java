@@ -30,6 +30,11 @@ public class BranchRepository {
                 .orElseThrow(() -> new GeneralException("Branch not found."));
     }
 
+    public BranchEntity getOneByCode(String code) {
+        return repository.findByCode(code)
+                .orElseThrow(() -> new GeneralException("Branch not found."));
+    }
+
     public BranchEntity updateAccount(UUID uuid, BranchDto dto) {
         BranchEntity entity = getOne(uuid);
         mapper.updateBranchFromDto(dto, entity);

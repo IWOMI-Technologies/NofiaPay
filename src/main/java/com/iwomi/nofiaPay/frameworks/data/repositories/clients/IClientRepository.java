@@ -7,5 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IClientRepository extends JpaRepository<ClientEntity, UUID> {
+    Optional<ClientEntity> findByPhoneNumber(String phone);
+    Optional<ClientEntity> findByClientCode(String clientCode);
     Optional<ClientEntity> findByBranchIdAndClientCode(String branchId, String code);
 }

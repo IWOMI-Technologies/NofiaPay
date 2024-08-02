@@ -1,5 +1,5 @@
 package com.iwomi.nofiaPay.core.enums;
 
 public enum AccountTypeEnum {
-    COLLECTION_TELLER
+    COLLECTION, TELLER, COMMISSION, CLIENT, MERCHANT, BRANCH_DIGITAL_ACCOUNT
 }

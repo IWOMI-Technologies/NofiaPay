@@ -7,6 +7,7 @@ import com.iwomi.nofiaPay.dtos.TransactionDto;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +27,15 @@ public class TransactionRepository {
     public  TransactionEntity createTransaction (TransactionDto dto) {
         TransactionEntity transaction = mapper.mapToEntity(dto);
         return  repository.save(transaction);
+    }
+
+    public  TransactionEntity createTransaction (TransactionEntity entity) {
+        return  repository.save(entity);
+    }
+
+    @Transactional
+    public  List<TransactionEntity> createMany (List<TransactionEntity> entities) {
+        return  repository.saveAll(entities);
     }
 
     public  TransactionEntity getOne(UUID uuid) {

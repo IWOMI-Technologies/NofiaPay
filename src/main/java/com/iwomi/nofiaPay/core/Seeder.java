@@ -17,7 +17,7 @@ public class Seeder {
     CommandLineRunner initDatabase(
             IClientRepository clientRepository,
             BranchRepository branchRepository
-                                   ) {
+) {
         BranchDto branchDto = new BranchDto("Central", "8888");
         // save branch
         BranchEntity branch = branchRepository.createBranch(branchDto);

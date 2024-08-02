@@ -29,8 +29,6 @@ public class ClientEntity extends BaseEntity  {
     private String firstName;
     private String lastName;
     private String idNumber;    // from CNI, PASSPORT, etc
-    @Enumerated(EnumType.STRING)
-    private IdTypeEnum idType; // enum
     private String idDeliveryPlace;
     private String idDeliveryAuthority;
     private String placeOfBirth;
@@ -38,6 +36,8 @@ public class ClientEntity extends BaseEntity  {
     private String taxPayerNumber;
     private Date businessCreationDate;
     private String address;
+
+    @Enumerated(EnumType.STRING) private IdTypeEnum idType; // enum
 
     @JsonFormat(pattern = AppConst.DATEFORMAT, timezone = AppConst.BACKEND_TIME_ZONE)
     @Temporal(TemporalType.DATE)

@@ -1,0 +1,12 @@
+package com.iwomi.nofiaPay.dtos;
+
+import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
+
+public record AgentCashCollectionDto(
+        String clientPhoneNumber,
+        String agentCollectionAccount,
+        String amount,
+        String reason,
+        OperationTypeEnum operation
+) {
+}

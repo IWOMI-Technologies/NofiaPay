@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.frameworks.data.repositories.accounts;
 
+import com.iwomi.nofiaPay.core.enums.AccountTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.dtos.AccountDto;
@@ -29,6 +30,21 @@ public class AccountRepository {
 
     public  AccountEntity getOne(UUID uuid) {
         return  repository.findById(uuid)
+                .orElseThrow(() -> new GeneralException("Account Not Found"));
+    }
+
+    public  AccountEntity getOneByAccount(String account) {
+        return  repository.findByAccountNumber(account)
+                .orElseThrow(() -> new GeneralException("Account Not Found"));
+    }
+
+    public  AccountEntity getOneByBranchAndType(String branchid, AccountTypeEnum type) {
+        return  repository.findByBranchIdAndType(branchid, type)
+                .orElseThrow(() -> new GeneralException("Account Not Found"));
+    }
+
+    public  AccountEntity getOneByClientIdAndType(String clientId, AccountTypeEnum type) {
+        return  repository.findByClientIdAndType(clientId, type)
                 .orElseThrow(() -> new GeneralException("Account Not Found"));
     }
 

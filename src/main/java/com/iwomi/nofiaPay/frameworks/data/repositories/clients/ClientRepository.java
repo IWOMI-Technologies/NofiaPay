@@ -29,6 +29,16 @@ public class ClientRepository {
                 .orElseThrow(() -> new GeneralException("Client not found."));
     }
 
+    public ClientEntity getOneByClientCode(String code) {
+        return repository.findByClientCode(code)
+                .orElseThrow(() -> new GeneralException("Client not found."));
+    }
+
+    public ClientEntity getOneByPhone(String phone) {
+        return repository.findByPhoneNumber(phone)
+                .orElseThrow(() -> new GeneralException("Client not found."));
+    }
+
 //    public BranchEntity updateAccount(UUID uuid, BranchDto dto) {
 //        BranchEntity entity = getOne(uuid);
 //        mapper.updateBranchFromDto(dto, entity);
@@ -43,4 +53,5 @@ public class ClientRepository {
         return repository.findByBranchIdAndClientCode(branchId, code)
                 .orElseThrow(() -> new GeneralException("Client not found."));
     }
+
 }

@@ -10,12 +10,8 @@ import java.math.BigDecimal;
 
 @Data
 public class TransactionDto {
-
     private OperationTypeEnum type;
-
     private SenseTypeEnum sense;
-
     private BigDecimal amount;
     private String reason;
-    private StatusTypeEnum status;
 }

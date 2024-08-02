@@ -11,6 +11,8 @@ public record Transaction(
 
         SenseTypeEnum sense,
 
+        String accountNumber,
+
         BigDecimal amount,
 
         String reason,

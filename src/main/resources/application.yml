@@ -31,8 +31,14 @@ eureka:
     enabled: false  # false value disables discovery request.
 
 externals:
+  iwomi:
+    apiKey: ""
+    apiSecret: ""
+    username: ""
+    password: ""
   base-url:
     auth: http://AUTH/api/v1/users
+    iwomiPay: https://www.pay.iwomitechnologies.com/api/iwomipay_sandbox
 
 #logging:
 #  level:

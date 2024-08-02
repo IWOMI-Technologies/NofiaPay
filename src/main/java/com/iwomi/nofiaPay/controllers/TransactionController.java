@@ -1,6 +1,7 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
+import com.iwomi.nofiaPay.dtos.AgentCashCollectionDto;
 import com.iwomi.nofiaPay.dtos.TransactionDto;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @RestController
 public class TransactionController {
 
-    private  final TransactionService transactionService;
+    private final TransactionService transactionService;
 
     @GetMapping()
     @Operation(
@@ -38,34 +39,94 @@ public class TransactionController {
         return GlobalResponse.responseBuilder("List of  transactions", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @PostMapping()
-    @Operation(
-            description = "Transaction creation",
-            responses = {
-                    @ApiResponse(responseCode = "400", ref = "badRequest"),
-                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
-                    @ApiResponse(responseCode = "201", ref = "successResponse"),
-            }
-    )
-    public ResponseEntity<?> store(@RequestBody TransactionDto dto) {
-        Transaction result = transactionService.SaveTransaction(dto);
-        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
-    }
+//    @PostMapping()
+//    @Operation(
+//            description = "Transaction creation",
+//            responses = {
+//                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+//                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+//                    @ApiResponse(responseCode = "201", ref = "successResponse"),
+//            }
+//    )
+//    public ResponseEntity<?> store(@RequestBody TransactionDto dto) {
+//        Transaction result = transactionService.SaveTransaction(dto);
+//        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
+//    }
+
     @GetMapping("/{uuid}")
     public ResponseEntity<?> show(@PathVariable UUID uuid) {
         Transaction result = transactionService.viewOne(uuid);
         return GlobalResponse.responseBuilder("Transaction found", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @PutMapping("/{uuid}")
-    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody TransactionDto dto) {
-        Transaction result = transactionService.update(id, dto);
-        return GlobalResponse.responseBuilder("Transaction  update successful", HttpStatus.OK, HttpStatus.OK.value(), result);
-    }
+//    @PutMapping("/{uuid}")
+//    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody TransactionDto dto) {
+//        Transaction result = transactionService.update(id, dto);
+//        return GlobalResponse.responseBuilder("Transaction  update successful", HttpStatus.OK, HttpStatus.OK.value(), result);
+//    }
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity<?> destroy(@PathVariable UUID uuid) {
         transactionService.deleteOne(uuid);
         return GlobalResponse.responseBuilder("Transaction deleted", HttpStatus.OK, HttpStatus.OK.value(), null);
     }
+
+    @PostMapping("/agent-cash")
+    @Operation(
+            description = "Agent cash collection transaction ::: use -> AGENT_CASH_COLLECTION",
+            parameters = {},
+            responses = {
+                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse"),
+            }
+    )
+    public ResponseEntity<?> storeAgentCash(@RequestBody AgentCashCollectionDto dto) {
+        Transaction result = transactionService.agentCashCollection(dto);
+        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
+    }
+
+    @PostMapping("/agent-digital")
+    @Operation(
+            description = """
+                    Agent digital collection transaction ::: use -> AGENT_DIGITAL_COLLECTION_MOMO, AGENT_DIGITAL_COLLECTION_OM
+                    used for any with prefix AGENT_DIGITAL_COLLECTION_**
+                    """,
+            parameters = {},
+            responses = {
+                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", ref = "successResponse"),
+            }
+    )
+    public ResponseEntity<?> storeAgentDigital(@RequestBody AgentCashCollectionDto dto) {
+        Transaction result = transactionService.agentCashCollection(dto);
+        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
+    }
+
+    //put the 03 remaining services here same as above
+
+//    @GetMapping("/initiate-reversement")
+//    @Operation(
+//            description = """
+//                    Agent to teller transaction initialisation.
+//                    This returns info of the teller, agent collected transactions of the day in batches,
+//                     total amount collected in the day
+//                    """,
+//            parameters = {},
+//            responses = {
+//                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+//                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+//                    @ApiResponse(responseCode = "200", ref = "successResponse"),
+//            }
+//    )
+//    public ResponseEntity<?> initiateReversal(
+//            @RequestParam("agentClientId") String agentClientId,
+//            @RequestParam("branchCode") String branchCode,
+//            @RequestParam("tellerBoxNumber") String boxNumber
+//    ) {
+//        Object result = transactionService.initiateReversement(branchCode, boxNumber, agentClientId);
+//        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
+//    }
+
 }

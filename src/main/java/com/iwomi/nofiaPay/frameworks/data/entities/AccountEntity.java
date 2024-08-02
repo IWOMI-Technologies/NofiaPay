@@ -20,18 +20,13 @@ import java.util.UUID;
 @Entity(name = "accounts")
 public class AccountEntity extends BaseEntity {
 
-    @Column(name = "account-number")
-    private String accountNumber;
+    @Column(name = "account-number") private String accountNumber;
+    @Column(name = "balance") private BigDecimal balance;
+    @Column(name = "client_id") private String clientId;
+    @Column(name = "branch_id") private String branchId;
 
-    @Enumerated(EnumType.STRING)
-    private AccountStatusEnum accountStatus;
-    @Column(name = "balance")
-    private BigDecimal balance;
+    @Enumerated(EnumType.STRING) private AccountStatusEnum accountStatus;
+    @Enumerated(EnumType.STRING) private AccountTypeEnum type;
 
-    @Enumerated(EnumType.STRING)
-    private AccountTypeEnum type;
-
-    @Column(name = "client_id")
-    private UUID clientId;
 
 }

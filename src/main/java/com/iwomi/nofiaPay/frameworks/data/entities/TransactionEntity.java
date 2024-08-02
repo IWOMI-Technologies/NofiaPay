@@ -20,15 +20,14 @@ import java.math.BigDecimal;
 @Entity(name = "transactions")
 public class TransactionEntity extends BaseEntity {
 
-    @Enumerated(EnumType.STRING)
-    private OperationTypeEnum type;
-
-    @Enumerated(EnumType.STRING)
-    private SenseTypeEnum sense;
-
     private BigDecimal amount;
     private String reason;
+    private String batch;
 
-    @Enumerated(EnumType.STRING)
-    private StatusTypeEnum status;
+    @Column(name = "account_number") private String accountNumber;
+
+    @Enumerated(EnumType.STRING) private OperationTypeEnum type;
+    @Enumerated(EnumType.STRING) private SenseTypeEnum sense;
+    @Enumerated(EnumType.STRING) private StatusTypeEnum status;
+
 }
