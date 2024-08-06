@@ -4,6 +4,7 @@ import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ITransactionService {
@@ -31,6 +32,7 @@ public interface ITransactionService {
     //TODO similar to agentDigitalCollection above
     List<Transaction> merchantDigital(MerchantDigitalDto dto);
 
-//    Object initiateReversement(String branchCode, String boxNumber, String clientCode);
+    Map<String, Object> initiateReversement(String branchCode, String boxNumber, String clientCode);
+    List<Transaction> reversement(ReversementDto dto);
 
 }

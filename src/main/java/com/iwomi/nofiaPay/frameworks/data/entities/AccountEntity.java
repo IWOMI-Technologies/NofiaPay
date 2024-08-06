@@ -27,6 +27,4 @@ public class AccountEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING) private AccountStatusEnum accountStatus;
     @Enumerated(EnumType.STRING) private AccountTypeEnum type;
-
-
 }

@@ -26,7 +26,4 @@ public class AccountHistoryEntity extends  BaseEntity {
     private String accountNumber;
     @Enumerated(EnumType.STRING)
     private SenseTypeEnum sense;
-
-
-
 }

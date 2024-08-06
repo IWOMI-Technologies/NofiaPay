@@ -2,7 +2,7 @@ spring:
   application:
     name: NOFIAPAY
   datasource: # db config seems not to be used
-    url: jdbc:mysql://localhost:3308/nofia?serverTimezone=Africa/Douala
+    url: jdbc:mysql://localhost:3308/nofia?serverTimezone=Africa/Douala&allowPublicKeyRetrieval=true&useSSL=false
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver

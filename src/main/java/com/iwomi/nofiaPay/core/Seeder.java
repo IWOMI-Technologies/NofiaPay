@@ -18,21 +18,21 @@ public class Seeder {
             IClientRepository clientRepository,
             BranchRepository branchRepository
 ) {
-        BranchDto branchDto = new BranchDto("Central", "8888");
-        // save branch
-        BranchEntity branch = branchRepository.createBranch(branchDto);
+//        BranchDto branchDto = new BranchDto("Central", "8888");
+//        // save branch
+//        BranchEntity branch = branchRepository.createBranch(branchDto);
+//
+//        ClientEntity client = ClientEntity.builder()
+//                .clientCode("CliCode78965")
+//                .phoneNumber("44556688")
+//                .address("etoudi")
+//                .branchId(branch.getUuid().toString())
+//                .build();
 
-        ClientEntity client = ClientEntity.builder()
-                .clientCode("CliCode78965")
-                .phoneNumber("44556688")
-                .address("etoudi")
-                .branchId(branch.getUuid().toString())
-                .build();
-
-        ClientEntity clientEntity = clientRepository.save(client);
+//        ClientEntity clientEntity = clientRepository.save(client);
         return args -> {
-            log.info("Preloading branch "+ branch);
-            log.info("Preloading clients "+ clientEntity);
+//            log.info("Preloading branch "+ branch);
+//            log.info("Preloading clients "+ clientEntity);
         };
     }
 }

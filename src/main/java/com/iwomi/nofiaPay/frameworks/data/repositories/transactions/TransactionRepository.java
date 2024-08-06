@@ -40,7 +40,21 @@ public class TransactionRepository {
 
     public  TransactionEntity getOne(UUID uuid) {
         return  repository.findById(uuid)
-                .orElseThrow(() -> new GeneralException("Account Not Found"));
+                .orElseThrow(() -> new GeneralException("Transaction Not Found"));
+    }
+
+    public  List<TransactionEntity> getByBatch(String batchCode) {
+        List<TransactionEntity> transactions =  repository.findByBatch(batchCode);
+        if (transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
+
+        return transactions;
+    }
+
+    public  List<TransactionEntity> getByBatchCodes(List<String> batches) {
+        List<TransactionEntity> transactions =  repository.findByBatchIn(batches);
+        if (transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
+
+        return transactions;
     }
 
     public  TransactionEntity updateTransaction (TransactionDto dto, UUID uuid){

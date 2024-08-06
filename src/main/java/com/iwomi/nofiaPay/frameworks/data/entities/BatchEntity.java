@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -20,5 +22,5 @@ public class BatchEntity extends BaseEntity {
 
     // amount remaining after reversement
     // if 0 then batch is fully paid
-    private String remainder;
+    @Column(nullable = false) private BigDecimal remainder;
 }

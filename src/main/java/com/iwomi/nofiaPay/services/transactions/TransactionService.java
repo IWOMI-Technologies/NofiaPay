@@ -8,6 +8,7 @@ import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
 import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.BatchEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
@@ -21,7 +22,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -224,15 +227,74 @@ public class TransactionService implements ITransactionService {
                 .toList();
     }
 
-//    @Override
-//    public Object initiateReversement(String branchCode, String boxNumber, String agentClientId) {
-//        String branchUuid = branchRepository.getOneByCode(branchCode).getUuid().toString();
-//        String clientUuid = tellerBoxRepository.getOneByNumber(boxNumber, branchUuid).getUuid().toString();
-//        String tellerAccount = accountRepository.getOneByClientIdAndType(clientUuid,
-//                AccountTypeEnum.COLLECTION).getAccountNumber();
-//
-//
-//    }
+    @Override
+    public Map<String, Object> initiateReversement(String branchCode, String boxNumber, String agentClientId) {
+        String branchUuid = branchRepository.getOneByCode(branchCode).getUuid().toString();
+        String clientUuid = tellerBoxRepository.getOneByNumber(boxNumber, branchUuid).getUuid().toString();
+        String tellerAccount = accountRepository.getOneByClientIdAndType(clientUuid,
+                AccountTypeEnum.COLLECTION).getAccountNumber();
+
+        // get only the batches code
+        List<String> batchCodes = batchRepository.getOneByClientId(agentClientId).stream().map(BatchEntity::getBatchCode).toList();
+        List<TransactionEntity> transactions = transactionRepository.getByBatchCodes(batchCodes);
+
+        Map<String, BigDecimal> groupedTransactions = transactions.stream().collect(Collectors.groupingBy(
+                TransactionEntity::getBatch, // Key extractor
+                Collectors.mapping(
+                        TransactionEntity::getAmount, // Value extractor
+                        Collectors.reducing(BigDecimal.ZERO, BigDecimal::add) // Aggregation
+                )
+        ));
+
+        return Map.of(
+                "tellerAccount", tellerAccount,
+                "batchesTransactions", groupedTransactions
+        );
+
+    }
+
+    @Override
+    public List<Transaction> reversement(ReversementDto dto) {
+        String agentAccount = accountRepository.getOneByClientIdAndType(dto.agentClientId(),
+                AccountTypeEnum.COLLECTION).getAccountNumber();
+
+        List<Transaction> transactions = List.of();
+
+        for (BatchDto batch : dto.batchesPayment()) {
+            BatchEntity foundBatch = batchRepository.getOneByCode(batch.batchCode());
+            BigDecimal subtractedAmount = foundBatch.getRemainder().subtract(batch.amount());
+            if (subtractedAmount.intValue() > 0) batchRepository.updateBatch(foundBatch.getUuid(), subtractedAmount);
+
+            TransactionEntity outOfAgentAccount = TransactionEntity.builder()
+                    .amount(batch.amount())
+                    .reason(dto.raison())
+                    .batch(batch.batchCode())
+                    .accountNumber(agentAccount)
+                    .type(dto.operation())  // agent to teller type
+                    .sense(SenseTypeEnum.DEBIT)
+                    .status(StatusTypeEnum.PENDING)
+                    .build();
+            TransactionEntity inTellersAccount = TransactionEntity.builder()
+                    .amount(batch.amount())
+                    .reason(dto.raison())
+                    .batch(batch.batchCode())
+                    .accountNumber(dto.tellersAccount())
+                    .type(dto.operation())
+                    .sense(SenseTypeEnum.CREDIT)
+                    .status(StatusTypeEnum.PENDING)
+                    .build();
+
+            transactions = transactionRepository
+                    .createMany(List.of(outOfAgentAccount, inTellersAccount))
+                    .stream().map(mapper::mapToModel)
+                    .toList();
+
+            //TODO to validate change both status to validated
+        }
+
+        return transactions;
+
+    }
 
     private String agentBranchCode(String agentCollectionAccount) {
         AccountEntity account = accountRepository.getOneByAccount(agentCollectionAccount);
