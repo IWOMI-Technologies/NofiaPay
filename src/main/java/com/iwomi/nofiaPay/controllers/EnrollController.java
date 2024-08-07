@@ -3,6 +3,7 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.EnrollDto;
 import com.iwomi.nofiaPay.dtos.responses.Enroll;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.services.enrollments.EnrollService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -52,6 +53,14 @@ public class EnrollController {
         return GlobalResponse.responseBuilder("User successfully created", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
     @GetMapping("/{uuid}")
+    @Operation(
+            description = "Get a user",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse",
+                            content = {@Content(schema = @Schema(implementation = Enroll.class))}),
+            }
+    )
     public ResponseEntity<?> show(@PathVariable UUID id) {
         Enroll result = enrollService.viewOne(id);
         return GlobalResponse.responseBuilder("Found User", HttpStatus.OK, HttpStatus.OK.value(), result);
@@ -63,12 +72,28 @@ public class EnrollController {
         return GlobalResponse.responseBuilder("User update successful", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
     @DeleteMapping("/{uuid}")
+    @Operation(
+            description = "Delete a user",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Void.class))}),
+            }
+    )
     public ResponseEntity<?> destroy(@PathVariable UUID uuid) {
      enrollService.deleteOne(uuid);
        return GlobalResponse.responseBuilder("User deleted", HttpStatus.OK, HttpStatus.OK.value(), null);
     }
 
     @GetMapping("/{phone-number}")
+    @Operation(
+            description = "Get a user",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Enroll.class))}),
+            }
+    )
     public ResponseEntity<?> showByPhoneNumber(@PathVariable String phoneNumber) {
         Enroll result = enrollService.viewByPhoneNumber(phoneNumber);
         return GlobalResponse.responseBuilder("Found User", HttpStatus.OK, HttpStatus.OK.value(), result);

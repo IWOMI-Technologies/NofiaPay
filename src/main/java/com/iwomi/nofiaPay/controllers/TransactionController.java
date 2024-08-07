@@ -54,6 +54,14 @@ public class TransactionController {
 //    }
 
     @GetMapping("/{uuid}")
+    @Operation(
+            description = "get a transactions",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse",
+                            content = {@Content(schema = @Schema(implementation = Transaction.class))}),
+            }
+    )
     public ResponseEntity<?> show(@PathVariable UUID uuid) {
         Transaction result = transactionService.viewOne(uuid);
         return GlobalResponse.responseBuilder("Transaction found", HttpStatus.OK, HttpStatus.OK.value(), result);
@@ -66,6 +74,14 @@ public class TransactionController {
 //    }
 
     @DeleteMapping("/{uuid}")
+    @Operation(
+            description = "Delete a transaction",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse",
+                            content = {@Content(schema = @Schema(implementation = Void.class))}),
+            }
+    )
     public ResponseEntity<?> destroy(@PathVariable UUID uuid) {
         transactionService.deleteOne(uuid);
         return GlobalResponse.responseBuilder("Transaction deleted", HttpStatus.OK, HttpStatus.OK.value(), null);

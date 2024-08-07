@@ -52,6 +52,14 @@ public class ClientController {
 //    }
 
     @GetMapping("/{id}")
+    @Operation(
+            description = "Get a client",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Client.class))}),
+            }
+    )
     public ResponseEntity<?> show(@PathVariable UUID id) {
         Client result = clientService.viewOne(id);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
@@ -64,6 +72,14 @@ public class ClientController {
 //    }
 
     @DeleteMapping("/{id}")
+    @Operation(
+            description = "Delete a client",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Void.class))}),
+            }
+    )
     public ResponseEntity<?> destroy(@PathVariable UUID id) {
         clientService.deleteOne(id);
         return GlobalResponse.responseBuilder("Client deleted", HttpStatus.OK, HttpStatus.OK.value(), null);

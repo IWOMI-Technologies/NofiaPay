@@ -3,6 +3,7 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -52,6 +53,14 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Account successfully created", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
     @GetMapping("/{uuid}")
+    @Operation(
+            description = "Get an account",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse",
+                            content = {@Content(schema = @Schema(implementation = Account.class))}),
+            }
+    )
     public ResponseEntity<?> show(@PathVariable UUID uuid) {
         Account result = accountService.viewOne(uuid);
         return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
@@ -64,6 +73,14 @@ public class AccountController {
     }
 
     @DeleteMapping("/{uuid}")
+    @Operation(
+            description = "Delete an account",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Void.class))}),
+            }
+    )
     public ResponseEntity<?> destroy(@PathVariable UUID uuid) {
         accountService.deleteOne(uuid);
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), null);

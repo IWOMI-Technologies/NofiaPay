@@ -40,6 +40,14 @@ public class AccountHistoryController {
     }
 
     @GetMapping("/{uuid}")
+    @Operation(
+            description = "Account History by uuid",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse",
+                            content = {@Content(schema = @Schema(implementation = AccountHistory.class))}),
+            }
+    )
     public ResponseEntity<?> show(@PathVariable UUID uuid) {
         AccountHistory result = accountHistoryService.viewOne(uuid);
         return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);

@@ -2,14 +2,13 @@ spring:
   application:
     name: NOFIAPAY
   datasource: # db config seems not to be used
-    url: jdbc:mysql://localhost:3308/nofia?serverTimezone=Africa/Douala
+    url: jdbc:mysql://localhost:3306/nofia?serverTimezone=Africa/Douala
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    database-platform: org.hibernate.dialect.MySQL5Dialect
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
