@@ -37,30 +37,10 @@ public class ClientController {
         return GlobalResponse.responseBuilder("List of clients", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-//    @PostMapping()
-//    @Operation(
-//            description = "Client creation",
-//            responses = {
-//                    @ApiResponse(responseCode = "400", ref = "badRequest"),
-//                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
-//                    @ApiResponse(responseCode = "201", ref = "successResponse"),
-//            }
-//    )
-//    public ResponseEntity<?> store(@Valid @RequestBody BranchDto dto) {
-//        Branch result = branchService.saveBranch(dto);
-//        return GlobalResponse.responseBuilder("Branch successfully created", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
-//    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<?> show(@PathVariable UUID id) {
-        Client result = clientService.viewOne(id);
-        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
-    }
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody BranchDto dto) {
-//        Branch result = branchService.update(id, dto);
-//        return GlobalResponse.responseBuilder("Branch update successful", HttpStatus.OK, HttpStatus.OK.value(), result);
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> show(@PathVariable UUID id) {
+//        Client result = clientService.viewOne(id);
+//        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
 //    }
 
     @DeleteMapping("/{id}")
@@ -69,20 +49,18 @@ public class ClientController {
         return GlobalResponse.responseBuilder("Client deleted", HttpStatus.OK, HttpStatus.OK.value(), null);
     }
 
-    @GetMapping("/specific")
+    @GetMapping("/phone")
     @Operation(
-            description = "Find client by branchid and client code",
+            description = "Find client by phone number",
             responses = {
                     @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
                     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Client.class))}),
             }
     )
-    public ResponseEntity<?> specificByBranchAndCode(
-            @RequestParam("branchId") String uuid,
-            @RequestParam("clientCode") String code
-    ) {
-        Client result = clientService.viewOneByBranchAndClientCode(uuid, code);
+    public ResponseEntity<?> specificByPhone(@RequestParam("clientPhone") String phone) {
+        Client result = clientService.viewOneByPhone(phone);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
+
 }

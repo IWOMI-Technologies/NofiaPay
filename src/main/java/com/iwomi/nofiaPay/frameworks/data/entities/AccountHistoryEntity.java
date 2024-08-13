@@ -16,14 +16,23 @@ import java.math.BigDecimal;
 @Setter
 @Builder(toBuilder = true)
 @Entity(name = "accounts-history")
-public class AccountHistoryEntity extends  BaseEntity {
+public class AccountHistoryEntity extends BaseEntity {
 
-    private String name; 
-    private String reason;
+    private String agencyCode;
+    private String currency;
+    private String cle;
+    private String operationCode;
+    private String operationTitle;
+    private String transactionReference;
     private BigDecimal amount;
 
-    @Column(name = "account-number")
-    private String accountNumber;
-    @Enumerated(EnumType.STRING)
-    private SenseTypeEnum sense;
+    private String accountingDocument;
+    private String accountingDate;
+    private String valueDate;
+    private String balance;
+
+    @Column(name = "account-number") private String accountNumber;
+
+    @Enumerated(EnumType.STRING) private SenseTypeEnum sense;
+
 }

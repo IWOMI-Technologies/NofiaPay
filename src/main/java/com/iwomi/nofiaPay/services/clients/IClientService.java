@@ -12,5 +12,5 @@ public interface IClientService {
 //    Branch update(UUID uuid, BranchDto dto);
     void deleteOne(UUID uuid);
 
-    Client viewOneByBranchAndClientCode(String branchId, String code);
+    Client viewOneByPhone(String phone);
 }

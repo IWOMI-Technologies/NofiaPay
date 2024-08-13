@@ -38,15 +38,24 @@ public class AccountRepository {
                 .orElseThrow(() -> new GeneralException("Account Not Found"));
     }
 
-    public  AccountEntity getOneByBranchAndType(String branchid, AccountTypeEnum type) {
-        return  repository.findByBranchIdAndType(branchid, type)
+    public  List<AccountEntity> getByClientCode(String clientCode) {
+        return  repository.findByClientCode(clientCode);
+    }
+
+    public  AccountEntity getOneByBranchCodeAndType(String branchCode, String type) {
+        return  repository.findByAgencyCodeAndAccountTypeCode(branchCode, type)
                 .orElseThrow(() -> new GeneralException("Account Not Found"));
     }
 
-    public  AccountEntity getOneByClientIdAndType(String clientId, AccountTypeEnum type) {
-        return  repository.findByClientIdAndType(clientId, type)
-                .orElseThrow(() -> new GeneralException("Account Not Found"));
-    }
+//    public  AccountEntity getOneByBranchAndType(String branchid, AccountTypeEnum type) {
+//        return  repository.findByBranchIdAndType(branchid, type)
+//                .orElseThrow(() -> new GeneralException("Account Not Found"));
+//    }
+//
+//    public  AccountEntity getOneByClientIdAndType(String clientId, AccountTypeEnum type) {
+//        return  repository.findByClientIdAndType(clientId, type)
+//                .orElseThrow(() -> new GeneralException("Account Not Found"));
+//    }
 
     public  AccountEntity updateAccount (AccountDto dto, UUID uuid){
         AccountEntity account = getOne(uuid);

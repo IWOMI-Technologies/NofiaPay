@@ -3,6 +3,7 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AgentCashCollectionDto;
 import com.iwomi.nofiaPay.dtos.ReversementDto;
+import com.iwomi.nofiaPay.dtos.SelfServiceDto;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -87,6 +88,21 @@ public class TransactionController {
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
+    @PostMapping("/self-service")
+    @Operation(
+            description = "Client self service transaction ::: use -> SELF_SERVICE_OM or SELF_SERVICE_MOMO for operation",
+            parameters = {},
+            responses = {
+                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse"),
+            }
+    )
+    public ResponseEntity<?> storeAgentCash(@RequestBody SelfServiceDto dto) {
+        List<Transaction> result = transactionService.selfService(dto);
+        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
+    }
+
     @PostMapping("/agent-digital")
     @Operation(
             description = """
@@ -107,43 +123,43 @@ public class TransactionController {
 
     //put the 03 remaining services here same as above
 
-    @GetMapping("/initiate-reversement")
-    @Operation(
-            description = """
-                    Agent to teller transaction initialisation.
-                    This returns info of the teller, agent collected transactions of the day in batches,
-                     total amount collected in the day
-                    """,
-            parameters = {},
-            responses = {
-                    @ApiResponse(responseCode = "400", ref = "badRequest"),
-                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
-                    @ApiResponse(responseCode = "200", ref = "successResponse"),
-            }
-    )
-    public ResponseEntity<?> initiateReversal(
-            @RequestParam("agentClientId") String agentClientId,
-            @RequestParam("branchCode") String branchCode,
-            @RequestParam("tellerBoxNumber") String boxNumber
-    ) {
-        Map<String, Object> result = transactionService.initiateReversement(branchCode, boxNumber, agentClientId);
-        return GlobalResponse.responseBuilder("Transactions to deposit", HttpStatus.OK, HttpStatus.OK.value(), result);
-    }
+//    @GetMapping("/initiate-reversement")
+//    @Operation(
+//            description = """
+//                    Agent to teller transaction initialisation.
+//                    This returns info of the teller, agent collected transactions of the day in batches,
+//                    total amount collected in the day
+//                    """,
+//            parameters = {},
+//            responses = {
+//                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+//                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+//                    @ApiResponse(responseCode = "200", ref = "successResponse"),
+//            }
+//    )
+//    public ResponseEntity<?> initiateReversal(
+//            @RequestParam("agentClientId") String agentClientId,
+//            @RequestParam("branchCode") String branchCode,
+//            @RequestParam("tellerBoxNumber") String boxNumber
+//    ) {
+//        Map<String, Object> result = transactionService.initiateReversement(branchCode, boxNumber, agentClientId);
+//        return GlobalResponse.responseBuilder("Transactions to deposit", HttpStatus.OK, HttpStatus.OK.value(), result);
+//    }
 
-    @GetMapping("/reversement")
-    @Operation(
-            description = """
-                    Agent to teller transaction reversement
-                    """,
-            parameters = {},
-            responses = {
-                    @ApiResponse(responseCode = "400", ref = "badRequest"),
-                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
-                    @ApiResponse(responseCode = "200", ref = "successResponse"),
-            }
-    )
-    public ResponseEntity<?> reversal(@RequestBody ReversementDto dto) {
-        List<Transaction> result = transactionService.reversement(dto);
-        return GlobalResponse.responseBuilder("Transactions to teller successful", HttpStatus.OK, HttpStatus.OK.value(), result);
-    }
+//    @GetMapping("/reversement")
+//    @Operation(
+//            description = """
+//                    Agent to teller transaction reversement
+//                    """,
+//            parameters = {},
+//            responses = {
+//                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+//                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+//                    @ApiResponse(responseCode = "200", ref = "successResponse"),
+//            }
+//    )
+//    public ResponseEntity<?> reversal(@RequestBody ReversementDto dto) {
+//        List<Transaction> result = transactionService.reversement(dto);
+//        return GlobalResponse.responseBuilder("Transactions to teller successful", HttpStatus.OK, HttpStatus.OK.value(), result);
+//    }
 }

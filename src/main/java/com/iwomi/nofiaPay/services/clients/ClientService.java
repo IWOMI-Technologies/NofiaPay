@@ -1,9 +1,13 @@
 package com.iwomi.nofiaPay.services.clients;
 
+import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.core.mappers.IBranchMapper;
 import com.iwomi.nofiaPay.core.mappers.IClientMapper;
+import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.Branch;
 import com.iwomi.nofiaPay.dtos.responses.Client;
+import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
+import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.branches.BranchRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +21,9 @@ import java.util.UUID;
 public class ClientService implements IClientService {
 
     private final ClientRepository clientRepository;
-    private final BranchRepository branchRepository;
+    private final AccountRepository accountRepository;
     private final IClientMapper mapper;
-    private final IBranchMapper branchMapper;
+    private final IAccountMapper accountMapper;
 
     @Override
     public List<Client> findAllClient() {
@@ -50,11 +54,15 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public Client viewOneByBranchAndClientCode(String branchId, String code) {
-        UUID uuid = UUID.fromString(branchId);
-        Branch branch = branchMapper.mapToModel(branchRepository.getOne(uuid));
-        Client client = mapper.mapToModel(clientRepository.getOneByBranchAndClientCode(branchId, code));
-        client.setBranch(branch);
+    public Client viewOneByPhone(String phone) {
+
+        Client client = mapper.mapToModel(clientRepository.getOneByPhone(phone));
+        List<Account> accounts = accountRepository
+                .getByClientCode(client.getClientCode())
+                .stream()
+                .map(accountMapper::mapToModel)
+                .toList();
+        client.setAccounts(accounts);
 
         return client;
     }

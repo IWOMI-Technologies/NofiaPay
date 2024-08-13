@@ -22,17 +22,17 @@ public interface ITransactionService {
 
     Transaction agentCashCollection(AgentCashCollectionDto dto);
 
-    List<Transaction> agentDigitalCollection(AgentDigitalCollectionDto dto);
+//    List<Transaction> agentDigitalCollection(AgentDigitalCollectionDto dto);
 
     List<Transaction> selfService(SelfServiceDto dto);
 
     //TODO very similar to agentCashCollection above (arrange better)
     Transaction merchantCash(MerchantCashDto dto);
 
-    //TODO similar to agentDigitalCollection above
-    List<Transaction> merchantDigital(MerchantDigitalDto dto);
+//    //TODO similar to agentDigitalCollection above
+//    List<Transaction> merchantDigital(MerchantDigitalDto dto);
 
-    Map<String, Object> initiateReversement(String branchCode, String boxNumber, String clientCode);
-    List<Transaction> reversement(ReversementDto dto);
+//    Map<String, Object> initiateReversement(String branchCode, String boxNumber, String clientCode);
+//    List<Transaction> reversement(ReversementDto dto);
 
 }

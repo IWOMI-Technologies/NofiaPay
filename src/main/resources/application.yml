@@ -2,20 +2,24 @@ spring:
   application:
     name: NOFIAPAY
   datasource: # db config seems not to be used
-    url: jdbc:mysql://localhost:3308/nofia?serverTimezone=Africa/Douala&allowPublicKeyRetrieval=true&useSSL=false
+    url: jdbc:mysql://nofia_db:3308/nofia?serverTimezone=Africa/Douala
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: create-drop
-    database-platform: org.hibernate.dialect.MySQL5Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
 server:
   port: 8082
+
+#springdoc:
+#  swagger-ui:
+#    path: /api/v1/nofia/docs-ui.html
 
 eureka:
   instance:
@@ -32,10 +36,14 @@ eureka:
 
 externals:
   iwomi:
-    apiKey: ""
-    apiSecret: ""
-    username: ""
-    password: ""
+    apiKeys:
+      momo: "5e016fb8-ef10-458c-80c4-442e94708eee"
+      om: "36f4b65b-bbcf-4ca6-b881-1ba76b95ac39"
+    apiSecrets:
+      momo: "6ef3965f-ccb9-4f70-8864-1ca1de8e7c7d"
+      om: "0cf40e83-e3eb-4bc1-9504-8d6cd3878343"
+    username: "iwomipay2021"
+    password: "iwomipay@2020"
   base-url:
     auth: http://AUTH/api/v1/users
     iwomiPay: https://www.pay.iwomitechnologies.com/api/iwomipay_sandbox

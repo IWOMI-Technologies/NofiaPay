@@ -25,6 +25,7 @@ public class TransactionEntity extends BaseEntity {
     private String batch;
 
     @Column(name = "account_number") private String accountNumber;
+    @Column(name = "destination_account") private String destinationAccount;
 
     @Enumerated(EnumType.STRING) private OperationTypeEnum type;
     @Enumerated(EnumType.STRING) private SenseTypeEnum sense;

@@ -11,10 +11,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class Payment implements IPayment{
+public class Payment implements IPayment {
     private final IwomiPayClient client;
 
     @Value("${externals.iwomi.username}")
@@ -23,11 +24,17 @@ public class Payment implements IPayment{
     @Value("${externals.iwomi.password}")
     private String password;
 
-    @Value("${externals.iwomi.apiKey}")
-    private String apiKey;
+    @Value("${externals.iwomi.apiKeys.momo}")
+    private String momoKey;
 
-    @Value("${externals.iwomi.apiSecret}")
-    private String apiSecret;
+    @Value("${externals.iwomi.apiSecrets.momo}")
+    private String momoSecret;
+
+    @Value("${externals.iwomi.apiKeys.om}")
+    private String omKey;
+
+    @Value("${externals.iwomi.apiSecrets.om}")
+    private String omSecret;
 
     @Override
     public String auth(IwomiAuthDto dto) {
@@ -41,10 +48,16 @@ public class Payment implements IPayment{
         IwomiAuthDto authDto = new IwomiAuthDto(username, password);
         String token = auth(authDto);
 
-        var object = CoreUtils.objectToMap(dto);
-        String encodedKey = "base64(apikey:apisecret)";
-        Map<String, Object> response = client.callPay(encodedKey, object);
+        String key = Objects.equals(dto.type(), "om") ? omKey : momoKey;
+        String secret = Objects.equals(dto.type(), "om") ? omSecret : momoSecret;
+        String joined = key + ":" + secret;
 
+        String encoded = Base64.getEncoder().encodeToString(joined.getBytes());
+
+        var object = CoreUtils.objectToMap(dto);
+        Map<String, Object> response = client.callPay(encoded, object);
+        System.out.printf("-------- "+ response);
+//        System.out.printf("-------- "+ response);
         return Map.of();
     }
 }

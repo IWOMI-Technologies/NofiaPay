@@ -39,19 +39,8 @@ public class ClientRepository {
                 .orElseThrow(() -> new GeneralException("Client not found."));
     }
 
-//    public BranchEntity updateAccount(UUID uuid, BranchDto dto) {
-//        BranchEntity entity = getOne(uuid);
-//        mapper.updateBranchFromDto(dto, entity);
-//        return repository.save(entity);
-//    }
-
     public void deleteAccount(UUID uuid) {
         repository.deleteById(uuid);
-    }
-
-    public ClientEntity getOneByBranchAndClientCode(String branchId, String code) {
-        return repository.findByBranchIdAndClientCode(branchId, code)
-                .orElseThrow(() -> new GeneralException("Client not found."));
     }
 
 }

@@ -1,17 +1,24 @@
 package com.iwomi.nofiaPay.dtos.responses;
 
-import com.iwomi.nofiaPay.core.enums.AccountStatusEnum;
-import com.iwomi.nofiaPay.core.enums.AccountTypeEnum;
-
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.util.Date;
 
 public record Account(
-         String accountNumber,
-         AccountStatusEnum accountStatus,
-         BigDecimal balance,
-         AccountTypeEnum type,
-         UUID clientId
+        String agencyCode,
+        String agencyName,
+        String currency,
+        String cle,
+        String accountTitle,
+        String chapter,
+        String chapterTitle,
+        String accountTypeCode,
+        String accountTypeLabel,
+
+        String accountNumber,
+        BigDecimal balance,
+        String clientCode,
+
+        Date accountCreation
 
 ) {
 }
