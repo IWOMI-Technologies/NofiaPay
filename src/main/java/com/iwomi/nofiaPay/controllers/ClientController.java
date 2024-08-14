@@ -41,13 +41,13 @@ public class ClientController {
     }
 
     @GetMapping("/{role}")
-    public ResponseEntity<?> show(@PathVariable String role) {
+    public ResponseEntity<?> show(@RequestParam("role") String role) {
         List <Client> result = clientService.findAllByClientCode(role);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
     @GetMapping("/{role}/deleted")
-    public ResponseEntity<?> showByDeleted(@PathVariable String role) {
+    public ResponseEntity<?> showByDeleted(@RequestParam("role") String role) {
         List <Client> result = clientService.findAllDeletedByClientCode(role);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
