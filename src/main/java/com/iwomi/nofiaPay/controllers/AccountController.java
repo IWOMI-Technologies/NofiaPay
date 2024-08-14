@@ -3,6 +3,7 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
+import com.iwomi.nofiaPay.frameworks.externals.clients.AuthServiceClient;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RequestMapping("/api/v1/accounts")
@@ -23,6 +25,8 @@ import java.util.UUID;
 public class AccountController {
 
     private final AccountService accountService;
+
+    private  final AuthServiceClient authServiceClient;
 
     @GetMapping()
     @Operation(
@@ -67,5 +71,17 @@ public class AccountController {
     public ResponseEntity<?> destroy(@PathVariable UUID uuid) {
         accountService.deleteOne(uuid);
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), null);
+    }
+
+    @GetMapping("/check-balance")
+    public ResponseEntity<?> checkBalance(@RequestParam String clientCode,
+                                          @RequestParam String pin) {
+        if (!authServiceClient.checkPin(clientCode, pin)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Pin");
+        }
+
+        Map<String, List<Double>>  balances = accountService.viewAccountBalances(clientCode);
+
+        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), balances);
     }
 }

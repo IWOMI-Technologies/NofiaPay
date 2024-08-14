@@ -3,6 +3,7 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.responses.Branch;
 import com.iwomi.nofiaPay.dtos.responses.Client;
+import com.iwomi.nofiaPay.frameworks.externals.clients.AuthServiceClient;
 import com.iwomi.nofiaPay.services.clients.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +24,8 @@ import java.util.UUID;
 public class ClientController {
     private final ClientService clientService;
 
+    private  final AuthServiceClient authServiceClient;
+
     @GetMapping()
     @Operation(
             description = "List of clients",
@@ -37,11 +40,17 @@ public class ClientController {
         return GlobalResponse.responseBuilder("List of clients", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> show(@PathVariable UUID id) {
-//        Client result = clientService.viewOne(id);
-//        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
-//    }
+    @GetMapping("/{role}")
+    public ResponseEntity<?> show(@PathVariable String role) {
+        List <Client> result = clientService.findAllByClientCode(role);
+        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @GetMapping("/{role}/deleted")
+    public ResponseEntity<?> showByDeleted(@PathVariable String role) {
+        List <Client> result = clientService.findAllDeletedByClientCode(role);
+        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> destroy(@PathVariable UUID id) {

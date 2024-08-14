@@ -4,11 +4,13 @@ import com.iwomi.nofiaPay.core.enums.AccountTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.dtos.AccountDto;
+import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -22,6 +24,7 @@ public class AccountRepository {
     public List<AccountEntity> getAllAccounts () {
         return repository.findAll();
     }
+
 
     public  AccountEntity createAccount (AccountDto dto) {
         AccountEntity account = mapper.mapToEntity(dto);
@@ -65,4 +68,15 @@ public class AccountRepository {
     public  void  deleteAccount(UUID uuid){
         repository.deleteById(uuid);
     }
+
+    public List<AccountEntity> getAccountNumbersByClientCode(String clientCode) {
+        return repository.findByClientCode(clientCode);
+
+    }
+
+    public  List<AccountEntity> getAccountBalances(List<String> accountNumbers){
+        return repository.findByAccountNumber(accountNumbers);
+    }
+
+
 }

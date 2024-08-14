@@ -5,6 +5,7 @@ import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface IAccountService {
@@ -17,4 +18,9 @@ public interface IAccountService {
     Account updateAccount(UUID uuid, AccountDto dto);
 
     void  deleteOne(UUID uuid);
+
+
+//    List<String> getAccountNumbersByClientCode (String clientCode);
+
+    Map<String, List<Double>> viewAccountBalances(String clientCode);
 }

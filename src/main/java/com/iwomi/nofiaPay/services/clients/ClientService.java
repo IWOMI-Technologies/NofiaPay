@@ -10,7 +10,9 @@ import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.branches.BranchRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
+import com.iwomi.nofiaPay.frameworks.externals.clients.AuthServiceClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class ClientService implements IClientService {
     private final AccountRepository accountRepository;
     private final IClientMapper mapper;
     private final IAccountMapper accountMapper;
+    private final AuthServiceClient authServiceClient;
 
     @Override
     public List<Client> findAllClient() {
@@ -66,4 +69,28 @@ public class ClientService implements IClientService {
 
         return client;
     }
-}
+
+    @Override
+    public List<Client> findAllByClientCode(String role) {
+        ResponseEntity<?> response = authServiceClient.getUsersByRole(role);
+        List<String> codes = (List<String>) response.getBody();
+
+        return clientRepository.getAllByClientCodes(codes)
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
+    }
+
+    @Override
+    public List<Client> findAllDeletedByClientCode(String role) {
+        ResponseEntity<?> response = authServiceClient.getUsersByRoleAndDeleted(role);
+        List<String> codes = (List<String>) response.getBody();
+
+        return clientRepository.getAllByClientCodes(codes)
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
+    }
+
+
+    }

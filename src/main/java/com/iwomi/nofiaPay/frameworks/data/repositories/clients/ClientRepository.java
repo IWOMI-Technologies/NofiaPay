@@ -43,4 +43,8 @@ public class ClientRepository {
         repository.deleteById(uuid);
     }
 
+    public List<ClientEntity> getAllByClientCodes(List<String> codes) {
+        return repository.findByClientCodeIn(codes);
+    }
+
 }

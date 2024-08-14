@@ -2,8 +2,11 @@ package com.iwomi.nofiaPay.controllers;
 
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
+import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
+import com.iwomi.nofiaPay.frameworks.externals.clients.AuthServiceClient;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
+import com.iwomi.nofiaPay.services.accounts.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -24,6 +28,10 @@ import java.util.UUID;
 public class AccountHistoryController {
 
     private final AccountHistoryService accountHistoryService;
+
+    private  final AuthServiceClient authServiceClient;
+
+    private final AccountService accountService;
 
     @GetMapping()
     @Operation(
@@ -43,5 +51,17 @@ public class AccountHistoryController {
     public ResponseEntity<?> show(@PathVariable UUID uuid) {
         AccountHistory result = accountHistoryService.viewOne(uuid);
         return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @GetMapping("/check-history")
+    public  ResponseEntity<?> checkBalance(@RequestParam String clientCode,
+                                           @RequestParam String pin){
+        if(!authServiceClient.checkPin(clientCode, pin)){
+            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Pin");
+        }
+
+        Map<String, List<AccountHistory>> histories = accountHistoryService.getAccountHistoriesByClientCode(clientCode);
+
+        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), histories);
     }
 }

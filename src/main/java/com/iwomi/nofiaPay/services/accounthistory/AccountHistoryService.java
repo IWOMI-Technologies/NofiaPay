@@ -1,13 +1,19 @@
 package com.iwomi.nofiaPay.services.accounthistory;
 
 import com.iwomi.nofiaPay.core.mappers.IAccountHistoryMapper;
+import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
+import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.AccountHistoryEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory.AccountHistoryRepository;
+import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -17,6 +23,10 @@ public class AccountHistoryService implements IAccountHistoryService {
     private  final AccountHistoryRepository accountHistoryRepository;
 
     private  final IAccountHistoryMapper mapper;
+
+    private  final IAccountMapper iAccountMapper;
+
+    private  final AccountRepository accountRepository;
 
 
 
@@ -33,4 +43,16 @@ public class AccountHistoryService implements IAccountHistoryService {
         return mapper.mapToModel(accountHistoryRepository.getOne(uuid));
     }
 
+
+    public Map<String, List<AccountHistory>> getAccountHistoriesByClientCode(String clientCode) {
+        List<String> accountNumbers = accountRepository.getAccountNumbersByClientCode(clientCode)
+                .stream()
+                .map(AccountEntity::getAccountNumber)
+                .collect(Collectors.toList());
+
+        return accountHistoryRepository.getAccountHistory(accountNumbers)
+                .stream()
+                .map(mapper::mapToModel)
+                .collect(Collectors.groupingBy(AccountHistory::accountNumber));
+    }
 }

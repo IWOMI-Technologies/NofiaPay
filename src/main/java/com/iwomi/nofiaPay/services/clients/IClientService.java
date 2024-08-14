@@ -13,4 +13,8 @@ public interface IClientService {
     void deleteOne(UUID uuid);
 
     Client viewOneByPhone(String phone);
+
+    List<Client> findAllByClientCode(String role);
+
+    List<Client> findAllDeletedByClientCode(String role);
 }
