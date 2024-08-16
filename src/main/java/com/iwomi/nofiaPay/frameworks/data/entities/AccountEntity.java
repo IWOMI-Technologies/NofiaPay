@@ -30,7 +30,7 @@ public class AccountEntity extends BaseEntity {
     private String accountTypeCode;
     private String accountTypeLabel;
 
-    @Column(name = "account-number") private String accountNumber;
+    @Column(name = "account_number") private String accountNumber;
     @Column(name = "balance") private BigDecimal balance;
     @Column(name = "client_code") private String clientCode;
 

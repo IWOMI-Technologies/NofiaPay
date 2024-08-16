@@ -1,9 +1,7 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
-import com.iwomi.nofiaPay.dtos.AgentCashCollectionDto;
-import com.iwomi.nofiaPay.dtos.ReversementDto;
-import com.iwomi.nofiaPay.dtos.SelfServiceDto;
+import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -116,8 +114,41 @@ public class TransactionController {
                     @ApiResponse(responseCode = "200", ref = "successResponse"),
             }
     )
-    public ResponseEntity<?> storeAgentDigital(@RequestBody AgentCashCollectionDto dto) {
-        Transaction result = transactionService.agentCashCollection(dto);
+    public ResponseEntity<?> storeAgentDigital(@RequestBody AgentDigitalCollectionDto dto) {
+        List<Transaction> result = transactionService.AgentDigitalCollection(dto);
+        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @PostMapping("/merchant-cash")
+    @Operation(
+            description = "Agent cash collection transaction ::: use -> MERCHANT_CASH_COLLECTION",
+            parameters = {},
+            responses = {
+                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse"),
+            }
+    )
+    public ResponseEntity<?> storeMerchantCash(@RequestBody MerchantCashDto dto) {
+        Transaction result = transactionService.merchantCash(dto);
+        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
+    }
+
+    @PostMapping("/merchant-digital")
+    @Operation(
+            description = """
+                    Agent digital collection transaction ::: use -> MERCHANT_DIGITAL_COLLECTION_MOMO, AGENT_DIGITAL_COLLECTION_OM
+                    used for any with prefix MERCHANT_DIGITAL_COLLECTION_**
+                    """,
+            parameters = {},
+            responses = {
+                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", ref = "successResponse"),
+            }
+    )
+    public ResponseEntity<?> storeMerchantDigital(@RequestBody MerchantDigitalDto dto) {
+        List<Transaction> result = transactionService.merchantDigital(dto);
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
