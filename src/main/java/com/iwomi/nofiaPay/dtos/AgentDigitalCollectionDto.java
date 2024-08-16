@@ -8,7 +8,7 @@ public record AgentDigitalCollectionDto(
         String clientAccount,
 //        String clientDestinationAccount,
 
-        String agentCollectionAccount,
+        String agentAccount,
         String amount,
         String sourcePhoneNumber,
         String reason,

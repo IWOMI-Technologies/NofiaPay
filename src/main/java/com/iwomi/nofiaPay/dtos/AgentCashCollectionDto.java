@@ -4,7 +4,7 @@ import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 
 public record AgentCashCollectionDto(
         String clientAccount,
-        String agentCollectionAccount,
+        String agentAccount,
         String amount,
         String reason,
         OperationTypeEnum operation

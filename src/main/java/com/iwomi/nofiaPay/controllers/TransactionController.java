@@ -97,7 +97,7 @@ public class TransactionController {
             }
     )
     public ResponseEntity<?> storeAgentCash(@RequestBody SelfServiceDto dto) {
-        List<Transaction> result = transactionService.selfService(dto);
+        Transaction result = transactionService.selfService(dto);
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
@@ -115,7 +115,7 @@ public class TransactionController {
             }
     )
     public ResponseEntity<?> storeAgentDigital(@RequestBody AgentDigitalCollectionDto dto) {
-        List<Transaction> result = transactionService.AgentDigitalCollection(dto);
+        Transaction result = transactionService.AgentDigitalCollection(dto);
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
@@ -148,7 +148,7 @@ public class TransactionController {
             }
     )
     public ResponseEntity<?> storeMerchantDigital(@RequestBody MerchantDigitalDto dto) {
-        List<Transaction> result = transactionService.merchantDigital(dto);
+        Transaction result = transactionService.merchantDigital(dto);
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 

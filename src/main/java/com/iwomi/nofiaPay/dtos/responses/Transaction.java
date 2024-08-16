@@ -7,17 +7,12 @@ import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import java.math.BigDecimal;
 
 public record Transaction(
-        OperationTypeEnum type,
-
-        SenseTypeEnum sense,
-
-        String accountNumber,
-
         BigDecimal amount,
-
         String reason,
-
+        String batch,
+        String issuerAccount,
+        String receiverAccount,
+        OperationTypeEnum type,
         StatusTypeEnum status
-
 ) {
 }
