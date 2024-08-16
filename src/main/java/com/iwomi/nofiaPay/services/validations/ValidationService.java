@@ -34,6 +34,7 @@ public class ValidationService implements IvalidationService {
         SubscriptionValidationEntity entity = repository.getByClientCode(clientCode);
         if (entity.getStatus() != ValidationStatusEnum.VALIDATED) {
             entity.setStatus(ValidationStatusEnum.VALIDATED);
+            entity.setValidatedBy(userid);
             return repository.updateSubscription(entity);
         }
 
@@ -42,7 +43,7 @@ public class ValidationService implements IvalidationService {
 
     @Override
     public List<ClientEntity> viewByStatus(UserTypeEnum role, ValidationStatusEnum status) {
-        // get cliend codes from auth ms with specific role
+        // get client codes from auth ms with specific role
         List<String> clientCodes = (List<String>) authClient.getUsersByRole(role).getBody();
         // get appropriate client codes
         List<String> inValidationCodes = repository.getAllByClientCodes(clientCodes)
@@ -50,7 +51,6 @@ public class ValidationService implements IvalidationService {
                 .filter(entity -> entity.getStatus() == status) // filter or get those with wanted status
                 .map(SubscriptionValidationEntity::getSubscriberClientCode)// get client codes
                 .toList();
-
         return clientRepository.getAllByClientCodes(inValidationCodes);
     }
 
@@ -59,6 +59,6 @@ public class ValidationService implements IvalidationService {
         ValidatorEntity validator = validatorRepository.getOneByProcess(AppConst.SUBCRIPTION);
         if (validator.getProfiles() == null) return false;
 
-        return validator.getProfiles().contains(profile);
+        return validator.getProfiles().contains(profile.toLowerCase());
     }
 }

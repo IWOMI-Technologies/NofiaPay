@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@RequestMapping("/api/v1/transactions")
+@RequestMapping("${apiV1Prefix}/transactions")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 @RestController

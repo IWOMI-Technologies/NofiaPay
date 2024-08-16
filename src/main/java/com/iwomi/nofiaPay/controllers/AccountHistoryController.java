@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
-@RequestMapping("/api/v1/accounthis")
+@RequestMapping("${apiV1Prefix}/account-history")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 @RestController
@@ -52,7 +52,7 @@ public class AccountHistoryController {
         return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/check-history")
+    @GetMapping("/check")
     public  ResponseEntity<?> checkBalance(@RequestParam String clientCode,
                                            @RequestParam String pin){
         if(!authClient.checkPin(clientCode, pin)){

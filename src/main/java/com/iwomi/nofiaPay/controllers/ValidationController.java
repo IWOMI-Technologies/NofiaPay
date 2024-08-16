@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@RequestMapping("/api/v1/validation")
+@RequestMapping("${apiV1Prefix}/validations")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 @RestController
@@ -39,12 +39,12 @@ public class ValidationController {
             }
     )
     public ResponseEntity<?> showClientByTypeAndStatus(
-            @RequestParam("profile") String profile,
+//            @RequestParam("profile") String profile,
             @RequestParam("role") UserTypeEnum role,
             @RequestParam("status") ValidationStatusEnum status
     ) {
         List<ClientEntity> data = validationService.viewByStatus(role, status);
-        Boolean canValidate = validationService.canValidate(profile);
+        Boolean canValidate = validationService.canValidate(role.toString());
         Map<String, Object> result = Map.of("data", data, "canValidate", canValidate);
         return GlobalResponse.responseBuilder("List of enroll users", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
@@ -59,7 +59,7 @@ public class ValidationController {
                             schema = @Schema(implementation = SubscriptionValidationEntity.class))}),
             }
     )
-    public ResponseEntity<?> store(@RequestParam("clientCode") String clientCode) {
+    public ResponseEntity<?> store(@RequestParam String clientCode) {
         SubscriptionValidationEntity result = validationService.sendToValidation(clientCode);
         return GlobalResponse.responseBuilder("Added successfully to validation", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
@@ -74,7 +74,7 @@ public class ValidationController {
                             schema = @Schema(implementation = SubscriptionValidationEntity.class))}),
             }
     )
-    public ResponseEntity<?> validate(@RequestParam("clientCode") String clientCode, @RequestParam("userId") String userId) {
+    public ResponseEntity<?> validate(@RequestParam String clientCode, @RequestParam String userId) {
         SubscriptionValidationEntity result = validationService.validate(clientCode, userId);
         return GlobalResponse.responseBuilder("Validation successful", HttpStatus.OK, HttpStatus.OK.value(), result);
     }

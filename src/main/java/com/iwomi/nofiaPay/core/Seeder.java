@@ -29,7 +29,10 @@ public class Seeder {
             IValidatorRepository validatorRepository
 ) {
 
-        ValidatorEntity validatorOne = ValidatorEntity.builder().process(AppConst.SUBCRIPTION).profiles(Set.of("agent")).build();
+        ValidatorEntity validatorOne = ValidatorEntity.builder()
+                .process(AppConst.SUBCRIPTION)
+                .profiles(Set.of("agent"))
+                .build();
 //        ValidatorEntity validatorTwo = ValidatorEntity.builder().process("reversement").profiles(Set.of("agent")).build();
 
         ClientEntity client = ClientEntity.builder()
@@ -49,12 +52,13 @@ public class Seeder {
                 .balance(new BigDecimal("550000"))
                 .accountTypeCode("0003")
                 .build();
+        if (!validatorRepository.existsValidatorEntityByProcess(AppConst.SUBCRIPTION))
+            validatorRepository.save(validatorOne);
 
-        ValidatorEntity validatorEntity = validatorRepository.save(validatorOne);
         ClientEntity clientEntity = clientRepository.save(client);
         List<AccountEntity> accounts = accountRepository.saveAll(List.of(account, accountDigital));
         return args -> {
-            log.info("Preloading validators "+ validatorEntity);
+//            log.info("Preloading validators "+ validatorEntity);
             log.info("Preloading clients "+ clientEntity);
             log.info("Preloading account "+ accounts);
         };

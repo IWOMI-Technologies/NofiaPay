@@ -9,6 +9,5 @@ import java.util.UUID;
 
 public interface IValidatorRepository extends JpaRepository<ValidatorEntity, UUID> {
     Optional<ValidatorEntity> findByProcess(String process);
-//    Optional<ValidatorEntity> findByProfiles(String profile);
-//    Optional<ValidatorEntity> findByUsers(String user);
+    boolean existsValidatorEntityByProcess(String process);
 }
