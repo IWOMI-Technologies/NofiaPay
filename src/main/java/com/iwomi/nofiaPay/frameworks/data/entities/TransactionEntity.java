@@ -9,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.math.BigDecimal;
 
@@ -18,17 +20,22 @@ import java.math.BigDecimal;
 @Setter
 @Builder(toBuilder = true)
 @Entity(name = "transactions")
+@SQLDelete(sql = "UPDATE transactions SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class TransactionEntity extends BaseEntity {
 
     private BigDecimal amount;
     private String reason;
     private String batch;
 
-    @Column(name = "account_number") private String accountNumber;
-    @Column(name = "destination_account") private String destinationAccount;
+    @Column(name = "issuer_account") private String issuerAccount;
+    @Column(name = "receiver_account") private String receiverAccount;
+
 
     @Enumerated(EnumType.STRING) private OperationTypeEnum type;
-    @Enumerated(EnumType.STRING) private SenseTypeEnum sense;
     @Enumerated(EnumType.STRING) private StatusTypeEnum status;
 
+    private boolean generated = Boolean.FALSE;
+
+    private boolean deleted = Boolean.FALSE;
 }
