@@ -2,9 +2,8 @@ package com.iwomi.nofiaPay.controllers;
 
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
-import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
-import com.iwomi.nofiaPay.frameworks.externals.clients.AuthServiceClient;
+import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +28,7 @@ public class AccountHistoryController {
 
     private final AccountHistoryService accountHistoryService;
 
-    private  final AuthServiceClient authServiceClient;
+    private  final AuthClient authClient;
 
     private final AccountService accountService;
 
@@ -56,7 +55,7 @@ public class AccountHistoryController {
     @GetMapping("/check-history")
     public  ResponseEntity<?> checkBalance(@RequestParam String clientCode,
                                            @RequestParam String pin){
-        if(!authServiceClient.checkPin(clientCode, pin)){
+        if(!authClient.checkPin(clientCode, pin)){
             return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Pin");
         }
 

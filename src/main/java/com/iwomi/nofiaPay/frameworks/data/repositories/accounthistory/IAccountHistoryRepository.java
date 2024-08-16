@@ -13,5 +13,5 @@ public interface IAccountHistoryRepository extends JpaRepository<AccountHistoryE
 
     Optional<AccountHistoryEntity> getOneByAccountNumber (String accountNumber);
 
-    List<AccountHistoryEntity> findByAccountNumber(List<String> accountNumbers);
+    List<AccountHistoryEntity> findByAccountNumberIn(List<String> accountNumbers);
 }

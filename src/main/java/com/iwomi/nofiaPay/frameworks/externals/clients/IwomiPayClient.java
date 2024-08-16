@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.UUID;
 
-@FeignClient(name = "auth-service", url = "${externals.base-url.iwomiPay}")
+@FeignClient(name = "iwomiPay-service", url = "${externals.base-url.iwomiPay}")
 public interface IwomiPayClient {
     @GetMapping("/authenticate")
     ResponseEntity<?> authenticate(@RequestBody IwomiAuthDto dto);

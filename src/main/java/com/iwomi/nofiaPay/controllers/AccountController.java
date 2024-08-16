@@ -3,7 +3,7 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
-import com.iwomi.nofiaPay.frameworks.externals.clients.AuthServiceClient;
+import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,7 +26,7 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    private  final AuthServiceClient authServiceClient;
+    private  final AuthClient authClient;
 
     @GetMapping()
     @Operation(
@@ -76,7 +76,7 @@ public class AccountController {
     @GetMapping("/check-balance")
     public ResponseEntity<?> checkBalance(@RequestParam String clientCode,
                                           @RequestParam String pin) {
-        if (!authServiceClient.checkPin(clientCode, pin)) {
+        if (!authClient.checkPin(clientCode, pin)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Pin");
         }
 

@@ -153,10 +153,11 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public List<Transaction> selfService(SelfServiceDto dto) {
+        System.out.println("in service************");
 //        // get client branchid then account with that branchid and AccountTypeEnum -> BRANCH_DIGITAL_ACCOUNT
         String clientBranchCode = accountRepository.getOneByAccount(dto.clientAccount()).getAgencyCode();
         String branchCDA = accountRepository.getOneByBranchCodeAndType(clientBranchCode,
-                "0001").getAccountNumber();     // 0001 is type code for digital accounts
+                "0003").getAccountNumber();     // 0001 is type code for digital accounts
 
         String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
         if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();

@@ -75,7 +75,7 @@ public class AccountRepository {
     }
 
     public  List<AccountEntity> getAccountBalances(List<String> accountNumbers){
-        return repository.findByAccountNumber(accountNumbers);
+        return repository.findByAccountNumberIn(accountNumbers);
     }
 
 

@@ -1,16 +1,13 @@
 package com.iwomi.nofiaPay.services.clients;
 
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
-import com.iwomi.nofiaPay.core.mappers.IBranchMapper;
 import com.iwomi.nofiaPay.core.mappers.IClientMapper;
 import com.iwomi.nofiaPay.dtos.responses.Account;
-import com.iwomi.nofiaPay.dtos.responses.Branch;
 import com.iwomi.nofiaPay.dtos.responses.Client;
-import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
-import com.iwomi.nofiaPay.frameworks.data.repositories.branches.BranchRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
-import com.iwomi.nofiaPay.frameworks.externals.clients.AuthServiceClient;
+import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
+import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,7 +23,7 @@ public class ClientService implements IClientService {
     private final AccountRepository accountRepository;
     private final IClientMapper mapper;
     private final IAccountMapper accountMapper;
-    private final AuthServiceClient authServiceClient;
+    private final AuthClient authClient;
 
     @Override
     public List<Client> findAllClient() {
@@ -71,8 +68,8 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public List<Client> findAllByClientCode(String role) {
-        ResponseEntity<?> response = authServiceClient.getUsersByRole(role);
+    public List<Client> findAllByClientCode(UserTypeEnum role) {
+        ResponseEntity<?> response = authClient.getUsersByRole(role);
         List<String> codes = (List<String>) response.getBody();
 
         return clientRepository.getAllByClientCodes(codes)
@@ -83,7 +80,7 @@ public class ClientService implements IClientService {
 
     @Override
     public List<Client> findAllDeletedByClientCode(String role) {
-        ResponseEntity<?> response = authServiceClient.getUsersByRoleAndDeleted(role);
+        ResponseEntity<?> response = authClient.getUsersByRoleAndDeleted(role);
         List<String> codes = (List<String>) response.getBody();
 
         return clientRepository.getAllByClientCodes(codes)

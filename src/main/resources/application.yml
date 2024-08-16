@@ -32,7 +32,7 @@ eureka:
     #      enabled: true
     lease:
       duration: 5
-    enabled: false  # false value disables discovery request.
+    enabled: true  # false value disables discovery request.
 
 externals:
   iwomi:

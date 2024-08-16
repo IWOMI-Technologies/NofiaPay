@@ -1,6 +1,7 @@
 package com.iwomi.nofiaPay.services.clients;
 
 import com.iwomi.nofiaPay.dtos.responses.Client;
+import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +15,7 @@ public interface IClientService {
 
     Client viewOneByPhone(String phone);
 
-    List<Client> findAllByClientCode(String role);
+    List<Client> findAllByClientCode(UserTypeEnum role);
 
     List<Client> findAllDeletedByClientCode(String role);
 }

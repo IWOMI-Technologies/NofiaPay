@@ -14,15 +14,16 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EnrollRepository {
 
-    private  final IEnrollRepository repository;
+    private final IEnrollRepository repository;
 
-    private  final IEnrollMapper mapper;
+    private final IEnrollMapper mapper;
 
 
-  public List<EnrollEntity> getAllUsers() {
+    public List<EnrollEntity> getAllUsers() {
         return repository.findAll();
     }
-    public EnrollEntity createUser( EnrollDto dto){
+
+    public EnrollEntity createUser(EnrollDto dto) {
         EnrollEntity enroll = mapper.mapToEntity(dto);
         return repository.save(enroll);
     }
@@ -38,7 +39,7 @@ public class EnrollRepository {
         return repository.save(entity);
     }
 
-    public  void  deleteUser(UUID uuid) {
+    public void deleteUser(UUID uuid) {
         repository.deleteById(uuid);
     }
 

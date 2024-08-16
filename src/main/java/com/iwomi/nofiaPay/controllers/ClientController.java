@@ -1,9 +1,9 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
-import com.iwomi.nofiaPay.dtos.responses.Branch;
 import com.iwomi.nofiaPay.dtos.responses.Client;
-import com.iwomi.nofiaPay.frameworks.externals.clients.AuthServiceClient;
+import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
+import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
 import com.iwomi.nofiaPay.services.clients.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ClientController {
     private final ClientService clientService;
 
-    private  final AuthServiceClient authServiceClient;
+    private  final AuthClient authClient;
 
     @GetMapping()
     @Operation(
@@ -41,7 +41,7 @@ public class ClientController {
     }
 
     @GetMapping("/{role}")
-    public ResponseEntity<?> show(@RequestParam("role") String role) {
+    public ResponseEntity<?> show(@RequestParam("role") UserTypeEnum role) {
         List <Client> result = clientService.findAllByClientCode(role);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
