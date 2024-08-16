@@ -39,8 +39,6 @@ public class AccountController {
     )
     public ResponseEntity<?> index() {
         List<Account> result = accountService.viewAllAccounts();
-        result.forEach(account -> System.out.println(account.accountNumber()));
-
         return GlobalResponse.responseBuilder("List of all accounts", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
