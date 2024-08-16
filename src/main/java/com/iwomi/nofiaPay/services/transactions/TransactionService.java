@@ -159,13 +159,13 @@ public class TransactionService implements ITransactionService {
         String branchCDA = accountRepository.getOneByBranchCodeAndType(clientBranchCode,
                 "0003").getAccountNumber();     // 0001 is type code for digital accounts
 
-        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
-        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
-
-        DigitalPaymentDto paymentDto = new DigitalPaymentDto("debit", payType, dto.amount(),
-                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
-        // make iwomi Pay request
-        Map<String, Object> response = payment.pay(paymentDto);
+//        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
+//        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
+//
+//        DigitalPaymentDto paymentDto = new DigitalPaymentDto("debit", payType, dto.amount(),
+//                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
+//        // make iwomi Pay request
+//        Map<String, Object> response = payment.pay(paymentDto);
 
         TransactionEntity outOfCBR = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
@@ -224,13 +224,94 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
+    public List<Transaction> AgentDigitalCollection(AgentDigitalCollectionDto dto) {
+        String batchCode = agentBranchCode(dto.agentCollectionAccount());
+
+        String clientBranchCode = accountRepository.getOneByAccount(dto.clientAccount()).getAgencyCode();
+        String branchCDA = accountRepository.getOneByBranchCodeAndType(clientBranchCode,
+                "0003").getAccountNumber();
+
+//        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
+//        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
+//
+//        DigitalPaymentDto paymentDto = new DigitalPaymentDto("debit", payType, dto.amount(),
+//                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
+//
+//        Map<String, Object> response = payment.pay(paymentDto);
+
+        TransactionEntity outOfCBR = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .batch(batchCode)
+                .accountNumber(NomenclatureConstants.CBR)
+                .type(dto.operation())
+                .sense(SenseTypeEnum.DEBIT)
+                .status(StatusTypeEnum.COLLECTED)
+                .build();
+        TransactionEntity inCL = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .batch(batchCode)
+                .accountNumber(clientBranchCode + NomenclatureConstants.CL)
+                .type(dto.operation())
+                .sense(SenseTypeEnum.CREDIT)
+                .status(StatusTypeEnum.COLLECTED)
+                .build();
+        TransactionEntity outOfCL = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .batch(batchCode)
+                .accountNumber(clientBranchCode + NomenclatureConstants.CL)
+                .type(dto.operation())
+                .sense(SenseTypeEnum.DEBIT)
+                .status(StatusTypeEnum.COLLECTED)
+                .build();
+
+        TransactionEntity inAgentAccount = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .batch(batchCode)
+                .accountNumber(dto.agentCollectionAccount())
+                .type(dto.operation())
+                .sense(SenseTypeEnum.CREDIT)
+                .status(StatusTypeEnum.COLLECTED)
+                .build();
+
+        TransactionEntity outOfAgentAccount = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .batch(batchCode)
+                .accountNumber(dto.agentCollectionAccount())
+                .type(dto.operation())
+                .sense(SenseTypeEnum.DEBIT)
+                .status(StatusTypeEnum.PENDING)
+                .build();
+
+        TransactionEntity inClientAccount = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .batch(batchCode)
+                .accountNumber(dto.clientDestinationAccount())
+                .type(dto.operation())
+                .sense(SenseTypeEnum.CREDIT)
+                .status(StatusTypeEnum.PENDING)
+                .build();
+
+        return transactionRepository
+                .createMany(List.of(outOfCBR, inCL, outOfCL, inAgentAccount, outOfAgentAccount,inClientAccount))
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
+    }
+
+    @Override
     public Transaction merchantCash(MerchantCashDto dto) {
         String batchCode = agentBranchCode(dto.merchantAccount());
 
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
                 .reason(dto.reason())
-                .batch(batchCode)
+//                .batch(batchCode)
                 .accountNumber(dto.merchantAccount())
                 .type(dto.operation())
                 .sense(SenseTypeEnum.CREDIT)
@@ -238,6 +319,79 @@ public class TransactionService implements ITransactionService {
                 .build();
 
         return mapper.mapToModel(transactionRepository.createTransaction(entity));
+    }
+
+    @Override
+    public List<Transaction> merchantDigital(MerchantDigitalDto dto) {
+
+        String clientBranchCode = accountRepository.getOneByAccount(dto.clientAccount()).getAgencyCode();
+        String branchCDA = accountRepository.getOneByBranchCodeAndType(clientBranchCode,
+                "0003").getAccountNumber();
+
+//        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
+//        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
+//
+//        DigitalPaymentDto paymentDto = new DigitalPaymentDto("debit", payType, dto.amount(),
+//                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
+//
+//        Map<String, Object> response = payment.pay(paymentDto);
+
+        TransactionEntity outOfCBR = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .accountNumber(NomenclatureConstants.CBR)
+                .type(dto.operation())
+                .sense(SenseTypeEnum.DEBIT)
+                .status(StatusTypeEnum.PENDING)
+                .build();
+
+        TransactionEntity inCL = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .accountNumber(clientBranchCode + NomenclatureConstants.CL)   // append branch code to compte liaison
+                .type(dto.operation())
+                .sense(SenseTypeEnum.CREDIT)
+                .status(StatusTypeEnum.COLLECTED)
+                .build();
+
+        TransactionEntity outOfCL = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .accountNumber(clientBranchCode + NomenclatureConstants.CL)   // append branch code to compte liaison
+                .type(dto.operation())
+                .sense(SenseTypeEnum.DEBIT)
+                .status(StatusTypeEnum.COLLECTED)
+                .build();
+
+        TransactionEntity inCDA = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .accountNumber(branchCDA)
+                .type(dto.operation())
+                .sense(SenseTypeEnum.CREDIT)
+                .status(StatusTypeEnum.COLLECTED)
+                .build();
+
+        TransactionEntity outOfCDA = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .accountNumber(branchCDA)
+                .type(dto.operation())
+                .sense(SenseTypeEnum.DEBIT)
+                .status(StatusTypeEnum.COLLECTED)
+                .build();
+        TransactionEntity inMerchantAccount = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason(dto.reason())
+                .accountNumber(dto.merchantAccount())
+                .type(dto.operation())
+                .sense(SenseTypeEnum.CREDIT)
+                .status(StatusTypeEnum.PENDING)
+                .build();
+        return transactionRepository
+                .createMany(List.of(outOfCBR,inCL, outOfCL, inCDA, outOfCDA, inMerchantAccount ))
+                .stream().map(mapper::mapToModel)
+                .toList();
     }
 
 //    @Override
@@ -252,7 +406,7 @@ public class TransactionService implements ITransactionService {
 //        TransactionEntity outOfDigitalBranchAccount = TransactionEntity.builder()
 //                .amount(new BigDecimal(dto.amount()))
 //                .reason(dto.reason())
-////                .batch(batchCode)
+////               .batch(batchCode)
 //                .accountNumber(branchAccountNumber)
 //                .type(dto.operation())
 //                .sense(SenseTypeEnum.DEBIT)

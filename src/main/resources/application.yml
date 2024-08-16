@@ -4,7 +4,7 @@ spring:
   application:
     name: NOFIAPAY
   datasource: # db config seems not to be used
-    url: jdbc:mysql://nofia_db:3308/nofia?serverTimezone=Africa/Douala
+    url: jdbc:mysql://localhost:3306/nofia?serverTimezone=Africa/Douala
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -35,7 +35,7 @@ eureka:
     #      enabled: true
     lease:
       duration: 5
-    enabled: true  # false value disables discovery request.
+    enabled: false  # false value disables discovery request.
 
 externals:
   iwomi:
