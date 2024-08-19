@@ -39,6 +39,25 @@ public class TransactionController {
         return GlobalResponse.responseBuilder("List of  transactions", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
+    public ResponseEntity<?> getHistoryByAccount(@RequestParam String account) {
+
+        // Determine the account type (issuer or receiver)
+        boolean isIssuerAccount = transactionService.isIssuerAccount(account);
+
+        List<Transaction> transactions;
+
+        if (isIssuerAccount) {
+            transactions = transactionService.viewByIssuerAccount(account);
+        } else {
+            transactions = transactionService.viewByReceiverAccount(account);
+        }
+
+        Map<String, List<Transaction>> result = Map.of(
+                "Transactions", transactions
+        );
+
+        return GlobalResponse.responseBuilder("List of transactions", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
 //    @PostMapping()
 //    @Operation(
 //            description = "Transaction creation",

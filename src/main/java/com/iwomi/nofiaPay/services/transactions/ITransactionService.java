@@ -10,6 +10,10 @@ import java.util.UUID;
 public interface ITransactionService {
     List<Transaction> viewAllTransactions();
 
+     List<Transaction> viewByIssuerAccount(String issuer);
+
+    List<Transaction> viewByReceiverAccount(String receiver);
+    Boolean isIssuerAccount(String account);
     Transaction SaveTransaction(TransactionDto dto);
 
     Transaction viewOne(UUID uuid);

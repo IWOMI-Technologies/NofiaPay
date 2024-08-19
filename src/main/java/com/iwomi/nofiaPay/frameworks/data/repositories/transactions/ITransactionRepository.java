@@ -12,4 +12,9 @@ import java.util.UUID;
 public interface ITransactionRepository extends JpaRepository<TransactionEntity, UUID> {
     List<TransactionEntity> findByBatch(String batchCode);
     List<TransactionEntity> findByBatchIn(List<String> batchCodes);
+
+    List<TransactionEntity> findByIssuerAccount(String IssuerAccount);
+    List<TransactionEntity> findByReceiverAccount(String receiverAccount);
+
+    boolean  existByAccountNumber(String IssuerAccount);
 }
