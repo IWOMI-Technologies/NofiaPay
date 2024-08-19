@@ -4,6 +4,7 @@ import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,4 +13,5 @@ import java.util.UUID;
 public interface ITransactionRepository extends JpaRepository<TransactionEntity, UUID> {
     List<TransactionEntity> findByBatch(String batchCode);
     List<TransactionEntity> findByBatchIn(List<String> batchCodes);
+    List<TransactionEntity> findByCreatedAt(Date date);
 }

@@ -5,4 +5,6 @@ public class NomenclatureConstants {
     public static String CBR = "01004455-33551R";
     // Compte liaison siege. append branch code to differentiate
     public static String CL = "004455-33551S";
+
+    public static String SIEGEBRANCHCODE = "01";
 }

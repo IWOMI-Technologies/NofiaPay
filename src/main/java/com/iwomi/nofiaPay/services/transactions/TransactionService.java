@@ -110,7 +110,7 @@ public class TransactionService implements ITransactionService {
                 .issuerAccount(NomenclatureConstants.CBR)
                 .receiverAccount(dto.clientAccount())
                 .type(dto.operation())
-                .status(StatusTypeEnum.COLLECTED)
+                .status(StatusTypeEnum.PENDING)
                 .build();
 
         return mapper.mapToModel(transactionRepository.createTransaction(entity));

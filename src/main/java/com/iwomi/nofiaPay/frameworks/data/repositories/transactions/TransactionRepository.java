@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,7 +53,14 @@ public class TransactionRepository {
 
     public  List<TransactionEntity> getByBatchCodes(List<String> batches) {
         List<TransactionEntity> transactions =  repository.findByBatchIn(batches);
-        if (transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
+        if (transactions.isEmpty()) throw  new GeneralException("Transactions not found.");
+
+        return transactions;
+    }
+
+    public  List<TransactionEntity> getByCreatedAt(Date date) {
+        List<TransactionEntity> transactions =  repository.findByCreatedAt(date);
+        if (transactions.isEmpty()) throw  new GeneralException("Transactions not found for fle generation.");
 
         return transactions;
     }
