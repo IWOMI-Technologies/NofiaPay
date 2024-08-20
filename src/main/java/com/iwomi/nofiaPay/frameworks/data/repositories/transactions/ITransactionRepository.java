@@ -14,4 +14,9 @@ public interface ITransactionRepository extends JpaRepository<TransactionEntity,
     List<TransactionEntity> findByBatch(String batchCode);
     List<TransactionEntity> findByBatchIn(List<String> batchCodes);
     List<TransactionEntity> findByCreatedAt(Date date);
+
+    List<TransactionEntity> findByIssuerAccount(String IssuerAccount);
+    List<TransactionEntity> findByReceiverAccount(String receiverAccount);
+
+    boolean  existByAccountNumber(String IssuerAccount);
 }

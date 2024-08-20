@@ -17,6 +17,7 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.batches.BatchRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.branches.BranchRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.tellerBox.TellerBoxRepository;
+import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.ITransactionRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.TransactionRepository;
 import com.iwomi.nofiaPay.frameworks.externals.enums.IwomiPayTypesEnum;
 import com.iwomi.nofiaPay.frameworks.externals.iwomipay.domain.IPayment;
@@ -25,10 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +34,7 @@ import java.util.stream.Collectors;
 public class TransactionService implements ITransactionService {
 
     private final TransactionRepository transactionRepository;
+    private  final ITransactionRepository iTransactionRepository;
     private final BatchRepository batchRepository;
     private final AccountRepository accountRepository;
     private final ClientRepository clientRepository;
@@ -51,6 +50,25 @@ public class TransactionService implements ITransactionService {
                 .map(mapper::mapToModel)
                 .toList();
     }
+
+    @Override
+    public List<Transaction> viewByIssuerAccount(String issuer) {
+
+        return transactionRepository.getByIssuerAccount(issuer)
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
+    }
+
+
+    @Override
+    public List<Transaction> viewByReceiverAccount(String receiver) {
+        return transactionRepository.getByReceiverAccount(receiver)
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
+    }
+
 
     @Override
     public Transaction SaveTransaction(TransactionDto dto) {
@@ -264,5 +282,9 @@ public class TransactionService implements ITransactionService {
         AccountEntity secondAcc = accountRepository.getOneByAccount(accountTwo);
 
         return Objects.equals(firstAcc.getAgencyCode(), secondAcc.getAgencyCode());
+    }
+
+    public  Boolean isIssuerAccount (String account) {
+        return iTransactionRepository.existByAccountNumber(account);
     }
 }

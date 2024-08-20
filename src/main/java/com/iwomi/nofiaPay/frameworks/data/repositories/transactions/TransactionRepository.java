@@ -51,6 +51,7 @@ public class TransactionRepository {
         return transactions;
     }
 
+
     public  List<TransactionEntity> getByBatchCodes(List<String> batches) {
         List<TransactionEntity> transactions =  repository.findByBatchIn(batches);
         if (transactions.isEmpty()) throw  new GeneralException("Transactions not found.");
@@ -65,6 +66,18 @@ public class TransactionRepository {
         return transactions;
     }
 
+    public  List<TransactionEntity> getByIssuerAccount(String issuerAccount) {
+        List<TransactionEntity> transactions =  repository.findByIssuerAccount(issuerAccount);
+         if(transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
+         return transactions;
+
+    }
+
+    public  List<TransactionEntity> getByReceiverAccount(String receiverAccount) {
+        List<TransactionEntity> transactions =  repository.findByIssuerAccount(receiverAccount);
+        if(transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
+        return transactions;
+    }
     public  TransactionEntity updateTransaction (TransactionDto dto, UUID uuid){
         TransactionEntity transaction = getOne(uuid);
         mapper.updateTransactionFromDto(dto, transaction);
