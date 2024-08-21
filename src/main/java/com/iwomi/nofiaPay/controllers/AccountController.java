@@ -3,6 +3,7 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,6 +73,20 @@ public class AccountController {
         accountService.deleteOne(uuid);
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), null);
     }
+
+//    @GetMapping("history")
+//    @Operation(
+//            description = "List of accounts and their history",
+//            responses = {
+//                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+//                    @ApiResponse(responseCode = "201", ref = "successResponse",
+//                            content = {@Content(schema = @Schema(implementation = Transaction.class))}),
+//            }
+//    )
+//    public ResponseEntity<?> accountsHistory() {
+//        List<Transaction> result = transactionService.viewAllTransactions();
+//        return GlobalResponse.responseBuilder("List of  transactions", HttpStatus.OK, HttpStatus.OK.value(), result);
+//    }
 
     @GetMapping("/check-balance")
     public ResponseEntity<?> checkBalance(@RequestParam String clientCode,

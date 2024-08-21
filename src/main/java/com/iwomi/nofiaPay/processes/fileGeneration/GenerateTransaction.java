@@ -19,14 +19,14 @@ public class GenerateTransaction {
     private final TransactionRepository repository;
     private final IGeneration generation;
 
-    public void generate() {
-        Date today = CoreUtils.localDateToDate(LocalDate.now());
-        List<TransactionEntity> result = repository.getByCreatedAt(today);
-        List<TransactionFile> data = result.stream().flatMap(entity -> {
-            if (entity.getType() == OperationTypeEnum.AGENT_CASH_COLLECTION)
-                return generation.agentCashCollection(entity);
-        });
-
-        return List.of();
-    }
+//    public void generate() {
+//        Date today = CoreUtils.localDateToDate(LocalDate.now());
+//        List<TransactionEntity> result = repository.getByCreatedAt(today);
+//        List<TransactionFile> data = result.stream().flatMap(entity -> {
+//            if (entity.getType() == OperationTypeEnum.AGENT_CASH_COLLECTION)
+//                return generation.agentCashCollection(entity);
+//        });
+//
+//        return List.of();
+//    }
 }

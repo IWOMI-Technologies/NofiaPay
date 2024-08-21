@@ -24,6 +24,8 @@ public interface ITransactionService {
 
     void deleteOne(UUID uuid);
 
+    Map<String, Object> allHistory(String clientCode);
+
     Transaction agentCashCollection(AgentCashCollectionDto dto);
 
 //    List<Transaction> agentDigitalCollection(AgentDigitalCollectionDto dto);

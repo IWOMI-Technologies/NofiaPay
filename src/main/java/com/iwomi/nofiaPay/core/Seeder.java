@@ -55,12 +55,12 @@ public class Seeder {
         if (!validatorRepository.existsValidatorEntityByProcess(AppConst.SUBCRIPTION))
             validatorRepository.save(validatorOne);
 
-        ClientEntity clientEntity = clientRepository.save(client);
-        List<AccountEntity> accounts = accountRepository.saveAll(List.of(account, accountDigital));
+//        ClientEntity clientEntity = clientRepository.save(client);
+//        List<AccountEntity> accounts = accountRepository.saveAll(List.of(account, accountDigital));
         return args -> {
 //            log.info("Preloading validators "+ validatorEntity);
-            log.info("Preloading clients "+ clientEntity);
-            log.info("Preloading account "+ accounts);
+//            log.info("Preloading clients "+ clientEntity);
+//            log.info("Preloading account "+ accounts);
         };
     }
 }

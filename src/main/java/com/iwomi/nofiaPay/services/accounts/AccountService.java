@@ -5,7 +5,6 @@ import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
-import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.IAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +58,7 @@ public class AccountService  implements  IAccountService{
 
     @Override
     public Map<String, List<Double>> viewAccountBalances(String clientCode) {
-        List<String> accountNumbers = accountRepository.getAccountNumbersByClientCode(clientCode)
+        List<String> accountNumbers = accountRepository.getAccountsByClientCode(clientCode)
                 .stream()
                 .map(AccountEntity::getAccountNumber)
                 .collect(Collectors.toList());

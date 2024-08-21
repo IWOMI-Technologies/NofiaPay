@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class TransactionService implements ITransactionService {
 
     private final TransactionRepository transactionRepository;
-    private  final ITransactionRepository iTransactionRepository;
+    private final ITransactionRepository iTransactionRepository;
     private final BatchRepository batchRepository;
     private final AccountRepository accountRepository;
     private final ClientRepository clientRepository;
@@ -93,6 +93,20 @@ public class TransactionService implements ITransactionService {
     @Override
     public void deleteOne(UUID uuid) {
         transactionRepository.deleteTransaction(uuid);
+    }
+
+    @Override
+    public Map<String, Object> allHistory(String clientCode) {
+        List<String> accountNumbers = accountRepository.getAccountNumbersByClientCode(clientCode);
+        List<TransactionEntity> debitTransactions = accountNumbers.stream().flatMap(acc -> transactionRepository
+                .getByIssuerAccount(acc).stream()).toList();
+        List<TransactionEntity> creditTransactions = accountNumbers.stream().flatMap(acc -> transactionRepository
+                .getByReceiverAccount(acc).stream()).toList();
+
+        return Map.of(
+                "Debited", debitTransactions,
+                "Credited", creditTransactions
+        );
     }
 
     @Override
@@ -196,7 +210,7 @@ public class TransactionService implements ITransactionService {
                 .status(StatusTypeEnum.COLLECTED)
                 .build();
         if (entity.getType().toString().startsWith("MERCHANT_DIGITAL") && !Objects.equals(entity.getIssuerAccount(), NomenclatureConstants.CBR))
-            throw new IllegalArgumentException("Issuer account must be "+NomenclatureConstants.CBR+" for MERCHANT_DIGITAL** type.");
+            throw new IllegalArgumentException("Issuer account must be " + NomenclatureConstants.CBR + " for MERCHANT_DIGITAL** type.");
 
         return mapper.mapToModel(transactionRepository.createTransaction(entity));
 
@@ -284,7 +298,7 @@ public class TransactionService implements ITransactionService {
         return Objects.equals(firstAcc.getAgencyCode(), secondAcc.getAgencyCode());
     }
 
-    public  Boolean isIssuerAccount (String account) {
-        return iTransactionRepository.existByAccountNumber(account);
+    public Boolean isIssuerAccount(String account) {
+        return iTransactionRepository.existsByIssuerAccount(account);
     }
 }

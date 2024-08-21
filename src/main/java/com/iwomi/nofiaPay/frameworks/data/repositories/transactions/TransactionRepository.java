@@ -74,7 +74,7 @@ public class TransactionRepository {
     }
 
     public  List<TransactionEntity> getByReceiverAccount(String receiverAccount) {
-        List<TransactionEntity> transactions =  repository.findByIssuerAccount(receiverAccount);
+        List<TransactionEntity> transactions =  repository.findByReceiverAccount(receiverAccount);
         if(transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
         return transactions;
     }

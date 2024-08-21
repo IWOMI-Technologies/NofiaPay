@@ -4,7 +4,6 @@ import com.iwomi.nofiaPay.core.mappers.IAccountHistoryMapper;
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
-import com.iwomi.nofiaPay.frameworks.data.entities.AccountHistoryEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory.AccountHistoryRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +44,7 @@ public class AccountHistoryService implements IAccountHistoryService {
 
 
     public Map<String, List<AccountHistory>> getAccountHistoriesByClientCode(String clientCode) {
-        List<String> accountNumbers = accountRepository.getAccountNumbersByClientCode(clientCode)
+        List<String> accountNumbers = accountRepository.getAccountsByClientCode(clientCode)
                 .stream()
                 .map(AccountEntity::getAccountNumber)
                 .collect(Collectors.toList());

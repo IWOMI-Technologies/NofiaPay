@@ -2,7 +2,9 @@ package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.*;
+import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
+import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,6 +26,7 @@ import java.util.UUID;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final AccountHistoryService historyService;
 
     @GetMapping()
     @Operation(
@@ -39,6 +42,15 @@ public class TransactionController {
         return GlobalResponse.responseBuilder("List of  transactions", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
+    @GetMapping("/account-history")
+    @Operation(
+            description = "Returns List of transactions for an account",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse",
+                            content = {@Content(schema = @Schema(implementation = Transaction.class))}),
+            }
+    )
     public ResponseEntity<?> getHistoryByAccount(@RequestParam String account) {
 
         // Determine the account type (issuer or receiver)
@@ -57,6 +69,25 @@ public class TransactionController {
         );
 
         return GlobalResponse.responseBuilder("List of transactions", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @GetMapping("/all-history")
+    @Operation(
+            description = "",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse",
+                            content = {@Content(schema = @Schema(implementation = Transaction.class))}),
+            }
+    )
+    public ResponseEntity<?> allHistory(@RequestParam String clientCode) {
+        Map<String, List<AccountHistory>> accountsHistory = historyService.getAccountHistoriesByClientCode(clientCode);
+        Map<String, Object> transactions = transactionService.allHistory(clientCode);
+        Map<String, Object> result = Map.of(
+                "accountHistory", accountsHistory,
+                "transactions", transactions
+        );
+        return GlobalResponse.responseBuilder("List of  transactions", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 //    @PostMapping()
 //    @Operation(
