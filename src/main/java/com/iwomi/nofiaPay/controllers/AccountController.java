@@ -3,8 +3,12 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
+import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
+import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
+import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,9 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequestMapping("${apiV1Prefix}/accounts")
 @RequiredArgsConstructor
@@ -25,8 +31,10 @@ import java.util.UUID;
 public class AccountController {
 
     private final AccountService accountService;
+    private final AccountHistoryService historyService;
+    private final TransactionService transactionService;
 
-    private  final AuthClient authClient;
+    private final AuthClient authClient;
 
     @GetMapping()
     @Operation(
@@ -55,6 +63,7 @@ public class AccountController {
         Account result = accountService.SaveAccount(dto);
         return GlobalResponse.responseBuilder("Account successfully created", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
+
     @GetMapping("/{uuid}")
     public ResponseEntity<?> show(@PathVariable UUID uuid) {
         Account result = accountService.viewOne(uuid);
@@ -80,8 +89,73 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Pin");
         }
 
-        Map<String, List<Double>>  balances = accountService.viewAccountBalances(clientCode);
+        Map<String, List<Double>> balances = accountService.viewAccountBalances(clientCode);
 
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), balances);
     }
+
+    @GetMapping("accounts/{client_code}")
+    public ResponseEntity<?> showAccountsByClientCode(@PathVariable String clientCode) {
+        List<Account> result = accountService.getAccountsByClientCode(clientCode);
+        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @GetMapping("accounts/dashboard")
+    public ResponseEntity<?> dashboard(@PathVariable String clientCode) {
+        List<AccountHistory> accountHistories = historyService.getLatestTop5AccountHistoryByClientCode(clientCode);
+        List<Transaction> transactions = transactionService.getLatestTop5TransactionByClientCode(clientCode);
+
+        List<Map<String, Object>> historiesMap = accountHistories
+                .stream()
+                .map(history -> Map.<String, Object>of(
+                        "uuid", history.uuid(),
+                        "createdAt", history.createdAt()
+                )).toList();
+        List<Map<String, Object>> transactionsMap = transactions
+                .stream()
+                .map(history -> Map.<String, Object>of(
+                        "uuid", history.uuid(),
+                        "createdAt", history.createdAt()
+                )).toList();
+
+
+        Set<String> uuids = Stream.of(historiesMap, transactionsMap)
+                .flatMap(List::stream)
+                .sorted(Comparator.comparing(o -> (Date) o.get("createdAt"), Comparator.reverseOrder()))
+                .limit(5)
+                .map(d -> (String) d.get("uuid"))
+                .collect(Collectors.toSet());
+
+        List<AccountHistory> historyResult = accountHistories
+                .stream()
+                .filter(history -> uuids.contains(history.uuid()))
+                .toList();
+
+        List<Transaction> transactionResult = transactions
+                .stream()
+                .filter(transaction -> uuids.contains(transaction.uuid()))
+                .toList();
+
+        Map<String, Object> result = Map.of(
+                "clientAccounts", accountService.getAccountsByClientCode(clientCode),
+                "accountHistories", historyResult,
+                "transactions", transactionResult
+        );
+
+        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @GetMapping("/accounts")
+    public ResponseEntity<?> getAccountsByDateRange(@RequestParam("startDate") String startDate,
+                                                    @RequestParam("endDate") String endDate) throws ParseException {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        Date start = formatter.parse(startDate);
+        Date end = formatter.parse(endDate);
+        List<Account> result = accountService.viewAccountByDateRange(start, end);
+
+        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
 }

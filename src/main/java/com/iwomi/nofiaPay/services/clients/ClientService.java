@@ -89,5 +89,4 @@ public class ClientService implements IClientService {
                 .toList();
     }
 
-
-    }
+}

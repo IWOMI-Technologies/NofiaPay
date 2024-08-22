@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.services.clients;
 
+import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.Client;
 import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
 
@@ -18,4 +19,6 @@ public interface IClientService {
     List<Client> findAllByClientCode(UserTypeEnum role);
 
     List<Client> findAllDeletedByClientCode(String role);
+
+
 }

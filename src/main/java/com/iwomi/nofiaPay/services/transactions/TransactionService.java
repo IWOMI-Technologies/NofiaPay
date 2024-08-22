@@ -7,6 +7,7 @@ import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
 import com.iwomi.nofiaPay.dtos.*;
+import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.BatchEntity;
@@ -28,13 +29,14 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionService implements ITransactionService {
 
     private final TransactionRepository transactionRepository;
-    private  final ITransactionRepository iTransactionRepository;
+    private final ITransactionRepository iTransactionRepository;
     private final BatchRepository batchRepository;
     private final AccountRepository accountRepository;
     private final ClientRepository clientRepository;
@@ -196,11 +198,12 @@ public class TransactionService implements ITransactionService {
                 .status(StatusTypeEnum.COLLECTED)
                 .build();
         if (entity.getType().toString().startsWith("MERCHANT_DIGITAL") && !Objects.equals(entity.getIssuerAccount(), NomenclatureConstants.CBR))
-            throw new IllegalArgumentException("Issuer account must be "+NomenclatureConstants.CBR+" for MERCHANT_DIGITAL** type.");
+            throw new IllegalArgumentException("Issuer account must be " + NomenclatureConstants.CBR + " for MERCHANT_DIGITAL** type.");
 
         return mapper.mapToModel(transactionRepository.createTransaction(entity));
 
     }
+
 
 //    @Override
 //    public Map<String, Object> initiateReversement(String branchCode, String boxNumber, String agentClientId) {
@@ -284,7 +287,48 @@ public class TransactionService implements ITransactionService {
         return Objects.equals(firstAcc.getAgencyCode(), secondAcc.getAgencyCode());
     }
 
-    public  Boolean isIssuerAccount (String account) {
-        return iTransactionRepository.existByAccountNumber(account);
+    public Boolean isIssuerAccount(String account) {
+        return iTransactionRepository.existsByIssuerAccount(account);
     }
+
+    @Override
+    public List<Transaction> getLatestTop5TransactionByClientCode(String clientCode) {
+
+        List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode)
+                .stream()
+                .map(AccountEntity::getAccountNumber)
+                .toList();
+
+        List<Transaction> issuerAccounts = transactionRepository.getTop5ByIssuerAccount(accounts)
+                .stream()
+                .limit(5)
+                .map(mapper::mapToModel)
+                .toList();
+
+        List<Transaction> receiverAccounts = transactionRepository.getTop5ByReceiverAccount(accounts)
+                .stream()
+                .limit(5)
+                .map(mapper::mapToModel)
+                .toList();
+
+        List<Transaction> merged = Stream.of(issuerAccounts, receiverAccounts)
+                .flatMap(List::stream)
+                .toList();
+
+        return merged
+                .stream()
+                .sorted(Comparator.comparing(Transaction::createdAt).reversed())
+                .limit(5)
+                .toList();
+
+    }
+
+//    @Override
+//    public List<Transaction> getAccountsWithLatestTransactions(String clientCode) {
+//
+//        List<Transaction> issuerAccounts  = transactionRepository.getLatestTransactionByIssuerAccount(clientCode)
+//
+//
+//    }
+
 }

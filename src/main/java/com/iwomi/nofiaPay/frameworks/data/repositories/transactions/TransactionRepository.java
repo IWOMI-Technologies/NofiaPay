@@ -6,6 +6,8 @@ import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
 import com.iwomi.nofiaPay.dtos.TransactionDto;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,7 +76,7 @@ public class TransactionRepository {
     }
 
     public  List<TransactionEntity> getByReceiverAccount(String receiverAccount) {
-        List<TransactionEntity> transactions =  repository.findByIssuerAccount(receiverAccount);
+        List<TransactionEntity> transactions =  repository.findByReceiverAccount(receiverAccount);
         if(transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
         return transactions;
     }
@@ -92,4 +94,23 @@ public class TransactionRepository {
         entity.setStatus(status);
         return repository.save(entity);
     }
+
+    public List<TransactionEntity> getTop5ByIssuerAccount(List<String> issuerAccounts) {
+        return repository.findTop5ByIssuerAccount(issuerAccounts);
+    }
+
+    public List<TransactionEntity> getTop5ByReceiverAccount(List<String> receiverAccounts) {
+        return repository.findTop5ByReceiverAccount(receiverAccounts);
+    }
+
+//    public TransactionEntity getLatestTransactionByIssuerAccount(String issuerAccount) {
+//        return  repository.findFirstByIssuerAccount(issuerAccount);
+//    }
+//
+//    public TransactionEntity getLatestTransactionByReceiverAccount(String receiverAccount) {
+//        return  repository.findFirstByReceiverAccount(receiverAccount);
+//    }
+
+
+
 }

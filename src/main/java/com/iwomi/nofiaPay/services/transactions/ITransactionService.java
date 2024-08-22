@@ -41,4 +41,8 @@ public interface ITransactionService {
 //    Map<String, Object> initiateReversement(String branchCode, String boxNumber, String clientCode);
 //    List<Transaction> reversement(ReversementDto dto);
 
+    List<Transaction> getLatestTop5TransactionByClientCode (String clientCode);
+
+//    List<Transaction> getAccountsWithLatestTransactions(String clientCode);
+
 }
