@@ -27,7 +27,7 @@ public class ClientService implements IClientService {
 
     @Override
     public List<Client> findAllClient() {
-        return clientRepository.getAllBranches()
+        return clientRepository.getAllClients()
                 .stream()
                 .map(mapper::mapToModel)
                 .toList();

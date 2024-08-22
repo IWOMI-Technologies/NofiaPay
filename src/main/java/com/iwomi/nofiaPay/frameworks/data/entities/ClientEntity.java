@@ -16,8 +16,6 @@ import java.util.Date;
 @Setter
 @Builder(toBuilder = true)
 @Entity(name = "clients")
-@SQLDelete(sql = "UPDATE clients SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class ClientEntity extends BaseEntity  {
 
     private String clientCode;  //code unique code
@@ -58,5 +56,4 @@ public class ClientEntity extends BaseEntity  {
     @Temporal(TemporalType.DATE)
     private Date dateOfBirth;
 
-    private boolean deleted = Boolean.FALSE;
 }

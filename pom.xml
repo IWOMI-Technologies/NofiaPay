@@ -133,6 +133,20 @@
 <!--			<version>2.5.0</version>-->
 <!--		</dependency>-->
 
+<!--		start excel import-->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.3.0</version>
+		</dependency>
+		<!--		end excel import-->
+
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
