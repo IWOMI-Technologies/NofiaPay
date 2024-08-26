@@ -30,5 +30,6 @@ public interface IAccountService {
     List<Account> viewAccountByDateRange(Date start, Date end);
 
 
+    List<Map<String, Object>> getAccountsWithLatestTransactions(String clientCode);
 
 }

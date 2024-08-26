@@ -18,4 +18,6 @@ public interface IAccountHistoryService {
 //    List<AccountHistory> getLatestTop5ByClientCode(String clientCode);
 
     List<AccountHistory> getLatestTop5AccountHistoryByClientCode(String clientCode);
+
+    public List<AccountHistory> getLatestAccountHistoryByClientCode(String clientCode);
 }

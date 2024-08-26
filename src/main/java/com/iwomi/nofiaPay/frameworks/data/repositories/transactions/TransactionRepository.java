@@ -103,13 +103,13 @@ public class TransactionRepository {
         return repository.findTop5ByReceiverAccount(receiverAccounts);
     }
 
-//    public TransactionEntity getLatestTransactionByIssuerAccount(String issuerAccount) {
-//        return  repository.findFirstByIssuerAccount(issuerAccount);
-//    }
-//
-//    public TransactionEntity getLatestTransactionByReceiverAccount(String receiverAccount) {
-//        return  repository.findFirstByReceiverAccount(receiverAccount);
-//    }
+    public List<TransactionEntity> getLatestTransactionsByIssuerAccount(List<String> issuerAccount) {
+        return  repository.findTransactionsByIssuerAccountsOrderedByCreatedAtDesc(issuerAccount);
+    }
+
+    public List<TransactionEntity> getLatestTransactionByReceiverAccount(List<String> receiverAccount) {
+        return  repository.findTransactionsByReceiverAccountsOrderedByCreatedAtDesc(receiverAccount);
+    }
 
 
 

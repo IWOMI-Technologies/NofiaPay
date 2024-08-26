@@ -32,11 +32,11 @@ public interface ITransactionRepository extends JpaRepository<TransactionEntity,
     @Query("SELECT a FROM transactions a WHERE a.receiverAccount IN :receiverAccount ORDER BY a.createdAt DESC")
     List<TransactionEntity> findTop5ByReceiverAccount(@Param("receiverAccount") List<String> receiverAccount);
 
-//    @Query("SELECT a FROM TransactionEntity a WHERE a.issuerAccount = :issuerAccount ORDER BY a.createdAt DESC")
-//    TransactionEntity findFirstByIssuerAccount(@Param("issuerAccount") String issuerAccount);
-//
-//    @Query("SELECT a FROM TransactionEntity a WHERE a.receiverAccount = :receiverAccount ORDER BY a.createdAt DESC")
-//    TransactionEntity findFirstByReceiverAccount(@Param("receiverAccount") String receiverAccount);
+    @Query("SELECT a FROM transactions a WHERE a.issuerAccount IN :issuerAccount ORDER BY a.createdAt DESC")
+    List<TransactionEntity> findTransactionsByIssuerAccountsOrderedByCreatedAtDesc(@Param("issuerAccount") List<String> issuerAccount);
+
+    @Query("SELECT a FROM transactions a WHERE a.receiverAccount IN :receiverAccount ORDER BY a.createdAt DESC")
+    List<TransactionEntity> findTransactionsByReceiverAccountsOrderedByCreatedAtDesc(@Param("receiverAccount") List<String> receiverAccount);
 
 //    TransactionEntity findFirstByIssuerAccount(String issuerAccount);
 

@@ -37,6 +37,10 @@ public class AccountHistoryRepository {
         return repository.findLatestTop5ByAccountNumbers(accountNumbers);
     }
 
+    public List<AccountHistoryEntity> getLatestAccountHistoryByAccountNumber(List<String> accountNumbers){
+        return repository.findByAccountNumberOrderedByCreatedAtDesc(accountNumbers);
+    }
+
 
 
 }

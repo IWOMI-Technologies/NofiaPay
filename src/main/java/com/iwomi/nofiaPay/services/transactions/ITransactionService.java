@@ -43,6 +43,8 @@ public interface ITransactionService {
 
     List<Transaction> getLatestTop5TransactionByClientCode (String clientCode);
 
-//    List<Transaction> getAccountsWithLatestTransactions(String clientCode);
+//    Map<String, List<Transaction>> getAccountsWithLatestTransactions(String clientCode);
+
+//    Map<String, List<Transaction>> getAccountWithLatestTransactions(String clientCode);
 
 }

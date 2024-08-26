@@ -75,6 +75,19 @@ public class AccountHistoryService implements IAccountHistoryService {
                 .toList();
     }
 
+
+    public List<AccountHistory> getLatestAccountHistoryByClientCode(String clientCode){
+        List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode)
+                .stream()
+                .map(AccountEntity::getAccountNumber)
+                .toList();
+        return accountHistoryRepository.getTop5ByAccount(accounts)
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
+
+    }
+
 //    public Object getLatestTop5ByClientCode(String clientCode) {
 //        List<String> accountNumbers = accountService.getAccountNumbersByClientCode(clientCode);
 //

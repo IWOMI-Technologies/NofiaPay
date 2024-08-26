@@ -323,12 +323,4 @@ public class TransactionService implements ITransactionService {
 
     }
 
-//    @Override
-//    public List<Transaction> getAccountsWithLatestTransactions(String clientCode) {
-//
-//        List<Transaction> issuerAccounts  = transactionRepository.getLatestTransactionByIssuerAccount(clientCode)
-//
-//
-//    }
-
 }
