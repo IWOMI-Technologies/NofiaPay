@@ -25,6 +25,10 @@ public class AccountHistoryRepository {
         return repository.findAll();
     }
 
+    public List<AccountHistoryEntity> saveAllHistories (List<AccountHistoryEntity> accountHistories) {
+        return repository.saveAll(accountHistories);
+    }
+
 
     public AccountHistoryEntity getOne(UUID uuid) {
         return  repository.findById(uuid)
@@ -32,6 +36,7 @@ public class AccountHistoryRepository {
     }
     public  List<AccountHistoryEntity> getAccountHistory(List<String> accountNumbers){
         return repository.findByAccountNumberIn(accountNumbers);
+
     }
 
 }

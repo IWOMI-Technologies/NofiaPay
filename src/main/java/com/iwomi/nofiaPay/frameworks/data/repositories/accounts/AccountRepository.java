@@ -29,6 +29,10 @@ public class AccountRepository {
         return  repository.save(account);
     }
 
+    public  List<AccountEntity> saveAllAccounts(List<AccountEntity> accounts) {
+        return  repository.saveAll(accounts);
+    }
+
     public  AccountEntity getOne(UUID uuid) {
         return  repository.findById(uuid)
                 .orElseThrow(() -> new GeneralException("Account Not Found"));
