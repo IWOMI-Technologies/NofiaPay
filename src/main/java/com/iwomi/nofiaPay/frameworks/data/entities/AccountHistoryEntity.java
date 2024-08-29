@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @Builder(toBuilder = true)
-@Entity(name = "accounts-history")
+@Entity(name = "accounts_history")
 public class AccountHistoryEntity extends BaseEntity {
 
     private String agencyCode;

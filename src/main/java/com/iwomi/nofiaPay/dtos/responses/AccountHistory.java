@@ -6,12 +6,16 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.UUID;
 
 public record AccountHistory(
-          String name,
-          String reason,
-          BigDecimal amount,
-          String accountNumber,
-          SenseTypeEnum sense
+        UUID uuid,
+        String name,
+        String reason,
+        BigDecimal amount,
+        String accountNumber,
+        SenseTypeEnum sense,
+        Date createdAt
 ) {
 }

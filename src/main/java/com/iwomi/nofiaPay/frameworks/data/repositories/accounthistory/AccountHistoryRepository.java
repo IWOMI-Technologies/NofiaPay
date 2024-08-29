@@ -2,7 +2,6 @@ package com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory;
 
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.dtos.responses.Account;
-import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountHistoryEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.IAccountRepository;
@@ -33,5 +32,15 @@ public class AccountHistoryRepository {
     public  List<AccountHistoryEntity> getAccountHistory(List<String> accountNumbers){
         return repository.findByAccountNumberIn(accountNumbers);
     }
+
+    public List<AccountHistoryEntity> getTop5ByAccount(List<String> accountNumbers){
+        return repository.findLatestTop5ByAccountNumbers(accountNumbers);
+    }
+
+    public List<AccountHistoryEntity> getLatestAccountHistoryByAccountNumber(List<String> accountNumbers){
+        return repository.findByAccountNumberOrderedByCreatedAtDesc(accountNumbers);
+    }
+
+
 
 }

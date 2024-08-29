@@ -2,10 +2,12 @@ package com.iwomi.nofiaPay.services.accounthistory;
 
 import com.iwomi.nofiaPay.core.mappers.IAccountHistoryMapper;
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
+import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory.AccountHistoryRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
+import com.iwomi.nofiaPay.services.accounts.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,8 @@ public class AccountHistoryService implements IAccountHistoryService {
     private  final IAccountMapper iAccountMapper;
 
     private  final AccountRepository accountRepository;
+
+    private final AccountService accountService;
 
 
 
@@ -54,4 +58,48 @@ public class AccountHistoryService implements IAccountHistoryService {
                 .map(mapper::mapToModel)
                 .collect(Collectors.groupingBy(AccountHistory::accountNumber));
     }
+
+    @Override
+    public List<AccountHistory> getLatestTop5AccountHistoryByClientCode(String clientCode) {
+
+        List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode)
+                .stream()
+                .map(AccountEntity::getAccountNumber)
+                .collect(Collectors.toList());
+
+        return accountHistoryRepository.getTop5ByAccount(accounts)
+                .stream()
+                .limit(5)
+                .map(mapper::mapToModel)
+                .toList();
+    }
+
+
+    public List<AccountHistory> getLatestAccountHistoryByClientCode(String clientCode){
+        List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode)
+                .stream()
+                .map(AccountEntity::getAccountNumber)
+                .toList();
+        return accountHistoryRepository.getTop5ByAccount(accounts)
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
+
+    }
+
+//    public Object getLatestTop5ByClientCode(String clientCode) {
+//        List<String> accountNumbers = accountService.getAccountNumbersByClientCode(clientCode);
+//
+////        return accountHistoryRepository.getTop5ByAccount(accountNumbers)
+////                .stream()
+////                .limit(5)
+////                .map(mapper::mapToModel)
+////                .collect(Collectors.groupingBy(AccountHistory::accountNumber));
+////    }
+//
+//        List<AccountHistoryEntity> account = accountHistoryRepository.getTop5ByAccount(accountNumbers)
+//
+
+
+
 }

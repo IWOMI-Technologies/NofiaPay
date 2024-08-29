@@ -1,17 +1,8 @@
 package com.iwomi.nofiaPay.processes.fileGeneration;
 
-import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
-import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
-import com.iwomi.nofiaPay.core.utils.CoreUtils;
-import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.TransactionRepository;
-import com.iwomi.nofiaPay.frameworks.generate.TransactionFile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

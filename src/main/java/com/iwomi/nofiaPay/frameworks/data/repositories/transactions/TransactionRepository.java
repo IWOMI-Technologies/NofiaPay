@@ -7,6 +7,8 @@ import com.iwomi.nofiaPay.core.utils.CoreUtils;
 import com.iwomi.nofiaPay.dtos.TransactionDto;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,4 +102,23 @@ public class TransactionRepository {
         entity.setStatus(status);
         return repository.save(entity);
     }
+
+    public List<TransactionEntity> getTop5ByIssuerAccount(List<String> issuerAccounts) {
+        return repository.findTop5ByIssuerAccount(issuerAccounts);
+    }
+
+    public List<TransactionEntity> getTop5ByReceiverAccount(List<String> receiverAccounts) {
+        return repository.findTop5ByReceiverAccount(receiverAccounts);
+    }
+
+    public List<TransactionEntity> getLatestTransactionsByIssuerAccount(List<String> issuerAccount) {
+        return  repository.findTransactionsByIssuerAccountsOrderedByCreatedAtDesc(issuerAccount);
+    }
+
+    public List<TransactionEntity> getLatestTransactionByReceiverAccount(List<String> receiverAccount) {
+        return  repository.findTransactionsByReceiverAccountsOrderedByCreatedAtDesc(receiverAccount);
+    }
+
+
+
 }

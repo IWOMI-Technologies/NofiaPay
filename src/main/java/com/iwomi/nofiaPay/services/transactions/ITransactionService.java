@@ -42,4 +42,10 @@ public interface ITransactionService {
 
     Map<String, Object> reversement(ReversementDto dto);
 
+    List<Transaction> getLatestTop5TransactionByClientCode (String clientCode);
+
+//    Map<String, List<Transaction>> getAccountsWithLatestTransactions(String clientCode);
+
+//    Map<String, List<Transaction>> getAccountWithLatestTransactions(String clientCode);
+
 }

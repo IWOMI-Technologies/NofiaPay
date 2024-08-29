@@ -7,6 +7,8 @@ import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -83,5 +85,8 @@ public class AccountRepository {
         return repository.findByAccountNumberIn(accountNumbers);
     }
 
+    public  List<AccountEntity> getAccountByDateRange(Date startDate, Date endDate){
+           return  repository.findAccountByDateRange(startDate, endDate);
+    }
 
 }
