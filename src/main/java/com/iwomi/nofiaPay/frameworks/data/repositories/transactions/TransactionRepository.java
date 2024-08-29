@@ -3,12 +3,14 @@ package com.iwomi.nofiaPay.frameworks.data.repositories.transactions;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
+import com.iwomi.nofiaPay.core.utils.CoreUtils;
 import com.iwomi.nofiaPay.dtos.TransactionDto;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +25,10 @@ public class TransactionRepository {
 
     public List<TransactionEntity> getAllTransaction () {
         return repository.findAll();
+    }
+
+    public List<TransactionEntity> getAllByTransactionIds (List<UUID> uuids) {
+        return repository.findAllById(uuids);
     }
 
     public  TransactionEntity createTransaction (TransactionDto dto) {
@@ -59,8 +65,10 @@ public class TransactionRepository {
         return transactions;
     }
 
-    public  List<TransactionEntity> getByCreatedAt(Date date) {
-        List<TransactionEntity> transactions =  repository.findByCreatedAt(date);
+    public  List<TransactionEntity> getByIssuerAndCreatedAtBtw(String acc) {
+        Date today = CoreUtils.localDateToDate(LocalDate.now());
+        List<Date> dates = CoreUtils.startAndEndOfDay(today);
+        List<TransactionEntity> transactions =  repository.findByIssuerAccountAndCreatedAtBetween(acc, dates.getFirst(), dates.getLast());
         if (transactions.isEmpty()) throw  new GeneralException("Transactions not found for fle generation.");
 
         return transactions;

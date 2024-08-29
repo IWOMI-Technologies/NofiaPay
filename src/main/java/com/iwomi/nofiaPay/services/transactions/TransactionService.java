@@ -5,6 +5,8 @@ import com.iwomi.nofiaPay.core.enums.AccountTypeEnum;
 import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
+import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
+import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
 import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
@@ -19,10 +21,14 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.tellerBox.TellerBoxRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.ITransactionRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.TransactionRepository;
+import com.iwomi.nofiaPay.frameworks.data.repositories.validators.ValidatorRepository;
+import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.frameworks.externals.enums.IwomiPayTypesEnum;
 import com.iwomi.nofiaPay.frameworks.externals.iwomipay.domain.IPayment;
 import com.iwomi.nofiaPay.frameworks.externals.iwomipay.dto.DigitalPaymentDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -40,6 +46,8 @@ public class TransactionService implements ITransactionService {
     private final ClientRepository clientRepository;
     private final BranchRepository branchRepository;
     private final TellerBoxRepository tellerBoxRepository;
+    private final ValidatorRepository validatorRepository;
+    private  final AuthClient authClient;
     private final ITransactionMapper mapper;
     private final IPayment payment;
 
@@ -98,8 +106,10 @@ public class TransactionService implements ITransactionService {
     @Override
     public Map<String, Object> allHistory(String clientCode) {
         List<String> accountNumbers = accountRepository.getAccountNumbersByClientCode(clientCode);
+
         List<TransactionEntity> debitTransactions = accountNumbers.stream().flatMap(acc -> transactionRepository
                 .getByIssuerAccount(acc).stream()).toList();
+
         List<TransactionEntity> creditTransactions = accountNumbers.stream().flatMap(acc -> transactionRepository
                 .getByReceiverAccount(acc).stream()).toList();
 
@@ -214,6 +224,40 @@ public class TransactionService implements ITransactionService {
 
         return mapper.mapToModel(transactionRepository.createTransaction(entity));
 
+    }
+
+    @Override
+    public Map<String, Object> reversement(ReversementDto dto){
+        if (!authClient.checkPin(dto.agentClientCode(), dto.pin())) throw new UnAuthorizedException("Invalid Pin");
+
+        String tellerClientCode = tellerBoxRepository.getOneByNumberAndBranchCode(dto.boxNumber(), dto.branchCode())
+                .getClientCode();
+
+        String tellerAccountNumber = accountRepository.getAccountsByClientCode(tellerClientCode)
+                .stream()
+                .filter(acc -> acc.getAccountTypeCode() == NomenclatureConstants.TellerAccountTypeCode)
+                .map(AccountEntity::getAccountNumber)
+                .findFirst()
+                .orElseThrow(() -> new GeneralException("Teller account Not Found"));
+
+        TransactionEntity entity = TransactionEntity.builder()
+                .amount(new BigDecimal(dto.amount()))
+                .reason("Reversement to a teller")
+                .issuerAccount(dto.agentAccountNumber())
+                .receiverAccount(tellerAccountNumber)
+                .type(dto.operation())
+                .status(StatusTypeEnum.PENDING)
+                .build();
+
+        if (entity.getType() != OperationTypeEnum.REVERSEMENT)
+            throw new IllegalArgumentException("Operation type must be REVERSEMENT");
+
+        Transaction transaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
+
+        return Map.of(
+                "transaction", transaction,
+                "tellerCode", tellerClientCode
+        );
     }
 
 //    @Override

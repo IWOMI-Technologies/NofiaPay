@@ -62,12 +62,50 @@ public class Generation implements IGeneration {
 
     @Override
     public List<TransactionFile> selfService(TransactionEntity entity) {
-        return List.of();
+        String agentAccount = entity.getIssuerAccount();
+        String clientAccount = entity.getIssuerAccount();
+        String agentBranch = accountRepository.getOneByAccount(agentAccount).getAgencyCode();
+        String clientBranch = accountRepository.getOneByAccount(clientAccount).getAgencyCode();
+
+        String siegeBranchCode = NomenclatureConstants.SIEGEBRANCHCODE;
+        return List.of(
+                produceTransactionFile(NomenclatureConstants.CBR, entity.getAmount().toString(),
+                        "0", entity),
+                produceTransactionFile(siegeBranchCode + NomenclatureConstants.CL, "0",
+                        entity.getAmount().toString(), entity),
+                produceTransactionFile(clientBranch + NomenclatureConstants.CL,
+                        entity.getAmount().toString(), "0", entity),
+                produceTransactionFile(NomenclatureConstants.CDA, "0",
+                        entity.getAmount().toString(), entity),
+                produceTransactionFile(NomenclatureConstants.CDA,
+                        entity.getAmount().toString(), "0", entity),
+                produceTransactionFile(clientAccount, "0", entity.getAmount().toString(),
+                        entity)
+        );
     }
 
     @Override
     public List<TransactionFile> merchantDigitalCollection(TransactionEntity entity) {
-        return List.of();
+        String agentAccount = entity.getIssuerAccount();
+        String clientAccount = entity.getIssuerAccount();
+        String agentBranch = accountRepository.getOneByAccount(agentAccount).getAgencyCode();
+        String clientBranch = accountRepository.getOneByAccount(clientAccount).getAgencyCode();
+
+        String siegeBranchCode = NomenclatureConstants.SIEGEBRANCHCODE;
+        return List.of(
+                produceTransactionFile(NomenclatureConstants.CBR, entity.getAmount().toString(),
+                        "0", entity),
+                produceTransactionFile(siegeBranchCode + NomenclatureConstants.CL, "0",
+                        entity.getAmount().toString(), entity),
+                produceTransactionFile(clientBranch + NomenclatureConstants.CL,
+                        entity.getAmount().toString(), "0", entity),
+                produceTransactionFile(NomenclatureConstants.CDCA, "0",
+                        entity.getAmount().toString(), entity),
+                produceTransactionFile(NomenclatureConstants.CDCA,
+                        entity.getAmount().toString(), "0", entity),
+                produceTransactionFile(clientAccount, "0", entity.getAmount().toString(),
+                        entity)
+        );
     }
 
     private TransactionFile produceTransactionFile(String account, String debitAmt,

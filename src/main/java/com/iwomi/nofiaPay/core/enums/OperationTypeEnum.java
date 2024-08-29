@@ -9,5 +9,6 @@ public enum OperationTypeEnum {
     MERCHANT_CASH,
     MERCHANT_DIGITAL_MOMO,
     MERCHANT_DIGITAL_OM,
-    AGENT_TO_TELLER
+    AGENT_TO_TELLER,
+    REVERSEMENT
 }

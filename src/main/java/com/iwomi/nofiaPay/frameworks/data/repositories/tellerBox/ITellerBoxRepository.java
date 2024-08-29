@@ -8,6 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ITellerBoxRepository extends JpaRepository<TellerBoxEntity, UUID> {
-    Optional<TellerBoxEntity> findByNumberAndBranchId(String boxNumber, String branchId);
+    Optional<TellerBoxEntity> findByNumberAndBranchCode(String boxNumber, String branchCode);
 
 }

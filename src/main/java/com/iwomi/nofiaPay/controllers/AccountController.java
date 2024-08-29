@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.controllers;
 
+import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
@@ -89,11 +90,8 @@ public class AccountController {
 //    }
 
     @GetMapping("/check-balance")
-    public ResponseEntity<?> checkBalance(@RequestParam String clientCode,
-                                          @RequestParam String pin) {
-        if (!authClient.checkPin(clientCode, pin)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Pin");
-        }
+    public ResponseEntity<?> checkBalance(@RequestParam String clientCode, @RequestParam String pin) {
+        if (!authClient.checkPin(clientCode, pin)) throw new UnAuthorizedException("Invalid Pin");
 
         Map<String, List<Double>>  balances = accountService.viewAccountBalances(clientCode);
 

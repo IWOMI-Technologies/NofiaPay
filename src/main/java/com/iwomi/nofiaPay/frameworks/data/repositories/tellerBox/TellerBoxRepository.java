@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 public class TellerBoxRepository {
     private final ITellerBoxRepository repository;
 
-    public TellerBoxEntity getOneByNumber(String number, String branchId) {
-        return repository.findByNumberAndBranchId(number, branchId)
+    public TellerBoxEntity getOneByNumberAndBranchCode(String number, String branchCode) {
+        return repository.findByNumberAndBranchCode(number, branchCode)
                 .orElseThrow(() -> new GeneralException("Branch not found."));
     }
 }

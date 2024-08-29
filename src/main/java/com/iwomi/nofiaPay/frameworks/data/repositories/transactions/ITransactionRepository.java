@@ -17,6 +17,8 @@ public interface ITransactionRepository extends JpaRepository<TransactionEntity,
 
     List<TransactionEntity> findByCreatedAt(Date date);
 
+    List<TransactionEntity> findByIssuerAccountAndCreatedAtBetween(String account, Date start, Date end);
+
     List<TransactionEntity> findByIssuerAccount(String IssuerAccount);
 
     List<TransactionEntity> findByReceiverAccount(String receiverAccount);

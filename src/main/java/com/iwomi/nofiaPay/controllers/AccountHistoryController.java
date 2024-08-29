@@ -1,6 +1,7 @@
 package com.iwomi.nofiaPay.controllers;
 
 
+import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
@@ -53,11 +54,8 @@ public class AccountHistoryController {
     }
 
     @GetMapping("/check")
-    public  ResponseEntity<?> checkBalance(@RequestParam String clientCode,
-                                           @RequestParam String pin){
-        if(!authClient.checkPin(clientCode, pin)){
-            return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Pin");
-        }
+    public  ResponseEntity<?> checkBalance(@RequestParam String clientCode, @RequestParam String pin){
+        if (!authClient.checkPin(clientCode, pin)) throw new UnAuthorizedException("Invalid Pin");
 
         Map<String, List<AccountHistory>> histories = accountHistoryService.getAccountHistoriesByClientCode(clientCode);
 

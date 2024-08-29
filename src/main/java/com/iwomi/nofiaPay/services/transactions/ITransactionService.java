@@ -40,7 +40,6 @@ public interface ITransactionService {
 //    //TODO similar to agentDigitalCollection above
     Transaction merchantDigital(MerchantDigitalDto dto);
 
-//    Map<String, Object> initiateReversement(String branchCode, String boxNumber, String clientCode);
-//    List<Transaction> reversement(ReversementDto dto);
+    Map<String, Object> reversement(ReversementDto dto);
 
 }
