@@ -62,10 +62,7 @@ public class AccountHistoryService implements IAccountHistoryService {
     @Override
     public List<AccountHistory> getLatestTop5AccountHistoryByClientCode(String clientCode) {
 
-        List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode)
-                .stream()
-                .map(AccountEntity::getAccountNumber)
-                .collect(Collectors.toList());
+        List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode);
 
         return accountHistoryRepository.getTop5ByAccount(accounts)
                 .stream()
@@ -76,10 +73,7 @@ public class AccountHistoryService implements IAccountHistoryService {
 
 
     public List<AccountHistory> getLatestAccountHistoryByClientCode(String clientCode){
-        List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode)
-                .stream()
-                .map(AccountEntity::getAccountNumber)
-                .toList();
+        List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode);
         return accountHistoryRepository.getTop5ByAccount(accounts)
                 .stream()
                 .map(mapper::mapToModel)

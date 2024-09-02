@@ -21,15 +21,13 @@ public interface IAccountService {
 
     void deleteOne(UUID uuid);
 
+    List<String> getAccountNumbersByClientCode(String clientCode);
 
-        List<String> getAccountNumbersByClientCode (String clientCode);
     List<Account> getAccountsByClientCode(String clientCode);
 
     Map<String, List<Double>> viewAccountBalances(String clientCode);
 
     List<Account> viewAccountByDateRange(Date start, Date end);
 
-
     List<Map<String, Object>> getAccountsWithLatestTransactions(String clientCode);
-
 }
