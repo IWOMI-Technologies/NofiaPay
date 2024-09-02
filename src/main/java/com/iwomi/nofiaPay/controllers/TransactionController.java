@@ -51,8 +51,11 @@ public class TransactionController {
             description = "Returns List of transactions for an account",
             responses = {
                     @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
-                    @ApiResponse(responseCode = "201", ref = "successResponse",
-                            content = {@Content(schema = @Schema(implementation = Transaction.class))}),
+                    @ApiResponse(responseCode = "200", ref = "successResponse",
+                            content = {@Content(schema = @Schema(
+                                    implementation = Transaction.class,
+                                    type = "array"
+                            ))}),
             }
     )
     public ResponseEntity<?> getHistoryByAccount(@RequestParam String account) {

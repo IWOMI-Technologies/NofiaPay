@@ -5,6 +5,7 @@ import com.iwomi.nofiaPay.core.mappers.IClientMapper;
 import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,14 +16,15 @@ public class ClientRepository {
     private final IClientRepository repository;
     private final IClientMapper mapper;
 
-    public List<ClientEntity> getAllBranches() {
+    public List<ClientEntity> getAllClients() {
         return repository.findAll();
     }
 
-//    public BranchEntity createBranch(BranchDto dto) {
-//        BranchEntity entity = mapper.mapToEntity(dto);
-//        return repository.save(entity);
-//    }
+    @Transactional
+    public List<ClientEntity> createManyClients(List<ClientEntity> clients) {
+        repository.deleteAll();
+        return repository.saveAll(clients);
+    }
 
     public ClientEntity getOne(UUID uuid) {
         return repository.findById(uuid)

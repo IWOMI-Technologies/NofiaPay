@@ -11,6 +11,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring")
 public interface IEnrollMapper {
     EnrollEntity mapToEntity(EnrollDto dto);
+
     Enroll mapToModel(EnrollEntity entity);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUserFromDto(EnrollDto dto, @MappingTarget EnrollEntity entity);
