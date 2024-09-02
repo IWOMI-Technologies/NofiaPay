@@ -157,16 +157,26 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/accounts")
+    @GetMapping("/date-between")
     public ResponseEntity<?> getAccountsByDateRange(@RequestParam("startDate") String startDate,
-                                                    @RequestParam("endDate") String endDate) throws ParseException {
+                                                    @RequestParam("endDate") String endDate) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date start = formatter.parse(startDate);
+            Date end = formatter.parse(endDate);
+            List<Account> result = accountService.viewAccountByDateRange(start, end);
 
-        Date start = formatter.parse(startDate);
-        Date end = formatter.parse(endDate);
-        List<Account> result = accountService.viewAccountByDateRange(start, end);
+            return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
+        } catch (ParseException e) {
+            return ResponseEntity.badRequest().body("Invalid date format. Please use yyyy-MM-dd.");
+        }
+    }
 
+    @GetMapping("/latest")
+    public ResponseEntity<?> getAccountsByLatestTransactions(@RequestParam("clientCode") String clientCode) {
+
+        List<Map<String, Object>> result = accountService.getAccountsWithLatestTransactions(clientCode);
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 

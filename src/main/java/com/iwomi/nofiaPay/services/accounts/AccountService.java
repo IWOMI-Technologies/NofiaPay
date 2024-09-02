@@ -3,6 +3,7 @@ package com.iwomi.nofiaPay.services.accounts;
 import com.iwomi.nofiaPay.core.mappers.IAccountHistoryMapper;
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
+import com.iwomi.nofiaPay.core.utils.CoreUtils;
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
@@ -94,6 +95,7 @@ public class AccountService  implements  IAccountService{
 
     @Override
     public List<Account> viewAccountByDateRange(Date start, Date end) {
+
         return accountRepository.getAccountByDateRange(start, end)
                 .stream()
                 .filter(account -> account.getCreatedAt().after(start) && account.getCreatedAt().before(end))
@@ -121,16 +123,6 @@ public class AccountService  implements  IAccountService{
                 .stream()
                 .map(transactionMapper::mapToModel)
                 .toList();
-
-//         Group transactions by account number
-//        Map<String, List<Transaction>> debitTransactionsMap = issuerTransactions.stream()
-//                .map(transactionMapper::mapToModel)
-//                .collect(Collectors.groupingBy(Transaction::issuerAccount));
-
-//        Map<String, List<Transaction>> creditTransactionsMap = receiverTransactions.stream()
-//                .map(transactionMapper::mapToModel)
-//                .collect(Collectors.groupingBy(Transaction::receiverAccount));
-
 
        // Initialize the result list to hold the data for each account
         List<Map<String, Object>> result = new ArrayList<>();
