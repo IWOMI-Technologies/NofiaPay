@@ -14,4 +14,5 @@ public class InquiryEntity extends BaseEntity {
     private String name;
     private String email;
     private String content;
+    private String reply;
 }
