@@ -111,14 +111,18 @@ public class TransactionRepository {
         return repository.findTop5ByReceiverAccount(receiverAccounts);
     }
 
-    public List<TransactionEntity> getLatestTransactionsByIssuerAccount(List<String> issuerAccount) {
-        return  repository.findTransactionsByIssuerAccountsOrderedByCreatedAtDesc(issuerAccount);
+    public List<TransactionEntity> getLatestTransactionsByIssuerAccount(List<String> issuerAccount, int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return  repository.findTransactionsByIssuerAccountsOrderedByCreatedAtDesc(issuerAccount, pageable);
     }
 
-    public List<TransactionEntity> getLatestTransactionByReceiverAccount(List<String> receiverAccount) {
-        return  repository.findTransactionsByReceiverAccountsOrderedByCreatedAtDesc(receiverAccount);
+    public List<TransactionEntity> getLatestTransactionByReceiverAccount(List<String> receiverAccount, int limit) {
+        Pageable pageable = PageRequest.of(0, limit);
+        return  repository.findTransactionsByReceiverAccountsOrderedByCreatedAtDesc(receiverAccount, pageable);
     }
 
-
+    public List<TransactionEntity> getTodayTransactions(Date date) {
+        return  repository.findByCreatedAt(date);
+    }
 
 }

@@ -104,7 +104,7 @@ public class AccountService  implements  IAccountService{
     }
 
     @Override
-    public List<Map<String, Object>> getAccountsWithLatestTransactions(String clientCode) {
+    public List<Map<String, Object>> getAccountsWithLatestTransactions(String clientCode, int limit) {
 
         List<String> accountNumbers = accountRepository.getAccountNumbersByClientCode(clientCode);
 
@@ -114,12 +114,12 @@ public class AccountService  implements  IAccountService{
                 .toList();
 
 //             Fetch all transactions for the list of issuer and receiver accounts
-        List<Transaction> issuerTransactions = transactionRepository.getLatestTransactionsByIssuerAccount(accountNumbers)
+        List<Transaction> issuerTransactions = transactionRepository.getLatestTransactionsByIssuerAccount(accountNumbers, limit)
                 .stream()
                 .map(transactionMapper::mapToModel)
                 .toList();
 
-        List<Transaction> receiverTransactions = transactionRepository.getLatestTransactionByReceiverAccount(accountNumbers)
+        List<Transaction> receiverTransactions = transactionRepository.getLatestTransactionByReceiverAccount(accountNumbers, limit)
                 .stream()
                 .map(transactionMapper::mapToModel)
                 .toList();
@@ -132,7 +132,7 @@ public class AccountService  implements  IAccountService{
                 .map(accountNumber -> {
                     // Fetch debit and credit transactions
                     List<Transaction> debitTransactions = issuerTransactions.stream()
-                            .filter(history -> accountNumber.equals(history.receiverAccount()))
+                            .filter(history -> accountNumber.equals(history.issuerAccount()))
                             .toList();
 
                     List<Transaction> creditTransactions = receiverTransactions.stream()

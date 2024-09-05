@@ -106,13 +106,13 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), balances);
     }
 
-    @GetMapping("client/{client_code}")
+    @GetMapping("/client/{client_code}")
     public ResponseEntity<?> showAccountsByClientCode(@PathVariable String clientCode) {
         List<Account> result = accountService.getAccountsByClientCode(clientCode);
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/dashboard")
+    @GetMapping("/dashboard/{client_code}")
     public ResponseEntity<?> dashboard(@PathVariable String clientCode) {
         List<AccountHistory> accountHistories = historyService.getLatestTop5AccountHistoryByClientCode(clientCode);
         List<Transaction> transactions = transactionService.getLatestTop5TransactionByClientCode(clientCode);
@@ -175,8 +175,8 @@ public class AccountController {
 
     @GetMapping("/latest")
     public ResponseEntity<?> getAccountsByLatestTransactions(@RequestParam("clientCode") String clientCode) {
-
-        List<Map<String, Object>> result = accountService.getAccountsWithLatestTransactions(clientCode);
+        int limit = 5;
+        List<Map<String, Object>> result = accountService.getAccountsWithLatestTransactions(clientCode, limit);
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 

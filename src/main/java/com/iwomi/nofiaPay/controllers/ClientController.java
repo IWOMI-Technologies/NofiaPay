@@ -46,7 +46,7 @@ public class ClientController {
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/{role}/deleted")
+    @GetMapping("/deleted")
     public ResponseEntity<?> showByDeleted(@RequestParam("role") String role) {
         List <Client> result = clientService.findAllDeletedByClientCode(role);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);

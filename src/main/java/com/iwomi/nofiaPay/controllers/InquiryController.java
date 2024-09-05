@@ -25,6 +25,7 @@ import java.util.UUID;
 public class InquiryController {
 
     private final InquiryService inquiryService;
+
     @GetMapping()
     @Operation(
             description = "List of inquiries",

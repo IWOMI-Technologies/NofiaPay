@@ -6,12 +6,12 @@ spring:
   datasource: # db config seems not to be used
     url: jdbc:mysql://localhost:3306/nofia?serverTimezone=Africa/Douala
     username: root
-    password:
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
-#      ddl-auto: update
+#      ddl-auto: create-drop
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
       hibernate:
@@ -19,6 +19,10 @@ spring:
 
 server:
   port: 8082
+
+app:
+  files:
+    downloads: /home/projects-downloads/nofia
 
 #springdoc:
 #  swagger-ui:
@@ -35,7 +39,7 @@ eureka:
     #      enabled: true
     lease:
       duration: 5
-    enabled: false  # false value disables discovery request.
+    enabled: true  # false value disables discovery request.
 
 externals:
   iwomi:

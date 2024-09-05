@@ -47,7 +47,7 @@ public class ValidationController {
         return GlobalResponse.responseBuilder("List of enroll users", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/transfer")
+    @GetMapping("/awaiting")
     @Operation(
             description = "List of reversement validation requests for a teller",
             responses = {
