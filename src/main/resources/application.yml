@@ -58,3 +58,8 @@ externals:
 #logging:
 #  level:
 #    com.example.howtodoinjava: DEBUG
+
+  spring:
+    quartz:
+      job-store-type: jdbc
+      jdbc.schema: classpath:quartz/schema.sql

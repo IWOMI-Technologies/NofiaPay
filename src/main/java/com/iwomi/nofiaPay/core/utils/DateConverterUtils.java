@@ -2,7 +2,9 @@ package com.iwomi.nofiaPay.core.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -23,6 +25,34 @@ public class DateConverterUtils {
 //            e.printStackTrace();
             System.out.println("Failed to parse date: " + e.getMessage());
             throw new RuntimeException(e);
+        }
+    }
+
+    public static String convertEpochToTimeFormat(long epochSeconds) {
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.systemDefault());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        return dateTime.format(formatter);
+    }
+
+    public static int[] separateTime(String timeStr) {
+        if (timeStr == null || !timeStr.matches("\\d{2}:\\d{2}:\\d{2}")) {
+            throw new IllegalArgumentException("Time string must be in the format HH:MM:SS");
+        }
+
+        String[] parts = timeStr.split(":");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Time string must be in the format HH:MM:SS");
+        }
+
+        try {
+            int hours = Integer.parseInt(parts[0]);
+            int minutes = Integer.parseInt(parts[1]);
+            int seconds = Integer.parseInt(parts[2]);
+            return new int[]{hours, minutes, seconds};
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Time string contains invalid numbers", e);
         }
     }
 }

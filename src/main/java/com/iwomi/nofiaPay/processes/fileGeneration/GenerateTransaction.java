@@ -34,7 +34,7 @@ public class GenerateTransaction {
         this.generation = generation;
     }
 
-    public List<TransactionFile> generate() {
+    public List<TransactionFile> generate(List<TransactionEntity> transactions) {
         Date today = CoreUtils.localDateToDate(LocalDate.now());
         List<TransactionEntity> result = repository.getTodayTransactions(today);
 
@@ -49,8 +49,8 @@ public class GenerateTransaction {
                 .toList();
     }
 
-    public void excelTransactionFileGeneration() {
-        List<TransactionFile> transactions = generate();
+    public void excelTransactionFileGeneration(List<TransactionEntity> transacs) {
+        List<TransactionFile> transactions = generate(transacs);
         Path path = FileStorageUtil.createSubFolder(storagePath, "downloads");
         String fileExtension = ".xlsx";
         String fileName = new Date().getTime() + fileExtension;
