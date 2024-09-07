@@ -158,8 +158,10 @@ public class AccountController {
     }
 
     @GetMapping("/date-between")
-    public ResponseEntity<?> getAccountsByDateRange(@RequestParam("startDate") String startDate,
-                                                    @RequestParam("endDate") String endDate) {
+    public ResponseEntity<?> getAccountsByDateRange(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate
+    ) {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 

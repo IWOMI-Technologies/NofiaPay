@@ -125,4 +125,10 @@ public class TransactionRepository {
         return  repository.findByCreatedAt(date);
     }
 
+    public List<TransactionEntity> getByCreatedAtBetween(Date start, Date end) {
+        List<TransactionEntity> transactions =  repository.findByCreatedAtBetween(start, end);
+        if(transactions.isEmpty()) throw  new GeneralException("Transactions not found.");
+        return transactions;
+    }
+
 }

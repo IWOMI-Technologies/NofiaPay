@@ -10,9 +10,13 @@ import java.util.UUID;
 
 @FeignClient(name = "iwomiPay-service", url = "${externals.base-url.iwomiPay}")
 public interface IwomiPayClient {
-    @GetMapping("/authenticate")
+
+    @PostMapping("/authenticate")
     ResponseEntity<?> authenticate(@RequestBody IwomiAuthDto dto);
 
     @PostMapping("/iwomipay")
-    Map<String, Object> callPay(@RequestHeader("AccountKey") String apikey, @RequestBody Map<String, Object> payload);
+    Map<String, Object> iwomiPay(@RequestHeader("AccountKey") String apikey, @RequestBody Map<String, Object> payload);
+
+    @GetMapping("/iwomipayStatus/{internal_id}")
+    Map<String, Object> paymentStatus(@PathVariable String internal_id);
 }

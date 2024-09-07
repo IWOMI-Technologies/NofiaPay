@@ -12,6 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,10 +36,10 @@ public class GenerateTransaction {
     }
 
     public List<TransactionFile> generate(List<TransactionEntity> transactions) {
-        Date today = CoreUtils.localDateToDate(LocalDate.now());
-        List<TransactionEntity> result = repository.getTodayTransactions(today);
+//        Date today = CoreUtils.localDateToDate(LocalDate.now());
+//        List<TransactionEntity> result = repository.getTodayTransactions(today);
 
-        return result.stream()
+        return transactions.stream()
                 .flatMap(entity -> switch (entity.getType()) {
                     case AGENT_CASH_COLLECTION -> generation.agentCashCollection(entity).stream();
                     case AGENT_DIGITAL_COLLECTION_OM, AGENT_DIGITAL_COLLECTION_MOMO ->
@@ -49,7 +50,46 @@ public class GenerateTransaction {
                 .toList();
     }
 
-    public void excelTransactionFileGeneration(List<TransactionEntity> transacs) {
+    public byte[] toDownloadExcelTransactionFileGeneration(List<TransactionEntity> transacs) {
+        List<TransactionFile> transactions = generate(transacs);
+
+        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            Sheet sheet = workbook.createSheet("Transactions");
+
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            String[] headers = { "Account Number", "Transaction Label", "Transaction Reference", "Debited Amount", "Credited Amount", "Reference Lettering" };
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(getHeaderCellStyle(workbook));
+            }
+
+            // Populate data rows
+            int rowNum = 1;
+            for (TransactionFile transaction : transactions) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(transaction.accountNumber());
+                row.createCell(1).setCellValue(transaction.transactionLabel());
+                row.createCell(2).setCellValue(transaction.transactionReference());
+                row.createCell(3).setCellValue(transaction.debitedAmount());
+                row.createCell(4).setCellValue(transaction.creditedAmount());
+                row.createCell(5).setCellValue(transaction.referenceLettering());
+            }
+
+            // Adjust column widths
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            workbook.write(baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void toSaveExcelTransactionFileGeneration(List<TransactionEntity> transacs) {
         List<TransactionFile> transactions = generate(transacs);
         Path path = FileStorageUtil.createSubFolder(storagePath, "downloads");
         String fileExtension = ".xlsx";

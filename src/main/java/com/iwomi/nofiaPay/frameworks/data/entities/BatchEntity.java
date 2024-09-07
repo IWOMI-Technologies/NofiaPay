@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Setter
 @Builder(toBuilder = true)
 @Entity(name = "batches")
-@SQLDelete(sql = "UPDATE batches SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE batches SET deleted = true WHERE uuid=?")
 @Where(clause = "deleted=false")
 public class BatchEntity extends BaseEntity {
     @Column(name = "branch_code") private String batchCode;

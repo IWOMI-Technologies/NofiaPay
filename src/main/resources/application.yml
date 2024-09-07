@@ -10,12 +10,24 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-#      ddl-auto: create-drop
-      ddl-auto: update
+      ddl-auto: create-drop
+#      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+      schema: classpath:quartz/schema.sql
+  cloud:
+    openfeign:
+      httpclient:
+#        disable-ssl-validation: true
+#        enabled: false
+      okhttp:
+        enabled: true
 
 server:
   port: 8082
@@ -39,7 +51,7 @@ eureka:
     #      enabled: true
     lease:
       duration: 5
-    enabled: true  # false value disables discovery request.
+    enabled: false  # false value disables discovery request.
 
 externals:
   iwomi:
@@ -58,8 +70,3 @@ externals:
 #logging:
 #  level:
 #    com.example.howtodoinjava: DEBUG
-
-  spring:
-    quartz:
-      job-store-type: jdbc
-      jdbc.schema: classpath:quartz/schema.sql

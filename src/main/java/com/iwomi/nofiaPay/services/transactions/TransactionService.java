@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -140,14 +141,6 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public Transaction selfService(SelfServiceDto dto) {
-
-//        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
-//        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
-//
-//        DigitalPaymentDto paymentDto = new DigitalPaymentDto("debit", payType, dto.amount(),
-//                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
-//        // make iwomi Pay request
-//        Map<String, Object> response = payment.pay(paymentDto);
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
                 .reason(dto.reason())
@@ -157,8 +150,51 @@ public class TransactionService implements ITransactionService {
                 .status(StatusTypeEnum.PENDING)
                 .build();
 
-        return mapper.mapToModel(transactionRepository.createTransaction(entity));
+        Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
 
+        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
+        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
+
+        DigitalPaymentDto paymentDto = new DigitalPaymentDto("credit", payType, dto.amount(),
+                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
+        // make iwomi Pay request
+        Map<String, Object> response = payment.pay(paymentDto);
+
+        System.out.println("payment---------- "+response);
+        System.out.println("--- stat -- "+response.get("status"));
+
+        // put in private method handleUpdatingTrans
+
+        if (Objects.equals(response.get("status").toString(), "1000")) { // 1000 means request successfully made, awaiting client confirmation
+            // Extract internal ID from response
+            String internalId = response.get("internal_id").toString();
+            // Check payment status with exponential backoff
+            CompletableFuture<Map<String, Object>> statusFuture = payment.checkPaymentStatusWithBackoff(internalId);
+
+            statusFuture.thenApply(result -> {
+                // Process or transform the result here
+                System.out.println("Processing payment status: " + result);
+                return result; // Return the transformed result if needed
+            }).thenAccept(transformedResult -> {
+                // Further processing of the transformed result
+                System.out.println("Transformed result: " + transformedResult);
+                // update status in DB
+                if ("01".equalsIgnoreCase(transformedResult.get("status").toString()))
+                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.VALIDATED);
+                else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {
+                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+                }
+                else transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+            }).exceptionally(ex -> {
+                // Handle exceptions here
+                System.err.println("Error: " + ex.getMessage());
+                return null;
+            });
+        } else {
+            System.out.println("in ellsse");
+        }
+
+        return mapper.mapToModel(transactionRepository.getOne(savedTransaction.uuid()));
     }
 
     @Override

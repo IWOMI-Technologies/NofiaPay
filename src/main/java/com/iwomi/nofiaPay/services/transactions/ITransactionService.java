@@ -2,7 +2,9 @@ package com.iwomi.nofiaPay.services.transactions;
 
 import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
+import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,9 +45,5 @@ public interface ITransactionService {
     Map<String, Object> reversement(ReversementDto dto);
 
     List<Transaction> getLatestTop5TransactionByClientCode (String clientCode);
-
-//    Map<String, List<Transaction>> getAccountsWithLatestTransactions(String clientCode);
-
-//    Map<String, List<Transaction>> getAccountWithLatestTransactions(String clientCode);
 
 }

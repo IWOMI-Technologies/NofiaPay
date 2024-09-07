@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 @Setter
 @Builder(toBuilder = true)
 @Entity(name = "transactions")
-@SQLDelete(sql = "UPDATE transactions SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE transactions SET deleted = true WHERE uuid=?")
 @Where(clause = "deleted=false")
 public class TransactionEntity extends BaseEntity {
 
@@ -35,7 +35,7 @@ public class TransactionEntity extends BaseEntity {
     @Enumerated(EnumType.STRING) private OperationTypeEnum type;
     @Enumerated(EnumType.STRING) private StatusTypeEnum status;
 
-    private boolean generated = Boolean.FALSE;
+    private boolean processed = false;
 
-    private boolean deleted = Boolean.FALSE;
+    private boolean deleted = false;
 }
