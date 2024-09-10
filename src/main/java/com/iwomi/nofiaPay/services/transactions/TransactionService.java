@@ -27,6 +27,7 @@ import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.frameworks.externals.enums.IwomiPayTypesEnum;
 import com.iwomi.nofiaPay.frameworks.externals.iwomipay.domain.IPayment;
 import com.iwomi.nofiaPay.frameworks.externals.iwomipay.dto.DigitalPaymentDto;
+import com.iwomi.nofiaPay.services.wbesocket.IWebsocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +54,7 @@ public class TransactionService implements ITransactionService {
     private  final AuthClient authClient;
     private final ITransactionMapper mapper;
     private final IPayment payment;
+    private final IWebsocketService websocketService;
 
     @Override
     public List<Transaction> viewAllTransactions() {
@@ -181,6 +183,7 @@ public class TransactionService implements ITransactionService {
                 // update status in DB
                 if ("01".equalsIgnoreCase(transformedResult.get("status").toString()))
                     transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.VALIDATED);
+                
                 else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {
                     transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
                 }

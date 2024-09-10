@@ -140,7 +140,8 @@ public class TransactionController {
                     @ApiResponse(responseCode = "201", ref = "successResponse"),
             }
     )
-    public ResponseEntity<?> storeSelfService(@RequestBody SelfServiceDto dto) {
+    public ResponseEntity<?> storeSelfService(@RequestHeader String authUuid, @RequestBody SelfServiceDto dto) {
+        System.out.println("Authenticated user uuid "+authUuid);
         Transaction result = transactionService.selfService(dto);
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }

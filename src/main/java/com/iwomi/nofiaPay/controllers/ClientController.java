@@ -26,7 +26,7 @@ public class ClientController {
 
     private  final AuthClient authClient;
 
-    @GetMapping()
+    @GetMapping("/all")
     @Operation(
             description = "List of clients",
             responses = {
@@ -40,8 +40,9 @@ public class ClientController {
         return GlobalResponse.responseBuilder("List of clients", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/{role}")
-    public ResponseEntity<?> show(@RequestParam("role") UserTypeEnum role) {
+    @GetMapping("/role/{role}")
+    public ResponseEntity<?> show(@PathVariable UserTypeEnum role) {
+        System.out.println("trying ****************** to get client by role");
         List <Client> result = clientService.findAllByClientCode(role);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
@@ -49,7 +50,7 @@ public class ClientController {
     @GetMapping("/deleted")
     public ResponseEntity<?> showByDeleted(@RequestParam("role") String role) {
         List <Client> result = clientService.findAllDeletedByClientCode(role);
-        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
+        return GlobalResponse.responseBuilder("Found clients", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
     @DeleteMapping("/{id}")

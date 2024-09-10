@@ -10,8 +10,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
-#      ddl-auto: update
+#      ddl-auto: create-drop
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
       hibernate:
@@ -51,7 +51,7 @@ eureka:
     #      enabled: true
     lease:
       duration: 5
-    enabled: false  # false value disables discovery request.
+    enabled: true  # false value disables discovery request.
 
 externals:
   iwomi:
@@ -64,7 +64,7 @@ externals:
     username: "iwomipay2021"
     password: "iwomipay@2020"
   base-url:
-    auth: http://localhost:8080/api/v1/auth/users
+    auth: http://localhost:8080/api/v1/auth
     iwomiPay: https://www.pay.iwomitechnologies.com/api/iwomipay_sandbox
 
 #logging:

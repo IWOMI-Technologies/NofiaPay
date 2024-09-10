@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "auth-service", url = "${externals.base-url.auth}")
 public interface AuthClient {
 
-   @PostMapping("/{id}/check-pin")
+   @PostMapping("/users/{id}/check-pin")
    boolean checkPin(@PathVariable String clientCode, @RequestParam("pin") String pin);
 
-   @GetMapping("/{role}/deleted")
+   @GetMapping("/users/{role}/deleted")
    ResponseEntity<?>  getUsersByRoleAndDeleted(@RequestParam String role);
 
    @GetMapping()
