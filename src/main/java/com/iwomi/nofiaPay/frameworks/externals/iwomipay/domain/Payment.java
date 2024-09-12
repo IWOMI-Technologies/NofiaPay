@@ -6,19 +6,17 @@ import com.iwomi.nofiaPay.core.utils.CoreUtils;
 import com.iwomi.nofiaPay.frameworks.externals.clients.IwomiPayClient;
 import com.iwomi.nofiaPay.frameworks.externals.iwomipay.dto.DigitalPaymentDto;
 import com.iwomi.nofiaPay.frameworks.externals.iwomipay.dto.IwomiAuthDto;
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
-import kong.unirest.UnirestException;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.security.GeneralSecurityException;
-import java.util.*;
+import java.util.Base64;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -84,7 +82,7 @@ public class Payment implements IPayment {
     @Override
     public CompletableFuture<Map<String, Object>> checkPaymentStatusWithBackoff(String internalId) {
         // Define configuration parameters locally
-        long delayPeriodSeconds = 30; // Total retry duration in seconds (3 minutes)
+        long delayPeriodSeconds = 5; // Total retry duration in seconds (3 minutes)
         long maxInitialDelaySeconds = 1; // Initial delay in seconds
 
         Map<String, Object> checking = null;

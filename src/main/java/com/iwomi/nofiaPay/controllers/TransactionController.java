@@ -1,5 +1,7 @@
 package com.iwomi.nofiaPay.controllers;
 
+import com.iwomi.nofiaPay.core.configs.websocket.StompPrincipal;
+import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.*;
@@ -9,6 +11,7 @@ import com.iwomi.nofiaPay.frameworks.data.entities.ValidationEntity;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import com.iwomi.nofiaPay.services.validations.ValidationService;
+import com.iwomi.nofiaPay.services.wbesocket.IWebsocketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -31,6 +35,8 @@ public class TransactionController {
     private final TransactionService transactionService;
     private final AccountHistoryService historyService;
     private final ValidationService validationService;
+    private final IWebsocketService websocketService;
+
 
     @GetMapping()
     @Operation(
@@ -130,7 +136,7 @@ public class TransactionController {
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
-    @PostMapping("/self-service")
+    @PostMapping("/self-service/{userUuid}")
     @Operation(
             description = "Client self service transaction ::: use -> SELF_SERVICE_OM or SELF_SERVICE_MOMO for operation",
             parameters = {},
@@ -140,10 +146,19 @@ public class TransactionController {
                     @ApiResponse(responseCode = "201", ref = "successResponse"),
             }
     )
-    public ResponseEntity<?> storeSelfService(@RequestHeader String authUuid, @RequestBody SelfServiceDto dto) {
-        System.out.println("Authenticated user uuid "+authUuid);
-        Transaction result = transactionService.selfService(dto);
-        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
+    public ResponseEntity<?> storeSelfService(
+            @RequestBody SelfServiceDto dto,
+            @PathVariable String userUuid
+//            Principal principal // this is set in WebSocketEventListener
+    ) {
+//        String principal = StompPrincipal.class.getName().toString();
+//
+//        System.out.println("Principal found " + principal);
+//        System.out.println("Authenticated user uuid "+authUuid);
+        Transaction result = transactionService.selfService(userUuid, dto);
+//        websocketService.sendToUser("8d10a6ab-a403-4e37-a228-91f4be284458", StatusTypeEnum.VALIDATED.toString());
+
+        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), null);
     }
 
     @PostMapping("/agent-digital")

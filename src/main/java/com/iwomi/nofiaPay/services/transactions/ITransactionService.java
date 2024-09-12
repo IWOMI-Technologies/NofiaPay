@@ -32,7 +32,7 @@ public interface ITransactionService {
 
 //    List<Transaction> agentDigitalCollection(AgentDigitalCollectionDto dto);
 
-    Transaction selfService(SelfServiceDto dto);
+    Transaction selfService(String authUuid, SelfServiceDto dto);
 
     Transaction AgentDigitalCollection(AgentDigitalCollectionDto dto);
 

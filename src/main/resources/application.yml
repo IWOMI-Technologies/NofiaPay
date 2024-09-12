@@ -67,6 +67,13 @@ externals:
     auth: http://localhost:8080/api/v1/auth
     iwomiPay: https://www.pay.iwomitechnologies.com/api/iwomipay_sandbox
 
-#logging:
-#  level:
+logging:
+  level:
+    org:
+      springframework:
+        messaging: DEBUG
+        web:
+          socket:
+            messaging: DEBUG
+
 #    com.example.howtodoinjava: DEBUG

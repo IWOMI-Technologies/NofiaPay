@@ -142,7 +142,7 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public Transaction selfService(SelfServiceDto dto) {
+    public Transaction selfService(String authUuid, SelfServiceDto dto) {
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
                 .reason(dto.reason())
@@ -153,6 +153,8 @@ public class TransactionService implements ITransactionService {
                 .build();
 
         Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
+
+//        websocketService.sendToAll(savedTransaction);
 
         String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
         if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
@@ -181,13 +183,20 @@ public class TransactionService implements ITransactionService {
                 // Further processing of the transformed result
                 System.out.println("Transformed result: " + transformedResult);
                 // update status in DB
-                if ("01".equalsIgnoreCase(transformedResult.get("status").toString()))
+                if ("01".equalsIgnoreCase(transformedResult.get("status").toString())) {
                     transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.VALIDATED);
-                
+                    websocketService.sendToUser(authUuid, StatusTypeEnum.VALIDATED.toString());
+                }
+
                 else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {
                     transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+                    websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
+
                 }
-                else transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+                else {
+                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+                    websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
+                }
             }).exceptionally(ex -> {
                 // Handle exceptions here
                 System.err.println("Error: " + ex.getMessage());
