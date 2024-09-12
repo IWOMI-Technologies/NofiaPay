@@ -13,7 +13,6 @@ public class WebsocketService implements IWebsocketService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private static final String SIMP_SESSION_ID = "simpSessionId";
     private static final String WS_PRIVATE_DESTINATION = "/queue/messages";
-//    private static final String WS_PRIVATE_DESTINATION = "/topic/greetings";
     private List<String> userNames = new ArrayList<>();
 
     public WebsocketService(SimpMessagingTemplate simpMessagingTemplate) {

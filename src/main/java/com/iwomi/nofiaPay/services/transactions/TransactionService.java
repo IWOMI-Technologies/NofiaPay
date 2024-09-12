@@ -190,8 +190,7 @@ public class TransactionService implements ITransactionService {
 
                 else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {
                     transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
-                    websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
-
+                    websocketService.sendToUser(authUuid, StatusTypeEnum.PENDING.toString());
                 }
                 else {
                     transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
