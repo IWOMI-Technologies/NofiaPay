@@ -1,0 +1,25 @@
+{
+  "badRequestResponse": {
+    "code": 400,
+    "status": "Bad request",
+    "message": "Bad request"
+  },
+
+  "internalServerErrorResponse": {
+    "code": 500,
+    "status": "server error",
+    "message": "internal server error"
+  },
+  "successResponse": {
+    "message": "request correctly processed",
+    "httpStatus": 200,
+    "success": "200",
+    "data": []
+  },
+  "createdResponse": {
+    "message": "resource correctly saved",
+    "httpStatus": 201,
+    "success": "201",
+    "data": []
+  }
+}
