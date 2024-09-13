@@ -40,14 +40,14 @@ public class ClientController {
         return GlobalResponse.responseBuilder("List of clients", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/{role}")
+    @GetMapping("/role/{role}")
     public ResponseEntity<?> show(@RequestParam("role") UserTypeEnum role) {
         List <Client> result = clientService.findAllByClientCode(role);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
     @GetMapping("/{role}/deleted")
-    public ResponseEntity<?> showByDeleted(@RequestParam("role") String role) {
+    public ResponseEntity<?> showByDeleted(@PathVariable String role) {
         List <Client> result = clientService.findAllDeletedByClientCode(role);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
