@@ -34,6 +34,7 @@ public class TransactionEntity extends BaseEntity {
 
     @Enumerated(EnumType.STRING) private OperationTypeEnum type;
     @Enumerated(EnumType.STRING) private StatusTypeEnum status;
+    @Enumerated(EnumType.STRING) private SenseTypeEnum sense;
 
     private boolean processed = false;
 

@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.dtos.responses;
 
+import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -15,6 +16,7 @@ public record AccountHistory(
         String reason,
         BigDecimal amount,
         String accountNumber,
+        OperationTypeEnum type,
         SenseTypeEnum sense,
         Date createdAt
 ) {

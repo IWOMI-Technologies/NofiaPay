@@ -10,12 +10,14 @@ import java.util.UUID;
 
 public record Transaction(
         UUID uuid,
+        String name,
         BigDecimal amount,
         String reason,
         String batch,
         String issuerAccount,
         String receiverAccount,
         OperationTypeEnum type,
+        SenseTypeEnum sense,
         StatusTypeEnum status,
         Date createdAt
 ) {
