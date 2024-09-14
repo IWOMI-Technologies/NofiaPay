@@ -111,9 +111,59 @@ public class AccountController {
         List<Account> result = accountService.getAccountsByClientCode(clientCode);
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
+//
+//    @GetMapping("/dashboard/{client_code}")
+//    public ResponseEntity<?> dashboard(@PathVariable String clientCode) {
+//        List<AccountHistory> accountHistories = historyService.getLatestTop5AccountHistoryByClientCode(clientCode);
+//        List<Transaction> transactions = transactionService.getLatestTop5TransactionByClientCode(clientCode);
+//
+//        List<Map<String, Object>> historiesMap = accountHistories
+//                .stream()
+//                .map(history -> Map.<String, Object>of(
+//                        "uuid", history.uuid(),
+//                        "createdAt", history.createdAt()
+//                )).toList();
+//        List<Map<String, Object>> transactionsMap = transactions
+//                .stream()
+//                .map(history -> Map.<String, Object>of(
+//                        "uuid", history.uuid(),
+//                        "createdAt", history.createdAt()
+//                )).toList();
+//
+//
+//        Set<String> uuids = Stream.of(historiesMap, transactionsMap)
+//                .flatMap(List::stream)
+//                .sorted(Comparator.comparing(o -> (Date) o.get("createdAt"), Comparator.reverseOrder()))
+//                .limit(5)
+//                .map(d -> (String) d.get("uuid"))
+//                .collect(Collectors.toSet());
+//
+//        List<AccountHistory> historyResult = accountHistories
+//                .stream()
+//                .filter(history -> uuids.contains(history.uuid()))
+//                .toList();
+//
+//        List<Transaction> transactionResult = transactions
+//                .stream()
+//                .filter(transaction -> uuids.contains(transaction.uuid()))
+//                .toList();
+//
+//        Map<String, Object> result = Map.of(
+//                "clientAccounts", accountService.getAccountsByClientCode(clientCode),
+//                "accountHistories", historyResult,
+//                "transactions", transactionResult
+//        );
+//
+//        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
+//    }
 
     @GetMapping("/dashboard/{client_code}")
     public ResponseEntity<?> dashboard(@PathVariable String clientCode) {
+        List<String> accountNumbers = accountService.getAccountsByClientCode(clientCode)
+                .stream()
+                .map(Account::accountNumber)
+                .toList();
+
         List<AccountHistory> accountHistories = historyService.getLatestTop5AccountHistoryByClientCode(clientCode);
         List<Transaction> transactions = transactionService.getLatestTop5TransactionByClientCode(clientCode);
 
@@ -138,18 +188,27 @@ public class AccountController {
                 .map(d -> (String) d.get("uuid"))
                 .collect(Collectors.toSet());
 
-        List<AccountHistory> historyResult = accountHistories
+        List<Map<String, Object>> historyResult = accountHistories
                 .stream()
                 .filter(history -> uuids.contains(history.uuid()))
-                .toList();
+                .map(history -> Map.<String, Object>of(
+                        "name", history.name(),
+                        "transaction type", history.type(),
+                        "amount", history.amount(),
+                        "sense", history.sense()
+                )).toList();
 
-        List<Transaction> transactionResult = transactions
+        List<Map<String, Object>> transactionResult = transactions
                 .stream()
                 .filter(transaction -> uuids.contains(transaction.uuid()))
-                .toList();
+                .map(transaction -> Map.<String, Object>of(
+                        "name", transaction.name(),
+                        "transaction type", transaction.type(),
+                        "amount", transaction.amount(),
+                        "sense", accountNumbers.contains(transaction.issuerAccount()) ? "Debit" : "Credit"
+                )).toList();
 
         Map<String, Object> result = Map.of(
-                "clientAccounts", accountService.getAccountsByClientCode(clientCode),
                 "accountHistories", historyResult,
                 "transactions", transactionResult
         );

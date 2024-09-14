@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.frameworks.data.entities;
 
+import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,5 +35,6 @@ public class AccountHistoryEntity extends BaseEntity {
     @Column(name = "account-number") private String accountNumber;
 
     @Enumerated(EnumType.STRING) private SenseTypeEnum sense;
+    @Enumerated(EnumType.STRING) private OperationTypeEnum type;
 
 }
