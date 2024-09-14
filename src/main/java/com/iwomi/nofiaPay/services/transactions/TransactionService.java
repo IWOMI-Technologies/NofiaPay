@@ -154,56 +154,7 @@ public class TransactionService implements ITransactionService {
 
         Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
 
-//        websocketService.sendToAll(savedTransaction);
-
-        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
-        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
-
-        DigitalPaymentDto paymentDto = new DigitalPaymentDto("credit", payType, dto.amount(),
-                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
-        // make iwomi Pay request
-        Map<String, Object> response = payment.pay(paymentDto);
-
-        System.out.println("payment---------- "+response);
-        System.out.println("--- stat -- "+response.get("status"));
-
-        // put in private method handleUpdatingTrans
-
-        if (Objects.equals(response.get("status").toString(), "1000")) { // 1000 means request successfully made, awaiting client confirmation
-            // Extract internal ID from response
-            String internalId = response.get("internal_id").toString();
-            // Check payment status with exponential backoff
-            CompletableFuture<Map<String, Object>> statusFuture = payment.checkPaymentStatusWithBackoff(internalId);
-
-            statusFuture.thenApply(result -> {
-                // Process or transform the result here
-                System.out.println("Processing payment status: " + result);
-                return result; // Return the transformed result if needed
-            }).thenAccept(transformedResult -> {
-                // Further processing of the transformed result
-                System.out.println("Transformed result: " + transformedResult);
-                // update status in DB
-                if ("01".equalsIgnoreCase(transformedResult.get("status").toString())) {
-                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.VALIDATED);
-                    websocketService.sendToUser(authUuid, StatusTypeEnum.VALIDATED.toString());
-                }
-
-                else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {
-                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
-                    websocketService.sendToUser(authUuid, StatusTypeEnum.PENDING.toString());
-                }
-                else {
-                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
-                    websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
-                }
-            }).exceptionally(ex -> {
-                // Handle exceptions here
-                System.err.println("Error: " + ex.getMessage());
-                return null;
-            });
-        } else {
-            System.out.println("in ellsse");
-        }
+        handlePaymentProcess(authUuid, dto, savedTransaction);
 
         return mapper.mapToModel(transactionRepository.getOne(savedTransaction.uuid()));
     }
@@ -309,24 +260,6 @@ public class TransactionService implements ITransactionService {
         );
     }
 
-
-    private String agentBranchCode(String agentCollectionAccount) {
-//        AccountEntity account = accountRepository.getOneByAccount(agentCollectionAccount);
-//        return batchRepository.getTodaysBatchCode(account.getClientId().toString());
-        return "test";
-    }
-
-    private Boolean areAccountsInSameBranch(String accountOne, String accountTwo) {
-        AccountEntity firstAcc = accountRepository.getOneByAccount(accountOne);
-        AccountEntity secondAcc = accountRepository.getOneByAccount(accountTwo);
-
-        return Objects.equals(firstAcc.getAgencyCode(), secondAcc.getAgencyCode());
-    }
-
-    public Boolean isIssuerAccount(String account) {
-        return iTransactionRepository.existsByIssuerAccount(account);
-    }
-
     @Override
     public List<Transaction> getLatestTop5TransactionByClientCode(String clientCode) {
 
@@ -354,6 +287,76 @@ public class TransactionService implements ITransactionService {
                 .limit(5)
                 .toList();
 
+    }
+
+    private String agentBranchCode(String agentCollectionAccount) {
+//        AccountEntity account = accountRepository.getOneByAccount(agentCollectionAccount);
+//        return batchRepository.getTodaysBatchCode(account.getClientId().toString());
+        return "test";
+    }
+
+    private Boolean areAccountsInSameBranch(String accountOne, String accountTwo) {
+        AccountEntity firstAcc = accountRepository.getOneByAccount(accountOne);
+        AccountEntity secondAcc = accountRepository.getOneByAccount(accountTwo);
+
+        return Objects.equals(firstAcc.getAgencyCode(), secondAcc.getAgencyCode());
+    }
+
+    public Boolean isIssuerAccount(String account) {
+        return iTransactionRepository.existsByIssuerAccount(account);
+    }
+
+    private void handlePaymentProcess(String authUuid, SelfServiceDto dto, Transaction savedTransaction) {
+        System.out.println("handle authUUID //////////// "+authUuid);
+        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
+        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
+
+        DigitalPaymentDto paymentDto = new DigitalPaymentDto("credit", payType, dto.amount(),
+                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
+        // make iwomi Pay request
+        Map<String, Object> response = payment.pay(paymentDto);
+
+        System.out.println("payment---------- "+response);
+        System.out.println("--- stat -- "+response.get("status"));
+
+        if (Objects.equals(response.get("status").toString(), "1000")) { // 1000 means request pending made, awaiting client confirmation
+            // Extract internal ID from response
+            String internalId = response.get("internal_id").toString();
+            // Check payment status with exponential backoff
+            CompletableFuture<Map<String, Object>> statusFuture = payment.checkPaymentStatusWithBackoff(internalId);
+
+            statusFuture.thenApply(result -> {
+                // Process or transform the result here
+                System.out.println("Processing payment status: " + result);
+                return result; // Return the transformed result if needed
+            }).thenAccept(transformedResult -> {
+                // Further processing of the transformed result
+                System.out.println("Transformed result: " + transformedResult);
+                // update status in DB
+                if ("01".equalsIgnoreCase(transformedResult.get("status").toString())) {    // success
+                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.VALIDATED);
+                    websocketService.sendToUser(authUuid, StatusTypeEnum.VALIDATED.toString());
+                }
+                else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {  // fail
+                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+                    websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
+                }
+                else {  // remain pending
+//                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+                    websocketService.sendToUser(authUuid, StatusTypeEnum.PENDING.toString());
+                    System.out.println("******** !!! Transaction remained pending in checkStatus iwomipay check your code please !!! **********");
+                }
+            }).exceptionally(ex -> {
+                // Handle exceptions here
+                System.err.println("Error: " + ex.getMessage());
+                return null;
+            });
+        } else if (Objects.equals(response.get("status").toString(), "100")) {  // 100 means status is fail
+            transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+            websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
+        } else {    // this is for status 01 which is surely never called
+            System.out.println("******** !!! Payment status is 01 check your code please !!! **********");
+        }
     }
 
 }
