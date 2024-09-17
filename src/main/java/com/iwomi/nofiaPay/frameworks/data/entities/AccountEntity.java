@@ -29,14 +29,22 @@ public class AccountEntity extends BaseEntity {
     private String chapterTitle;
     private String accountTypeCode;
     private String accountTypeLabel;
-
     @Column(name = "account_number") private String accountNumber;
-    @Column(name = "balance") private BigDecimal balance;
-    @Column(name = "client_code") private String clientCode;
 
     @JsonFormat(pattern = AppConst.DATEFORMAT, timezone = AppConst.BACKEND_TIME_ZONE)
     @Temporal(TemporalType.DATE)
-    private Date accountCreation;
+    private Date startDate;
+
+    @JsonFormat(pattern = AppConst.DATEFORMAT, timezone = AppConst.BACKEND_TIME_ZONE)
+    @Temporal(TemporalType.DATE)
+    private Date endDate;
+
+    @Column(name = "debit_balance") private BigDecimal  debit;
+    @Column(name = "credit_balance") private BigDecimal credit ;
+
+    @Column(name = "client_code") private String clientCode;
+
+
 
 
 //    @Enumerated(EnumType.STRING) private AccountStatusEnum accountStatus;

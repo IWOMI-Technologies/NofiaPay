@@ -7,6 +7,7 @@ import com.iwomi.nofiaPay.frameworks.data.entities.AccountHistoryEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.IAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +25,9 @@ public class AccountHistoryRepository {
         return repository.findAll();
     }
 
+    @Transactional
     public List<AccountHistoryEntity> saveAllHistories (List<AccountHistoryEntity> accountHistories) {
+        repository.deleteAll();
         return repository.saveAll(accountHistories);
     }
 

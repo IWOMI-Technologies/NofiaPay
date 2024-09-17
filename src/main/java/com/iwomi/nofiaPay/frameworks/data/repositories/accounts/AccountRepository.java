@@ -6,6 +6,7 @@ import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -31,7 +32,9 @@ public class AccountRepository {
         return  repository.save(account);
     }
 
+    @Transactional
     public  List<AccountEntity> saveAllAccounts(List<AccountEntity> accounts) {
+        repository.deleteAll();
         return  repository.saveAll(accounts);
     }
 
