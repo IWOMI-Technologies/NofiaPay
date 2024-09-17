@@ -5,6 +5,7 @@ import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
+import com.iwomi.nofiaPay.dtos.responses.CombineHistory;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
@@ -36,6 +37,8 @@ public class AccountController {
     private final TransactionService transactionService;
 
     private final AuthClient authClient;
+
+    private final CombineHistory combineHistory;
 
     @GetMapping()
     @Operation(
@@ -208,10 +211,7 @@ public class AccountController {
                         "sense", accountNumbers.contains(transaction.issuerAccount()) ? "Debit" : "Credit"
                 )).toList();
 
-        Map<String, Object> result = Map.of(
-                "accountHistories", historyResult,
-                "transactions", transactionResult
-        );
+         CombineHistory result = new CombineHistory(historyResult, transactionResult);
 
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
