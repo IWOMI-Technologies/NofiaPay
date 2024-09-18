@@ -2,6 +2,7 @@ package com.iwomi.nofiaPay.dtos.responses;
 
 import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
+import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -18,6 +19,7 @@ public record AccountHistory(
         String accountNumber,
         OperationTypeEnum type,
         SenseTypeEnum sense,
+        StatusTypeEnum status,
         Date createdAt
 ) {
 }

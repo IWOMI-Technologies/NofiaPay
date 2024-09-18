@@ -1,21 +1,27 @@
 package com.iwomi.nofiaPay.dtos.responses;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Data
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class CombineHistory {
 
-    private List<Map<String, Object>> transactionHistory;
-
-    private List<Map<String, Object>> accountHistory;
-
-
+   private String name;
+    private String service;
+    private BigDecimal amount;
+    private String phone;
+    private String acc;
+    private String senderAcc;
+    private String branchName;
+    private UUID transactionId;
+    private Date transactionDate;
+    private String status;
 }
