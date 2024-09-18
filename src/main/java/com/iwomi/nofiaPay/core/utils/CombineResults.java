@@ -1,4 +1,4 @@
-package com.iwomi.nofiaPay.services.combinedResult;
+package com.iwomi.nofiaPay.core.utils;
 
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.core.mappers.IClientMapper;
@@ -21,7 +21,7 @@ public class CombineResults {
     private  final IClientMapper clientMapper;
     public CombineHistory mapToAccountHistory(AccountHistory history) {
         String accountNumber = history.accountNumber();
-        String account = mapper.mapToModel(accountRepository.getOneByAccount(accountNumber)).clientCode();
+        String account = accountRepository.getOneByAccount(accountNumber).getClientCode();
 
         Client client = clientMapper.mapToModel(clientRepository.getOneByClientCode(account));
         return CombineHistory.builder()
@@ -34,7 +34,7 @@ public class CombineResults {
                 .branchName(client.getAgencyLabel())
                 .transactionId(history.uuid())
                 .transactionDate(history.createdAt())
-                .status(history.status().toString())
+                .status("VALIDATED")
                 .build();
     }
 
