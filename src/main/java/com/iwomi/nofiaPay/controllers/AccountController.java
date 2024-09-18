@@ -5,10 +5,12 @@ import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
+import com.iwomi.nofiaPay.dtos.responses.CombineHistory;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
+import com.iwomi.nofiaPay.core.utils.CombineResults;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,6 +38,8 @@ public class AccountController {
     private final TransactionService transactionService;
 
     private final AuthClient authClient;
+
+    private final CombineResults combineResults;
 
     @GetMapping()
     @Operation(
@@ -188,30 +192,20 @@ public class AccountController {
                 .map(d -> (String) d.get("uuid"))
                 .collect(Collectors.toSet());
 
-        List<Map<String, Object>> historyResult = accountHistories
+        List<AccountHistory> historyResult = accountHistories
                 .stream()
                 .filter(history -> uuids.contains(history.uuid()))
-                .map(history -> Map.<String, Object>of(
-                        "name", history.name(),
-                        "transaction type", history.type(),
-                        "amount", history.amount(),
-                        "sense", history.sense()
-                )).toList();
+                .toList();
 
-        List<Map<String, Object>> transactionResult = transactions
+        List<Transaction> transactionResult = transactions
                 .stream()
                 .filter(transaction -> uuids.contains(transaction.uuid()))
-                .map(transaction -> Map.<String, Object>of(
-                        "name", transaction.name(),
-                        "transaction type", transaction.type(),
-                        "amount", transaction.amount(),
-                        "sense", accountNumbers.contains(transaction.issuerAccount()) ? "Debit" : "Credit"
-                )).toList();
+                .toList();
 
-        Map<String, Object> result = Map.of(
-                "accountHistories", historyResult,
-                "transactions", transactionResult
-        );
+        List<CombineHistory> result = Stream.concat(transactionResult.stream().map(combineResults::mapToTransactionHistory),
+                historyResult.stream().map(combineResults::mapToAccountHistory))
+                        .collect(Collectors.toList());
+
 
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
     }

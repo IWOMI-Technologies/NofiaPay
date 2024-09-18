@@ -20,6 +20,7 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.TransactionR
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,18 +81,34 @@ public class AccountService  implements  IAccountService{
         return  accountRepository.getAccountNumbersByClientCode(clientCode);
     }
 
-    @Override
-    public Map<String, List<Double>> viewAccountBalances(String clientCode) {
-        List<String> accountNumbers = accountRepository.getAccountsByClientCode(clientCode)
-                .stream()
-                .map(AccountEntity::getAccountNumber)
-                .collect(Collectors.toList());
+//    @Override
+//    public Map<String, List<Double>> viewAccountBalances(String clientCode) {
+//        List<String> accountNumbers = accountRepository.getAccountsByClientCode(clientCode)
+//                .stream()
+//                .map(AccountEntity::getAccountNumber)
+//                .collect(Collectors.toList());
+//
+//        return accountRepository.getAccountBalances(accountNumbers)
+//                .stream()
+//                .collect(Collectors.groupingBy(AccountEntity::getAccountNumber,
+//                        Collectors.mapping(account -> account.getBalance().doubleValue(), Collectors.toList())));
+//    }
+@Override
+public Map<String, List<Double>> viewAccountBalances(String clientCode) {
+    List<String> accountNumbers = accountRepository.getAccountsByClientCode(clientCode)
+            .stream()
+            .map(AccountEntity::getAccountNumber)
+            .collect(Collectors.toList());
 
-        return accountRepository.getAccountBalances(accountNumbers)
-                .stream()
-                .collect(Collectors.groupingBy(AccountEntity::getAccountNumber,
-                        Collectors.mapping(account -> account.getBalance().doubleValue(), Collectors.toList())));
-    }
+
+    return accountRepository.getAccountBalances(accountNumbers)
+            .stream()
+            .collect(Collectors.groupingBy(AccountEntity::getAccountNumber,
+                    Collectors.mapping(account -> {
+                        BigDecimal balance = account.getCredit().subtract(account.getDebit());
+                        return balance.doubleValue();
+                    }, Collectors.toList())));
+}
 
     @Override
     public List<Account> viewAccountByDateRange(Date start, Date end) {
