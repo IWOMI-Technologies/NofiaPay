@@ -10,7 +10,7 @@ import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
-import com.iwomi.nofiaPay.services.combinedResult.CombineResults;
+import com.iwomi.nofiaPay.core.utils.CombineResults;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
