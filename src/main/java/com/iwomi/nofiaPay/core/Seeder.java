@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -35,32 +36,51 @@ public class Seeder {
                 .build();
 //        ValidatorEntity validatorTwo = ValidatorEntity.builder().process("reversement").profiles(Set.of("agent")).build();
 
-        ClientEntity client = ClientEntity.builder()
-                .clientCode("cli1")
-                .phoneNumber("44444")
-                .agencyCode("agency1")
+//        ClientEntity client = ClientEntity.builder()
+//                .clientCode("cli1")
+//                .phoneNumber("44444")
+//                .agencyCode("agency1")
+//                .build();
+        AccountEntity accountOne = AccountEntity.builder()
+                .agencyCode("agency2")
+                .agencyName("Agency Two")
+                .currency("USD")
+                .cle("CLE1234")
+                .accountTitle("Savings Account")
+                .chapter("01")
+                .chapterTitle("Savings")
+                .accountTypeCode("SA")
+                .accountTypeLabel("Savings Account")
+                .accountNumber("12345678-1234")
+                .balance(new BigDecimal("10000"))
+                .clientCode("COO1")
+                .accountCreation(new Date()) // Set the date to the current date or a specific date
                 .build();
-        AccountEntity account = AccountEntity.builder()
-                .agencyCode("agency1")
-                .clientCode("cli1")
-                .accountNumber("03445512-4569")
-                .balance(new BigDecimal("50000"))
+
+        AccountEntity accountTwo = AccountEntity.builder()
+                .agencyCode("agency2")
+                .agencyName("Agency Two")
+                .currency("USD")
+                .cle("CLE5678")
+                .accountTitle("Checking Account")
+                .chapter("02")
+                .chapterTitle("Checking")
+                .accountTypeCode("CA")
+                .accountTypeLabel("Checking Account")
+                .accountNumber("87654321-4321")
+                .balance(new BigDecimal("20000"))
+                .clientCode("COO1")
+                .accountCreation(new Date()) // Set the date to the current date or a specific date
                 .build();
-        AccountEntity accountDigital = AccountEntity.builder()
-                .agencyCode("agency1")
-                .accountNumber("033333-3333")
-                .balance(new BigDecimal("550000"))
-                .accountTypeCode("0003")
-                .build();
-        if (!validatorRepository.existsValidatorEntityByProcess(AppConst.SUBCRIPTION))
-            validatorRepository.save(validatorOne);
+//        if (!validatorRepository.existsValidatorEntityByProcess(AppConst.SUBCRIPTION))
+//            validatorRepository.save(validatorOne);
 
 //        ClientEntity clientEntity = clientRepository.save(client);
-//        List<AccountEntity> accounts = accountRepository.saveAll(List.of(account, accountDigital));
+        List<AccountEntity> accounts = accountRepository.saveAll(List.of(accountOne, accountTwo));
         return args -> {
 //            log.info("Preloading validators "+ validatorEntity);
 //            log.info("Preloading clients "+ clientEntity);
-//            log.info("Preloading account "+ accounts);
+            log.info("Preloading account "+ accounts);
         };
     }
 }

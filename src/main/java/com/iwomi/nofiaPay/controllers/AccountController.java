@@ -106,7 +106,7 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), balances);
     }
 
-    @GetMapping("/client/{client_code}")
+    @GetMapping("/client/{clientCode}")
     public ResponseEntity<?> showAccountsByClientCode(@PathVariable String clientCode) {
         List<Account> result = accountService.getAccountsByClientCode(clientCode);
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
