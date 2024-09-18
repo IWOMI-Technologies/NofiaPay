@@ -1,29 +1,26 @@
 package com.iwomi.nofiaPay.core.utils;
 
-import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
-import com.iwomi.nofiaPay.core.mappers.IClientMapper;
-import com.iwomi.nofiaPay.dtos.responses.*;
+import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
+import com.iwomi.nofiaPay.dtos.responses.CombineHistory;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
+import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 public class CombineResults {
 
-    private  final AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-    private  final ClientRepository clientRepository;
-    private  final IAccountMapper mapper;
-    private  final IClientMapper clientMapper;
+    private final ClientRepository clientRepository;
+
     public CombineHistory mapToAccountHistory(AccountHistory history) {
-        String accountNumber = history.accountNumber();
-        String account = accountRepository.getOneByAccount(accountNumber).getClientCode();
+        String account = accountRepository.getOneByAccount(history.accountNumber()).getClientCode();
+        ClientEntity client = clientRepository.getOneByClientCode(account);
 
-        Client client = clientMapper.mapToModel(clientRepository.getOneByClientCode(account));
         return CombineHistory.builder()
                 .name(client.getFullName())
                 .service(history.type().toString())
@@ -39,11 +36,8 @@ public class CombineResults {
     }
 
     public CombineHistory mapToTransactionHistory(Transaction transaction) {
-
-        String accountNumber = transaction.issuerAccount();
-        String account = mapper.mapToModel(accountRepository.getOneByAccount(accountNumber)).clientCode();
-
-        Client client = clientMapper.mapToModel(clientRepository.getOneByClientCode(account));
+        String clientCode = accountRepository.getOneByAccount(transaction.issuerAccount()).getClientCode();
+        ClientEntity client = clientRepository.getOneByClientCode(clientCode);
 
         return CombineHistory.builder()
                 .name(client.getFullName())
