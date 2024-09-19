@@ -1,5 +1,7 @@
 package com.iwomi.nofiaPay.core.utils;
 
+import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -55,4 +57,30 @@ public class DateConverterUtils {
             throw new IllegalArgumentException("Time string contains invalid numbers", e);
         }
     }
+
+
+        public static Date convertToDate(String date) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+
+//            try {
+//                if (date.contains("-")) {
+//                    return dateFormat.parse(date.trim());
+//                } else if (date.contains("/")) {
+//                    return formatter.parse(date.trim());
+//                } else {
+//                    throw new GeneralException ("Invalid date format: " + date);
+//                }
+//            } catch (ParseException e) {
+//                throw new RuntimeException(e);
+//            }
+            try {
+                return dateFormat.parse(date);
+            } catch (ParseException e) {
+//            e.printStackTrace();
+                System.out.println("Failed to parse date: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        }
+
 }

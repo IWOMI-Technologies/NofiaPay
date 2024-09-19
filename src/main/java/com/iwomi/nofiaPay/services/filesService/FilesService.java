@@ -11,6 +11,7 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepositor
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -27,12 +28,12 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class FilesService implements IFilesService{
+public class FilesService implements IFilesService {
     private final ClientRepository clientRepository;
 
     private final AccountRepository accountRepository;
 
-    private  final AccountHistoryRepository accountHistoryRepository;
+    private final AccountHistoryRepository accountHistoryRepository;
 
     @Override
     public Boolean importFile(UploadDto dto) {
@@ -59,13 +60,13 @@ public class FilesService implements IFilesService{
                     continue;
                 }
 
-                System.out.println("cell data****** "+row.getCell(0));
-                System.out.println("cell data****** "+row.getCell(1));
-                System.out.println("cell data****** "+row.getCell(2));
+                System.out.println("cell data****** " + row.getCell(0));
+                System.out.println("cell data****** " + row.getCell(1));
+                System.out.println("cell data****** " + row.getCell(2));
 
-                System.out.println("cell data****** 9"+row.getCell(9));
-                System.out.println("cell data****** 10"+row.getCell(10));
-                System.out.println("cell data****** 22 "+row.getCell(22));
+                System.out.println("cell data****** 9" + row.getCell(9));
+                System.out.println("cell data****** 10" + row.getCell(10));
+                System.out.println("cell data****** 22 " + row.getCell(22));
 
                 ClientEntity client = new ClientEntity();
                 client.setClientCode(row.getCell(0).getStringCellValue());
@@ -79,22 +80,22 @@ public class FilesService implements IFilesService{
                 client.setFirstAddress(row.getCell(8).getStringCellValue());
                 client.setSecondAddress(row.getCell(9).getStringCellValue());
                 client.setClientType(row.getCell(10).getStringCellValue());
-                client.setDateOfBirth(row.getCell(11).getDateCellValue());
+                client.setDateOfBirth(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
                 client.setPlaceOfBirth(row.getCell(12).getStringCellValue());
                 client.setIdNumber(row.getCell(13).getStringCellValue());
-                client.setIdDeliveryDate(row.getCell(14).getDateCellValue());
+                client.setIdDeliveryDate(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
                 client.setIdDeliveryPlace(row.getCell(15).getStringCellValue());
-                client.setIdExpirationDate(row.getCell(16).getDateCellValue());
+                client.setIdExpirationDate(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
                 client.setCommercialRegNum(row.getCell(17).getStringCellValue());
                 client.setTaxPayerNumber(row.getCell(18).getStringCellValue());
-                client.setBusinessCreationDate(row.getCell(19).getDateCellValue());
+                client.setBusinessCreationDate(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
                 client.setNotificationPhoneNumber(row.getCell(20).getStringCellValue());
                 client.setPhoneNumber(row.getCell(21).getStringCellValue());
-                client.setClientCreationDate(row.getCell(22).getDateCellValue());
+                client.setClientCreationDate(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
                 client.setEmail(row.getCell(23).getStringCellValue());
                 client.setAgentCode(row.getCell(24).getStringCellValue());
                 client.setAgentName(row.getCell(25).getStringCellValue());
-       //         client.setIdDeliveryAuthority(row.getCell(18).getStringCellValue());
+                //         client.setIdDeliveryAuthority(row.getCell(18).getStringCellValue());
 
 //                clientRepository.save(client);
                 clientsList.add(client);
@@ -103,9 +104,9 @@ public class FilesService implements IFilesService{
             throw new RuntimeException(e);
         }
 
-        System.out.println("output ------- "+clientsList);
+        System.out.println("output ------- " + clientsList);
         List<ClientEntity> result = clientRepository.createManyClients(clientsList);
-        System.out.println("output ------- "+clientsList);
+        System.out.println("output ------- " + clientsList);
 
         return !result.isEmpty();
     }
@@ -123,13 +124,15 @@ public class FilesService implements IFilesService{
                     continue;
                 }
 
-                System.out.println("cell data****** "+row.getCell(0));
-                System.out.println("cell data****** "+row.getCell(1));
-                System.out.println("cell data****** "+row.getCell(2));
 
-                System.out.println("cell data****** 9"+row.getCell(9));
-                System.out.println("cell data****** 10"+row.getCell(10));
-                System.out.println("cell data****** 14 "+row.getCell(14));
+
+                System.out.println("cell data****** " + row.getCell(0));
+                System.out.println("cell data****** " + row.getCell(1));
+                System.out.println("cell data****** " + row.getCell(2));
+
+                System.out.println("cell data****** 5" + row.getCell(5));
+                System.out.println("cell data****** 10" + row.getCell(10));
+                System.out.println("cell data****** 14 " + row.getCell(14));
 
                 AccountEntity account = new AccountEntity();
                 account.setAgencyCode(row.getCell(0).getStringCellValue());
@@ -137,13 +140,21 @@ public class FilesService implements IFilesService{
                 account.setCurrency(row.getCell(2).getStringCellValue());
                 account.setCle(row.getCell(3).getStringCellValue());
                 account.setAccountTitle(row.getCell(4).getStringCellValue());
-                account.setChapter(row.getCell(5).getStringCellValue());
+//                account.setChapter(String.valueOf(row.getCell(5).getNumericCellValue()));
+
+                account.setAccountTypeCode(String.valueOf(row.getCell(5).getNumericCellValue()));
                 account.setChapterTitle(row.getCell(6).getStringCellValue());
-                account.setAccountTypeCode(row.getCell(7).getStringCellValue());
+
+                account.setAccountTypeCode(String.valueOf(row.getCell(7).getNumericCellValue()));
+//                account.setAccountTypeCode(row.getCell(7).getStringCellValue());
                 account.setAccountTypeLabel(row.getCell(8).getStringCellValue());
                 account.setAccountNumber(row.getCell(9).getStringCellValue());
-                account.setStartDate(row.getCell(10).getDateCellValue());
-                account.setEndDate(row.getCell(11).getDateCellValue());
+//                account.setStartDate(row.getCell(10).getDateCellValue());
+                String dateStr = row.getCell(10).getStringCellValue();
+                account.setStartDate(DateConverterUtils.convertToDate(dateStr));
+
+//                account.setEndDate(row.getCell(11).getDateCellValue());
+                account.setEndDate(DateConverterUtils.convertToDate(row.getCell(11).getStringCellValue()));
                 account.setDebit(BigDecimal.valueOf(row.getCell(12).getNumericCellValue()));
                 account.setCredit(BigDecimal.valueOf(row.getCell(13).getNumericCellValue()));
                 account.setClientCode(row.getCell(14).getStringCellValue());
@@ -154,9 +165,9 @@ public class FilesService implements IFilesService{
             throw new RuntimeException(e);
         }
 
-        System.out.println("output ------- "+accountsList);
+        System.out.println("output ------- " + accountsList);
         List<AccountEntity> result = accountRepository.saveAllAccounts(accountsList);
-        System.out.println("output ------- "+accountsList);
+        System.out.println("output ------- " + accountsList);
 
         return !result.isEmpty();
 
@@ -175,13 +186,13 @@ public class FilesService implements IFilesService{
                     continue;
                 }
 
-                System.out.println("cell data****** "+row.getCell(0));
-                System.out.println("cell data****** "+row.getCell(1));
-                System.out.println("cell data****** "+row.getCell(2));
+                System.out.println("cell data****** " + row.getCell(0));
+                System.out.println("cell data****** " + row.getCell(1));
+                System.out.println("cell data****** " + row.getCell(2));
 
-                System.out.println("cell data****** 9"+row.getCell(9));
-                System.out.println("cell data****** 10"+row.getCell(10));
-                System.out.println("cell data****** 14 "+row.getCell(14));
+                System.out.println("cell data****** 9" + row.getCell(9));
+                System.out.println("cell data****** 10" + row.getCell(10));
+                System.out.println("cell data****** 14 " + row.getCell(14));
 
                 AccountHistoryEntity accountHistory = new AccountHistoryEntity();
                 accountHistory.setAgencyCode(row.getCell(0).getStringCellValue());
@@ -191,7 +202,8 @@ public class FilesService implements IFilesService{
                 accountHistory.setOperationCode(row.getCell(4).getStringCellValue());
                 accountHistory.setOperationTitle(row.getCell(5).getStringCellValue());
                 accountHistory.setTransactionReference(row.getCell(6).getStringCellValue());
-                accountHistory.setAmount(BigDecimal.valueOf(row.getCell(7).getNumericCellValue()));
+                accountHistory.setAmount(new BigDecimal(row.getCell(12).getStringCellValue()));
+                ;
                 accountHistory.setSense(SenseTypeEnum.valueOf(row.getCell(8).getStringCellValue()));
                 accountHistory.setAccountingDocument(row.getCell(9).getStringCellValue());
                 accountHistory.setAccountingDate(row.getCell(10).getStringCellValue());
@@ -206,9 +218,9 @@ public class FilesService implements IFilesService{
             throw new RuntimeException(e);
         }
 
-        System.out.println("output ------- "+accountHisoryList);
+        System.out.println("output ------- " + accountHisoryList);
         List<AccountHistoryEntity> result = accountHistoryRepository.saveAllHistories(accountHisoryList);
-        System.out.println("output ------- "+accountHisoryList);
+        System.out.println("output ------- " + accountHisoryList);
 
         return !result.isEmpty();
     }
