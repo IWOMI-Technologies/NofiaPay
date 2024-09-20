@@ -113,7 +113,7 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/clientAccount/{clientCode}")
+    @GetMapping("/client-account/{clientCode}")
     public ResponseEntity<?> showClientAccountByClientCode(@PathVariable String clientCode) {
         ClientAccount result = accountService.getClientAccountByClientCode(clientCode);
         return GlobalResponse.responseBuilder("Account ", HttpStatus.OK, HttpStatus.OK.value(), result);
