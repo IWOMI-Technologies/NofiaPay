@@ -11,10 +11,7 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepositor
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,6 +55,9 @@ public class FilesService implements IFilesService {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) {  // Skip header row
                     continue;
+                }
+                if (!isValidRow(row)) {
+                    break;
                 }
 
                 System.out.println("cell data****** " + row.getCell(0));
@@ -123,7 +123,9 @@ public class FilesService implements IFilesService {
                 if (row.getRowNum() == 0) {  // Skip header row
                     continue;
                 }
-
+                if (!isValidRow(row)) {
+                    break;
+                }
 
 
                 System.out.println("cell data****** " + row.getCell(0));
@@ -149,12 +151,12 @@ public class FilesService implements IFilesService {
 //                account.setAccountTypeCode(row.getCell(7).getStringCellValue());
                 account.setAccountTypeLabel(row.getCell(8).getStringCellValue());
                 account.setAccountNumber(row.getCell(9).getStringCellValue());
-//                account.setStartDate(row.getCell(10).getDateCellValue());
-                String dateStr = row.getCell(10).getStringCellValue();
-                account.setStartDate(DateConverterUtils.convertToDate(dateStr));
+                account.setStartDate(row.getCell(10).getDateCellValue());
+//                String dateStr = row.getCell(10).getStringCellValue();
+//                account.setStartDate(DateConverterUtils.convertToDate(dateStr));
 
-//                account.setEndDate(row.getCell(11).getDateCellValue());
-                account.setEndDate(DateConverterUtils.convertToDate(row.getCell(11).getStringCellValue()));
+                account.setEndDate(row.getCell(11).getDateCellValue());
+//                account.setEndDate(DateConverterUtils.convertToDate(row.getCell(11).getStringCellValue()));
                 account.setDebit(BigDecimal.valueOf(row.getCell(12).getNumericCellValue()));
                 account.setCredit(BigDecimal.valueOf(row.getCell(13).getNumericCellValue()));
                 account.setClientCode(row.getCell(14).getStringCellValue());
@@ -184,6 +186,9 @@ public class FilesService implements IFilesService {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) {  // Skip header row
                     continue;
+                }
+                if (!isValidRow(row)) {
+                    break;
                 }
 
                 System.out.println("cell data****** " + row.getCell(0));
@@ -224,4 +229,14 @@ public class FilesService implements IFilesService {
 
         return !result.isEmpty();
     }
+    private  boolean isValidRow(Row row){
+        for (Cell cell : row ){
+            if (cell != null ) {
+                return true;
+            }
+
+        }
+        return false;
+    }
+
 }

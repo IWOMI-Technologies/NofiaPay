@@ -22,6 +22,7 @@ public interface IAccountRepository extends JpaRepository<AccountEntity, UUID> {
     Optional<AccountEntity> findByAgencyCodeAndAccountTypeCode(String clientId, String type);
     List<AccountEntity> findByClientCode(String clientCode);
 
+    AccountEntity findAccountByClientCode(String clientCode);
     List<AccountEntity> findByAccountNumberIn(List<String> accountNumbers);
 
     @Query("SELECT a FROM accounts a WHERE  a.createdAt BETWEEN :startDate AND :endDate ORDER BY a.createdAt DESC")

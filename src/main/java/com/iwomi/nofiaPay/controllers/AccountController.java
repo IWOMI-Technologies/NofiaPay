@@ -3,10 +3,6 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.AccountDto;
-import com.iwomi.nofiaPay.dtos.responses.Account;
-import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
-import com.iwomi.nofiaPay.dtos.responses.CombineHistory;
-import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
@@ -107,13 +103,19 @@ public class AccountController {
 
         Map<String, List<Double>> balances = accountService.viewAccountBalances(clientCode);
 
-        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), balances);
+        return GlobalResponse.responseBuilder("Balance check successful", HttpStatus.OK, HttpStatus.OK.value(), balances);
     }
 
     @GetMapping("/client/{clientCode}")
     public ResponseEntity<?> showAccountsByClientCode(@PathVariable String clientCode) {
         List<Account> result = accountService.getAccountsByClientCode(clientCode);
-        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
+        return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @GetMapping("/clientAccount/{clientCode}")
+    public ResponseEntity<?> showClientAccountByClientCode(@PathVariable String clientCode) {
+        ClientAccount result = accountService.getClientAccountByClientCode(clientCode);
+        return GlobalResponse.responseBuilder("Account ", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 //
 //    @GetMapping("/dashboard/{client_code}")
@@ -220,7 +222,8 @@ public class AccountController {
 
             Date start = formatter.parse(startDate);
             Date end = formatter.parse(endDate);
-            List<Account> result = accountService.viewAccountByDateRange(start, end);
+//           List<Account> result = accountService.viewAccountByDateRange(start, end);
+            List<CombineHistory> result = accountService.viewAccountByDateRange(start, end);
 
             return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
         } catch (ParseException e) {

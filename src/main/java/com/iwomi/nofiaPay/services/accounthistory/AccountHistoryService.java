@@ -25,11 +25,7 @@ public class AccountHistoryService implements IAccountHistoryService {
 
     private  final IAccountHistoryMapper mapper;
 
-    private  final IAccountMapper iAccountMapper;
-
     private  final AccountRepository accountRepository;
-
-    private final AccountService accountService;
 
 
 

@@ -3,27 +3,24 @@ package com.iwomi.nofiaPay.services.accounts;
 import com.iwomi.nofiaPay.core.mappers.IAccountHistoryMapper;
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
-import com.iwomi.nofiaPay.core.utils.CoreUtils;
+import com.iwomi.nofiaPay.core.utils.CombineResults;
 import com.iwomi.nofiaPay.dtos.AccountDto;
-import com.iwomi.nofiaPay.dtos.responses.Account;
-import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
-import com.iwomi.nofiaPay.dtos.responses.AccountTransDto;
-import com.iwomi.nofiaPay.dtos.responses.Transaction;
+import com.iwomi.nofiaPay.dtos.responses.*;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
-import com.iwomi.nofiaPay.frameworks.data.entities.AccountHistoryEntity;
-import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory.AccountHistoryRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
-
-import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.IAccountRepository;
+import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.TransactionRepository;
+import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
+import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +37,15 @@ public class AccountService  implements  IAccountService{
     private final AccountHistoryRepository accountHistoryRepository;
 
     private  final IAccountHistoryMapper accountHistoryMapper;
+
+    private  final ClientRepository clientRepository;
+
+    private final AccountHistoryService historyService;
+
+    private final TransactionService transactionService;
+
+    private final CombineResults combineResults;
+
     @Override
     public List<Account> viewAllAccounts() {
         return accountRepository.getAllAccounts()
@@ -76,6 +82,26 @@ public class AccountService  implements  IAccountService{
                 .toList();
     }
 
+    public ClientAccount getClientAccountByClientCode(String clientCode){
+        AccountEntity account = accountRepository.getAccountByClientCode(clientCode);
+        BigDecimal balance = account.getCredit().subtract(account.getDebit());
+
+        ClientEntity client =  clientRepository.getOneByClientCode(clientCode);
+
+         ClientAccount clientAccount = new ClientAccount();
+         clientAccount.setName(client.getFullName());
+         clientAccount.setAccountTypeLabel(account.getAccountTypeLabel());
+         clientAccount.setName(account.getClientCode());
+         clientAccount.setAmount(balance);
+         clientAccount.setAccountNumber(account.getAccountNumber());
+         clientAccount.setPhone(client.getPhoneNumber());
+         clientAccount.setBranchCode(account.getAgencyCode());
+         clientAccount.setBranchName(account.getAgencyName());
+         clientAccount.setOpeningDate(account.getStartDate());
+
+        return clientAccount;
+    }
+
     @Override
     public List<String> getAccountNumbersByClientCode(String clientCode) {
         return  accountRepository.getAccountNumbersByClientCode(clientCode);
@@ -110,13 +136,71 @@ public Map<String, List<Double>> viewAccountBalances(String clientCode) {
                     }, Collectors.toList())));
 }
 
-    @Override
-    public List<Account> viewAccountByDateRange(Date start, Date end) {
+//    public List<Account> viewAccountByDateRange(Date start, Date end) {
+//        return accountRepository.getAccountByDateRange(start, end)
+//                .stream()
+//                .filter(account -> !account.getCreatedAt().before(start) && !account.getCreatedAt().after(end))
+//                .map(mapper::mapToModel)
+//                .collect(Collectors.toList());
+//    }
 
-        return accountRepository.getAccountByDateRange(start, end)
+    @Override
+    public List<CombineHistory> viewAccountByDateRange(Date start, Date end) {
+
+        List<Account> accounts = accountRepository.getAccountByDateRange(start, end)
                 .stream()
                 .filter(account -> account.getCreatedAt().after(start) && account.getCreatedAt().before(end))
                 .map(mapper::mapToModel)
+                .toList();
+
+        List<AccountHistory> accountHistories = new ArrayList<>();
+        List<Transaction> transactions = new ArrayList<>();
+
+        for (Account account : accounts ) {
+
+            List<AccountHistory> allAccountHistories = historyService.getLatestTop5AccountHistoryByClientCode(account.clientCode());
+
+            List<Transaction> allTransactions = transactionService.getLatestTop5TransactionByClientCode(account.clientCode());
+
+            accountHistories.addAll(allAccountHistories);
+            transactions.addAll(allTransactions);
+        }
+
+        // Map histories and transactions to a common format
+        List<Map<String, Object>> historiesMap = accountHistories
+                .stream()
+                .map(history -> Map.<String, Object>of(
+                        "uuid", history.uuid(),
+                        "createdAt", history.createdAt()
+                )).toList();
+        List<Map<String, Object>> transactionsMap = transactions
+                .stream()
+                .map(history -> Map.<String, Object>of(
+                        "uuid", history.uuid(),
+                        "createdAt", history.createdAt()
+                )).toList();
+
+        // Combine and sort histories and transactions
+        Set<String> uuids = Stream.of(historiesMap, transactionsMap)
+                .flatMap(List::stream)
+                .sorted(Comparator.comparing(o -> (Date) o.get("createdAt"), Comparator.reverseOrder()))
+                .limit(5)
+                .map(d -> (String) d.get("uuid"))
+                .collect(Collectors.toSet());
+
+        List<AccountHistory> historyResult = accountHistories
+                .stream()
+                .filter(history -> uuids.contains(history.uuid()))
+                .toList();
+
+        List<Transaction> transactionResult = transactions
+                .stream()
+                .filter(transaction -> uuids.contains(transaction.uuid()))
+                .toList();
+
+        // Combine results into a single list
+        return Stream.concat(transactionResult.stream().map(combineResults::mapToTransactionHistory),
+                        historyResult.stream().map(combineResults::mapToAccountHistory))
                 .collect(Collectors.toList());
     }
 
