@@ -29,7 +29,6 @@ public class Client {
     private String email;
     private String idNumber;
     private String idDeliveryPlace;
-    private String idDeliveryAuthority;
     private String placeOfBirth;
     private String commercialRegNum;
     private String taxPayerNumber;

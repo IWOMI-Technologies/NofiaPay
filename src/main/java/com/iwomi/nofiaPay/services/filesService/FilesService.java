@@ -11,10 +11,7 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepositor
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,6 +57,10 @@ public class FilesService implements IFilesService {
                     continue;
                 }
 
+                if (isRowEmpty(row)) {
+                    continue;  //Skip empty rows
+                }
+
                 System.out.println("cell data****** " + row.getCell(0));
                 System.out.println("cell data****** " + row.getCell(1));
                 System.out.println("cell data****** " + row.getCell(2));
@@ -80,18 +81,18 @@ public class FilesService implements IFilesService {
                 client.setFirstAddress(row.getCell(8).getStringCellValue());
                 client.setSecondAddress(row.getCell(9).getStringCellValue());
                 client.setClientType(row.getCell(10).getStringCellValue());
-                client.setDateOfBirth(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
+                client.setDateOfBirth(DateConverterUtils.convertToDate(row.getCell(11).getStringCellValue()));
                 client.setPlaceOfBirth(row.getCell(12).getStringCellValue());
                 client.setIdNumber(row.getCell(13).getStringCellValue());
-                client.setIdDeliveryDate(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
+                client.setIdDeliveryDate(DateConverterUtils.convertToDate(row.getCell(14).getStringCellValue()));
                 client.setIdDeliveryPlace(row.getCell(15).getStringCellValue());
-                client.setIdExpirationDate(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
+                client.setIdExpirationDate(DateConverterUtils.convertToDate(row.getCell(16).getStringCellValue()));
                 client.setCommercialRegNum(row.getCell(17).getStringCellValue());
                 client.setTaxPayerNumber(row.getCell(18).getStringCellValue());
-                client.setBusinessCreationDate(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
+                client.setBusinessCreationDate(DateConverterUtils.convertToDate(row.getCell(19).getStringCellValue()));
                 client.setNotificationPhoneNumber(row.getCell(20).getStringCellValue());
                 client.setPhoneNumber(row.getCell(21).getStringCellValue());
-                client.setClientCreationDate(DateConverterUtils.convertToDate(row.getCell(10).getStringCellValue()));
+                client.setClientCreationDate(DateConverterUtils.convertToDate(row.getCell(22).getStringCellValue()));
                 client.setEmail(row.getCell(23).getStringCellValue());
                 client.setAgentCode(row.getCell(24).getStringCellValue());
                 client.setAgentName(row.getCell(25).getStringCellValue());
@@ -124,6 +125,10 @@ public class FilesService implements IFilesService {
                     continue;
                 }
 
+                if (isRowEmpty(row)) {
+                    continue;  //Skip empty rows
+                }
+
 
 
                 System.out.println("cell data****** " + row.getCell(0));
@@ -140,7 +145,7 @@ public class FilesService implements IFilesService {
                 account.setCurrency(row.getCell(2).getStringCellValue());
                 account.setCle(row.getCell(3).getStringCellValue());
                 account.setAccountTitle(row.getCell(4).getStringCellValue());
-//                account.setChapter(String.valueOf(row.getCell(5).getNumericCellValue()));
+                account.setChapter(String.valueOf(row.getCell(5).getNumericCellValue()));
 
                 account.setAccountTypeCode(String.valueOf(row.getCell(5).getNumericCellValue()));
                 account.setChapterTitle(row.getCell(6).getStringCellValue());
@@ -186,13 +191,17 @@ public class FilesService implements IFilesService {
                     continue;
                 }
 
+                if (isRowEmpty(row)) {
+                    continue;  //Skip empty rows
+                }
+
                 System.out.println("cell data****** " + row.getCell(0));
                 System.out.println("cell data****** " + row.getCell(1));
                 System.out.println("cell data****** " + row.getCell(2));
 
                 System.out.println("cell data****** 9" + row.getCell(9));
                 System.out.println("cell data****** 10" + row.getCell(10));
-                System.out.println("cell data****** 14 " + row.getCell(14));
+                System.out.println("cell data****** 12 " + row.getCell(12));
 
                 AccountHistoryEntity accountHistory = new AccountHistoryEntity();
                 accountHistory.setAgencyCode(row.getCell(0).getStringCellValue());
@@ -202,11 +211,10 @@ public class FilesService implements IFilesService {
                 accountHistory.setOperationCode(row.getCell(4).getStringCellValue());
                 accountHistory.setOperationTitle(row.getCell(5).getStringCellValue());
                 accountHistory.setTransactionReference(row.getCell(6).getStringCellValue());
-                accountHistory.setAmount(new BigDecimal(row.getCell(12).getStringCellValue()));
-                ;
+                accountHistory.setAmount(BigDecimal.valueOf(row.getCell(12).getNumericCellValue()));
                 accountHistory.setSense(SenseTypeEnum.valueOf(row.getCell(8).getStringCellValue()));
                 accountHistory.setAccountingDocument(row.getCell(9).getStringCellValue());
-                accountHistory.setAccountingDate(row.getCell(10).getStringCellValue());
+                accountHistory.setAccountingDate(DateConverterUtils.convertToDate(String.valueOf(row.getCell(10).getNumericCellValue())));
                 accountHistory.setValueDate(row.getCell(11).getStringCellValue());
                 accountHistory.setBalance(row.getCell(12).getStringCellValue());
 
@@ -223,5 +231,15 @@ public class FilesService implements IFilesService {
         System.out.println("output ------- " + accountHisoryList);
 
         return !result.isEmpty();
+    }
+
+    private boolean isRowEmpty(Row row) {
+        for (int i = 0; i < row.getLastCellNum(); i++) {
+            Cell cell = row.getCell(i);
+            if (cell != null && cell.getCellType() != CellType.BLANK) {
+                return false;
+            }
+        }
+        return true;
     }
 }

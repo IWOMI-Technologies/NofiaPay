@@ -56,31 +56,39 @@ public class DateConverterUtils {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Time string contains invalid numbers", e);
         }
+
     }
 
 
-        public static Date convertToDate(String date) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+    public static Date convertToDate(String date) {
+        SimpleDateFormat[] dateFormats = {
+                new SimpleDateFormat("yyyy/dd/MM"),
+                new SimpleDateFormat("yyyy-MM-dd"),
+                new SimpleDateFormat("MM-dd-yyyy"),
+                new SimpleDateFormat("dd-MM-yyyy"),
+                new SimpleDateFormat("yyyy-dd-MM"),
+                new SimpleDateFormat("yyyy/MM/dd"),
+                new SimpleDateFormat("MM/dd/yyyy"),
+                new SimpleDateFormat("dd/MM/yyyy")
 
-//            try {
-//                if (date.contains("-")) {
-//                    return dateFormat.parse(date.trim());
-//                } else if (date.contains("/")) {
-//                    return formatter.parse(date.trim());
-//                } else {
-//                    throw new GeneralException ("Invalid date format: " + date);
-//                }
-//            } catch (ParseException e) {
-//                throw new RuntimeException(e);
-//            }
+        };
+
+        for (SimpleDateFormat dateFormat : dateFormats) {
             try {
-                return dateFormat.parse(date);
+                return dateFormat.parse(date.trim());
             } catch (ParseException e) {
-//            e.printStackTrace();
-                System.out.println("Failed to parse date: " + e.getMessage());
-                throw new RuntimeException(e);
+                // continue to next
             }
         }
+
+        throw new IllegalArgumentException("Invalid date format: " + date);
+    }
+    public static long convertDateToNumeric(String date) {
+        Date parsedDate = convertToDate(date);
+        return parsedDate.getTime();
+    }
+
+
+
 
 }
