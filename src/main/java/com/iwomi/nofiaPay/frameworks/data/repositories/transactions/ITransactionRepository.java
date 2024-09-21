@@ -29,7 +29,7 @@ public interface ITransactionRepository extends JpaRepository<TransactionEntity,
     boolean existsByIssuerAccount(String IssuerAccount);
 
     @Query("SELECT a FROM transactions a WHERE a.issuerAccount IN :issuerAccounts ORDER BY a.createdAt DESC")
-    List<TransactionEntity> findTop5ByIssuerAccount(@Param("issuerAccount") List<String> issuerAccounts);
+    List<TransactionEntity> findTop5ByIssuerAccount(@Param("issuerAccounts") List<String> issuerAccounts);
 
     @Query("SELECT a FROM transactions a WHERE a.receiverAccount IN :receiverAccount ORDER BY a.createdAt DESC")
     List<TransactionEntity> findTop5ByReceiverAccount(@Param("receiverAccount") List<String> receiverAccount);

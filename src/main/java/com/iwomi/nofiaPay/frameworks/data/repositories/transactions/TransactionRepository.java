@@ -104,7 +104,8 @@ public class TransactionRepository {
     }
 
     public List<TransactionEntity> getTop5ByIssuerAccount(List<String> issuerAccounts) {
-        return repository.findTop5ByIssuerAccount(issuerAccounts);
+        List<TransactionEntity> entities = repository.findTop5ByIssuerAccount(issuerAccounts);
+        return entities;
     }
 
     public List<TransactionEntity> getTop5ByReceiverAccount(List<String> receiverAccounts) {

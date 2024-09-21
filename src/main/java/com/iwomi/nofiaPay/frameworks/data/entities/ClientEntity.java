@@ -55,12 +55,4 @@ public class ClientEntity extends BaseEntity  {
     private String agentCode;
     private String agentName;
 
-//    private String idDeliveryAuthority;
-
-
-
-
-
-
-
 }

@@ -73,4 +73,18 @@ public class ClientController {
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
+    @GetMapping("/client-code")
+    @Operation(
+            description = "Find client by client code",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Client.class))}),
+            }
+    )
+    public ResponseEntity<?> specificByClientCode(@RequestParam String clientCode) {
+        Client result = clientService.viewOneByClientCode(clientCode);
+        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
 }

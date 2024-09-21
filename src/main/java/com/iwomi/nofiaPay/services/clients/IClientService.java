@@ -15,6 +15,7 @@ public interface IClientService {
     void deleteOne(UUID uuid);
 
     Client viewOneByPhone(String phone);
+    Client viewOneByClientCode(String clientCode);
 
     List<Client> findAllByClientCode(UserTypeEnum role);
 

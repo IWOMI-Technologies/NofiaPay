@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.core.utils;
 
+import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.dtos.responses.CombineHistory;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
@@ -8,6 +9,8 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepositor
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -18,8 +21,8 @@ public class CombineResults {
     private final ClientRepository clientRepository;
 
     public CombineHistory mapToAccountHistory(AccountHistory history) {
-        String account = accountRepository.getOneByAccount(history.accountNumber()).getClientCode();
-        ClientEntity client = clientRepository.getOneByClientCode(account);
+        String clientCode = accountRepository.getOneByAccount(history.accountNumber()).getClientCode();
+        ClientEntity client = clientRepository.getOneByClientCode(clientCode);
 
         return CombineHistory.builder()
                 .name(client.getFullName())
@@ -32,12 +35,22 @@ public class CombineResults {
                 .transactionId(history.uuid())
                 .transactionDate(history.createdAt())
                 .status("VALIDATED")
+                .sense(history.sense())
                 .build();
     }
 
     public CombineHistory mapToTransactionHistory(Transaction transaction) {
+        System.out.println("@@@@@ "+transaction.issuerAccount());
         String clientCode = accountRepository.getOneByAccount(transaction.issuerAccount()).getClientCode();
+        System.out.println("@@@@@ CODE"+clientCode);
+
         ClientEntity client = clientRepository.getOneByClientCode(clientCode);
+
+        List<String> clientAccounts = accountRepository.getAccountNumbersByClientCode(clientCode);
+
+        SenseTypeEnum sense = clientAccounts.contains(transaction.issuerAccount()) ?
+                SenseTypeEnum.DEBIT :
+                SenseTypeEnum.CREDIT;
 
         return CombineHistory.builder()
                 .name(client.getFullName())
@@ -50,6 +63,7 @@ public class CombineResults {
                 .transactionId(transaction.uuid())
                 .transactionDate(transaction.createdAt())
                 .status(transaction.status().toString())
+                .sense(sense)
                 .build();
     }
 }

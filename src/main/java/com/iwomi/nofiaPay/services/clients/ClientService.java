@@ -68,6 +68,20 @@ public class ClientService implements IClientService {
     }
 
     @Override
+    public Client viewOneByClientCode(String clientCode) {
+
+        Client client = mapper.mapToModel(clientRepository.getOneByClientCode(clientCode));
+        List<Account> accounts = accountRepository
+                .getByClientCode(client.getClientCode())
+                .stream()
+                .map(accountMapper::mapToModel)
+                .toList();
+        client.setAccounts(accounts);
+
+        return client;
+    }
+
+    @Override
     public List<Client> findAllByClientCode(UserTypeEnum role) {
         ResponseEntity<?> response = authClient.getUsersByRole(role);
         List<String> codes = (List<String>) response.getBody();

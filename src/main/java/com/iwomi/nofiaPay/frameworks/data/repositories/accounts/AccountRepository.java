@@ -18,42 +18,43 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountRepository {
 
-    private final  IAccountRepository repository;
+    private final IAccountRepository repository;
 
-    private  final IAccountMapper mapper;
+    private final IAccountMapper mapper;
 
-    public List<AccountEntity> getAllAccounts () {
+    public List<AccountEntity> getAllAccounts() {
         return repository.findAll();
     }
 
 
-    public  AccountEntity createAccount (AccountDto dto) {
+    public AccountEntity createAccount(AccountDto dto) {
         AccountEntity account = mapper.mapToEntity(dto);
-        return  repository.save(account);
+        return repository.save(account);
     }
 
     @Transactional
-    public  List<AccountEntity> saveAllAccounts(List<AccountEntity> accounts) {
+    public List<AccountEntity> saveAllAccounts(List<AccountEntity> accounts) {
         repository.deleteAll();
-        return  repository.saveAll(accounts);
+        return repository.saveAll(accounts);
     }
 
-    public  AccountEntity getOne(UUID uuid) {
-        return  repository.findById(uuid)
+    public AccountEntity getOne(UUID uuid) {
+        return repository.findById(uuid)
                 .orElseThrow(() -> new GeneralException("Account Not Found"));
     }
 
-    public  AccountEntity getOneByAccount(String account) {
-        return  repository.findByAccountNumber(account)
-                .orElseThrow(() -> new GeneralException("Account Not Found"));
+    public AccountEntity getOneByAccount(String account) {
+        AccountEntity entity = repository.findByAccountNumber(account);
+        if (entity == null) throw new GeneralException("Account Not Found");
+        return entity;
     }
 
-    public  List<AccountEntity> getByClientCode(String clientCode) {
-        return  repository.findByClientCode(clientCode);
+    public List<AccountEntity> getByClientCode(String clientCode) {
+        return repository.findByClientCode(clientCode);
     }
 
-    public  AccountEntity getOneByBranchCodeAndType(String branchCode, String type) {
-        return  repository.findByAgencyCodeAndAccountTypeCode(branchCode, type)
+    public AccountEntity getOneByBranchCodeAndType(String branchCode, String type) {
+        return repository.findByAgencyCodeAndAccountTypeCode(branchCode, type)
                 .orElseThrow(() -> new GeneralException("Account Not Found"));
     }
 
@@ -67,18 +68,20 @@ public class AccountRepository {
 //                .orElseThrow(() -> new GeneralException("Account Not Found"));
 //    }
 
-    public  AccountEntity updateAccount (AccountDto dto, UUID uuid){
+    public AccountEntity updateAccount(AccountDto dto, UUID uuid) {
         AccountEntity account = getOne(uuid);
         mapper.updateAccountFromDto(dto, account);
-        return  repository.save(account);
+        return repository.save(account);
     }
-    public  void  deleteAccount(UUID uuid){
+
+    public void deleteAccount(UUID uuid) {
         repository.deleteById(uuid);
     }
 
     public List<AccountEntity> getAccountsByClientCode(String clientCode) {
-        return repository.findByClientCode(clientCode);
-
+        List<AccountEntity> accounts = repository.findByClientCode(clientCode);
+        System.out.println("Fetch accounts ))))) " + accounts);
+        return accounts;
     }
 
     public List<String> getAccountNumbersByClientCode(String clientCode) {
@@ -88,12 +91,12 @@ public class AccountRepository {
 
     }
 
-    public  List<AccountEntity> getAccountBalances(List<String> accountNumbers){
+    public List<AccountEntity> getAccountBalances(List<String> accountNumbers) {
         return repository.findByAccountNumberIn(accountNumbers);
     }
 
-    public  List<AccountEntity> getAccountByDateRange(Date startDate, Date endDate){
-           return  repository.findAccountByDateRange(startDate, endDate);
+    public List<AccountEntity> getAccountByDateRange(Date startDate, Date endDate) {
+        return repository.findAccountByDateRange(startDate, endDate);
     }
 
 }

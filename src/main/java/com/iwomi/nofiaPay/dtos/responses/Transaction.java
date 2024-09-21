@@ -17,7 +17,6 @@ public record Transaction(
         String issuerAccount,
         String receiverAccount,
         OperationTypeEnum type,
-        SenseTypeEnum sense,
         StatusTypeEnum status,
         Date createdAt
 ) {

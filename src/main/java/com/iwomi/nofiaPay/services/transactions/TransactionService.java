@@ -8,6 +8,7 @@ import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
+import com.iwomi.nofiaPay.core.utils.OperationTypeUtil;
 import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
@@ -127,6 +128,8 @@ public class TransactionService implements ITransactionService {
     @Override
     public Transaction agentCashCollection(AgentCashCollectionDto dto) {
         String batchCode = agentBranchCode(dto.agentAccount());
+        OperationTypeEnum operationType = OperationTypeUtil
+                .getOperationTypeFromString(dto.operation());
 
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
@@ -134,7 +137,7 @@ public class TransactionService implements ITransactionService {
                 .batch(batchCode)
                 .issuerAccount(dto.agentAccount())
                 .receiverAccount(dto.clientAccount())
-                .type(dto.operation())
+                .type(operationType)
                 .status(StatusTypeEnum.COLLECTED)
                 .build();
 
@@ -179,7 +182,6 @@ public class TransactionService implements ITransactionService {
                 .build();
 
         return mapper.mapToModel(transactionRepository.createTransaction(entity));
-
     }
 
     @Override
@@ -264,12 +266,15 @@ public class TransactionService implements ITransactionService {
     public List<Transaction> getLatestTop5TransactionByClientCode(String clientCode) {
 
         List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode);
+        System.out.println("-------- _+____ accounts"+ accounts);
 
         List<Transaction> issuerAccounts = transactionRepository.getTop5ByIssuerAccount(accounts)
                 .stream()
+//                .filter(Objects::nonNull)
                 .limit(5)
                 .map(mapper::mapToModel)
                 .toList();
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!! ");
 
         List<Transaction> receiverAccounts = transactionRepository.getTop5ByReceiverAccount(accounts)
                 .stream()
@@ -277,9 +282,12 @@ public class TransactionService implements ITransactionService {
                 .map(mapper::mapToModel)
                 .toList();
 
+        System.out.println("issuer data ***** "+issuerAccounts);
+        System.out.println("receiver data ***** "+issuerAccounts);
         List<Transaction> merged = Stream.of(issuerAccounts, receiverAccounts)
                 .flatMap(List::stream)
                 .toList();
+        System.out.println("############################");
 
         return merged
                 .stream()

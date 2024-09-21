@@ -161,15 +161,17 @@ public class AccountController {
 //        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
 //    }
 
-    @GetMapping("/dashboard/{client_code}")
+    @GetMapping("/dashboard/{clientCode}")
     public ResponseEntity<?> dashboard(@PathVariable String clientCode) {
-        List<String> accountNumbers = accountService.getAccountsByClientCode(clientCode)
-                .stream()
-                .map(Account::accountNumber)
-                .toList();
+//        List<String> accountNumbers = accountService.getAccountsByClientCode(clientCode)
+//                .stream()
+//                .map(Account::getAccountNumber)
+//                .toList();
 
         List<AccountHistory> accountHistories = historyService.getLatestTop5AccountHistoryByClientCode(clientCode);
+        System.out.println("+++++++++ " + accountHistories);
         List<Transaction> transactions = transactionService.getLatestTop5TransactionByClientCode(clientCode);
+        System.out.println("_________ " + transactions);
 
         List<Map<String, Object>> historiesMap = accountHistories
                 .stream()
@@ -177,37 +179,51 @@ public class AccountController {
                         "uuid", history.uuid(),
                         "createdAt", history.createdAt()
                 )).toList();
+        System.out.println("history UUIDssssss " + historiesMap);
         List<Map<String, Object>> transactionsMap = transactions
                 .stream()
                 .map(history -> Map.<String, Object>of(
                         "uuid", history.uuid(),
                         "createdAt", history.createdAt()
                 )).toList();
+        System.out.println("transaction UUIDssssss " + historiesMap);
 
 
         Set<String> uuids = Stream.of(historiesMap, transactionsMap)
                 .flatMap(List::stream)
                 .sorted(Comparator.comparing(o -> (Date) o.get("createdAt"), Comparator.reverseOrder()))
                 .limit(5)
-                .map(d -> (String) d.get("uuid"))
+                .map(d -> d.get("uuid").toString())
                 .collect(Collectors.toSet());
+        System.out.println("Only UUIDssssss " + uuids);
+
 
         List<AccountHistory> historyResult = accountHistories
                 .stream()
-                .filter(history -> uuids.contains(history.uuid()))
+                .filter(history -> uuids.contains(history.uuid().toString()))
                 .toList();
+        System.out.println("his results!!! " + historyResult);
+        System.out.println("his length!!! " + historyResult.size());
+
 
         List<Transaction> transactionResult = transactions
                 .stream()
-                .filter(transaction -> uuids.contains(transaction.uuid()))
+                .filter(trans -> uuids.contains(trans.uuid().toString()))
+                .distinct() // remove duplicates
                 .toList();
-
-        List<CombineHistory> result = Stream.concat(transactionResult.stream().map(combineResults::mapToTransactionHistory),
-                historyResult.stream().map(combineResults::mapToAccountHistory))
-                        .collect(Collectors.toList());
+        System.out.println("tran results!!! " + transactionResult);
+        System.out.println("tran length!!! " + transactionResult.size());
 
 
-        return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
+        List<CombineHistory> result = Stream
+                .concat(transactionResult.stream().map(combineResults::mapToTransactionHistory),
+                        historyResult.stream().map(combineResults::mapToAccountHistory)
+                )
+                .collect(Collectors.toList());
+        System.out.println("results dataaaaa "+ result);
+        System.out.println("results length "+ result.size());
+
+        return GlobalResponse.responseBuilder("Latest accounts history", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
     @GetMapping("/date-between")

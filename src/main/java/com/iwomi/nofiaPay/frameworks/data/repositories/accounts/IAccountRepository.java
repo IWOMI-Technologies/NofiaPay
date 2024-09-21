@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface IAccountRepository extends JpaRepository<AccountEntity, UUID> {
-    Optional<AccountEntity> findByAccountNumber(String account);
+    AccountEntity findByAccountNumber(String account);
 //    Optional<AccountEntity> findByBranchIdAndType(String branchId, AccountTypeEnum type);
 //    Optional<AccountEntity> findByClientIdAndType(String clientId, AccountTypeEnum type);
     Optional<AccountEntity> findByAgencyCodeAndAccountTypeCode(String clientId, String type);

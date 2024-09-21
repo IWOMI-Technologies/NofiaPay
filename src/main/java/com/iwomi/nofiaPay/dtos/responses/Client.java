@@ -21,24 +21,24 @@ public class Client {
     private String firstAddress;
     private String secondAddress;
     private String clientType;
-    private String agentCode;
-    private String agentName;
 
-    private String phoneNumber;
-    private String notificationPhoneNumber;
-    private String email;
-    private String idNumber;
-    private String idDeliveryPlace;
-    private String idDeliveryAuthority;
+    private Date dateOfBirth;
     private String placeOfBirth;
+    private String idNumber;
+
+    private Date idDeliveryDate;
+    private String idDeliveryPlace;
+    private Date idExpirationDate;
     private String commercialRegNum;
     private String taxPayerNumber;
     private Date businessCreationDate;
+    private String notificationPhoneNumber;
+    private String phoneNumber;
 
     private Date clientCreationDate;
-    private Date idDeliveryDate;
-    private Date idExpirationDate;
-    private Date dateOfBirth;
+    private String email;
+    private String agentCode;
+    private String agentName;
 
     private List<Account> accounts;
 

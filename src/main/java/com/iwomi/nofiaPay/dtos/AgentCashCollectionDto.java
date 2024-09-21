@@ -7,6 +7,6 @@ public record AgentCashCollectionDto(
         String agentAccount,
         String amount,
         String reason,
-        OperationTypeEnum operation
+        String operation
 ) {
 }

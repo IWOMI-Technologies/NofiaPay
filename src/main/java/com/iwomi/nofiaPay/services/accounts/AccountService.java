@@ -72,7 +72,12 @@ public class AccountService  implements  IAccountService{
     public List<Account> getAccountsByClientCode(String clientCode) {
         return  accountRepository.getAccountsByClientCode(clientCode)
                 .stream()
-                .map(mapper::mapToModel)
+                .map(entity -> {
+                    BigDecimal balance = entity.getCredit().subtract(entity.getDebit());
+                    Account account = mapper.mapToModel(entity);
+                    account.setBalance(balance);
+                    return account;
+                })
                 .toList();
     }
 
