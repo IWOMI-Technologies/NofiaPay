@@ -1,19 +1,19 @@
-#services:
-#  mysql:
-#    image: mysql:8.0-oracle
-#    env_file: ./.env
-#    container_name: nofia_db
-#    environment:
-#      MYSQL_DATABASE: $MYSQL_DATABASE   # from .env file
-#      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-#    volumes:
-#      - ./volumes/mysql:/var/lib/mysql
-#    ports:
-#      - "3308:3306"
-#    networks:
-#      - nofia_network
-#    restart: unless-stopped
-#
-#networks:
-#  nofia_network:
-#    driver: bridge
+services:
+  mysql:
+    image: mysql:8.0-oracle
+    env_file: ./.env
+    container_name: nofia_db
+    environment:
+      MYSQL_DATABASE: $MYSQL_DATABASE   # from .env file
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    networks:
+      - nofia_network
+    restart: unless-stopped
+
+networks:
+  nofia_network:
+    driver: bridge

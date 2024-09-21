@@ -4,6 +4,7 @@ import com.iwomi.nofiaPay.core.constants.AppConst;
 import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
+import com.iwomi.nofiaPay.core.utils.DateConverterUtils;
 import com.iwomi.nofiaPay.dtos.BranchDto;
 import com.iwomi.nofiaPay.frameworks.data.entities.*;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory.IAccountHistoryRepository;
@@ -141,7 +142,7 @@ public class Seeder {
                 .amount(new BigDecimal("500.00"))
                 .sense(SenseTypeEnum.CREDIT)
                 .accountingDocument("DOC001")
-                .accountingDate("2024-09-01")
+                .accountingDate(DateConverterUtils.convertToDate("2024-09-01"))
                 .valueDate("2024-09-01")
                 .balance("1500.00")
                 .type(OperationTypeEnum.AGENT_CASH_COLLECTION)
@@ -158,7 +159,7 @@ public class Seeder {
                 .amount(new BigDecimal("300.00"))
                 .sense(SenseTypeEnum.DEBIT)
                 .accountingDocument("DOC002")
-                .accountingDate("2024-09-10")
+                .accountingDate(DateConverterUtils.convertToDate("2024-09-01"))
                 .valueDate("2024-09-10")
                 .balance("700.00")
                 .type(OperationTypeEnum.AGENT_CASH_COLLECTION)
