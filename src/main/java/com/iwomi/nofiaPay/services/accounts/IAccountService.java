@@ -3,6 +3,8 @@ package com.iwomi.nofiaPay.services.accounts;
 
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
+import com.iwomi.nofiaPay.dtos.responses.ClientAccount;
+import com.iwomi.nofiaPay.dtos.responses.CombineHistory;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -25,9 +27,12 @@ public interface IAccountService {
 
     List<Account> getAccountsByClientCode(String clientCode);
 
+    ClientAccount getClientAccountByClientCode(String clientCode);
+
     Map<String, List<Double>> viewAccountBalances(String clientCode);
 
-    List<Account> viewAccountByDateRange(Date start, Date end);
+//    List<Account> viewAccountByDateRange(Date start, Date end)
+    List<CombineHistory> viewAccountByDateRange(Date start, Date end);
 
     List<Map<String, Object>> getAccountsWithLatestTransactions(String clientCode, int limit);
 }
