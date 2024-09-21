@@ -88,7 +88,4 @@ public class DateConverterUtils {
         return parsedDate.getTime();
     }
 
-
-
-
 }

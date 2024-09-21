@@ -43,7 +43,7 @@ springdoc:
 eureka:
   instance:
     leaseRenewalIntervalInSeconds: 2
-    leaseExpirationDurationInSeconds: 5files
+    leaseExpirationDurationInSeconds: 5
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/  # where to register this client

@@ -1,6 +1,7 @@
 package com.iwomi.nofiaPay.services.filesService;
 
 import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
+import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.core.utils.DateConverterUtils;
 import com.iwomi.nofiaPay.dtos.UploadDto;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
@@ -19,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -61,41 +64,60 @@ public class FilesService implements IFilesService {
                     continue;  //Skip empty rows
                 }
 
-                System.out.println("cell data****** " + row.getCell(0));
-                System.out.println("cell data****** " + row.getCell(1));
-                System.out.println("cell data****** " + row.getCell(2));
+                System.out.println("cell data****** 0 " + getValue(row, 0));
+                System.out.println("cell data****** 1 " + getValue(row, 1));
+                System.out.println("cell data****** 2 " + getValue(row, 2));
+                System.out.println("cell data****** 3 " + getValue(row, 3));
+                System.out.println("cell data****** 4 " + getValue(row, 4));
+                System.out.println("cell data****** 5 " + getValue(row, 5));
+                System.out.println("cell data****** 6 " + getValue(row, 6));
+                System.out.println("cell data****** 7 " + getValue(row, 7));
+                System.out.println("cell data****** 8 " + getValue(row, 8));
+                System.out.println("cell data****** 9 " + getValue(row, 9));
+                System.out.println("cell data****** 10 " + getValue(row, 10));
+                System.out.println("cell data****** 11 " + getValue(row, 11));
+                System.out.println("cell data****** 12 " + getValue(row, 12));
+                System.out.println("cell data****** 13 " + getValue(row, 13));
+                System.out.println("cell data****** 14 " + getValue(row, 14));
+                System.out.println("cell data****** 15 " + getValue(row, 15));
+                System.out.println("cell data****** 16 " + getValue(row, 16));
+                System.out.println("cell data****** 17 " + getValue(row, 17));
+                System.out.println("cell data****** 18 " + getValue(row, 18));
+                System.out.println("cell data****** 19 " + getValue(row, 19));
+                System.out.println("cell data****** 20 " + getValue(row, 20));
+                System.out.println("cell data****** 21 " + getValue(row, 21));
+                System.out.println("cell data****** 22 " + getValue(row, 22));
+                System.out.println("cell data****** 23 " + getValue(row, 23));
+                System.out.println("cell data****** 24 " + getValue(row, 24));
 
-                System.out.println("cell data****** 9" + row.getCell(9));
-                System.out.println("cell data****** 10" + row.getCell(10));
-                System.out.println("cell data****** 22 " + row.getCell(22));
 
                 ClientEntity client = new ClientEntity();
-                client.setClientCode(row.getCell(0).getStringCellValue());
-                client.setFirstName(row.getCell(1).getStringCellValue());
-                client.setLastName(row.getCell(2).getStringCellValue());
-                client.setFullName(row.getCell(3).getStringCellValue());
-                client.setAgencyCode(row.getCell(4).getStringCellValue());
-                client.setAgencyLabel(row.getCell(5).getStringCellValue());
-                client.setManagerCode(row.getCell(6).getStringCellValue());
-                client.setManagerName(row.getCell(7).getStringCellValue());
-                client.setFirstAddress(row.getCell(8).getStringCellValue());
-                client.setSecondAddress(row.getCell(9).getStringCellValue());
-                client.setClientType(row.getCell(10).getStringCellValue());
-                client.setDateOfBirth(DateConverterUtils.convertToDate(row.getCell(11).getStringCellValue()));
-                client.setPlaceOfBirth(row.getCell(12).getStringCellValue());
-                client.setIdNumber(row.getCell(13).getStringCellValue());
-                client.setIdDeliveryDate(DateConverterUtils.convertToDate(row.getCell(14).getStringCellValue()));
-                client.setIdDeliveryPlace(row.getCell(15).getStringCellValue());
-                client.setIdExpirationDate(DateConverterUtils.convertToDate(row.getCell(16).getStringCellValue()));
-                client.setCommercialRegNum(row.getCell(17).getStringCellValue());
-                client.setTaxPayerNumber(row.getCell(18).getStringCellValue());
-                client.setBusinessCreationDate(DateConverterUtils.convertToDate(row.getCell(19).getStringCellValue()));
-                client.setNotificationPhoneNumber(row.getCell(20).getStringCellValue());
-                client.setPhoneNumber(row.getCell(21).getStringCellValue());
-                client.setClientCreationDate(DateConverterUtils.convertToDate(row.getCell(22).getStringCellValue()));
-                client.setEmail(row.getCell(23).getStringCellValue());
-                client.setAgentCode(row.getCell(24).getStringCellValue());
-                client.setAgentName(row.getCell(25).getStringCellValue());
+                client.setClientCode(getValue(row, 0).toString());
+                client.setFirstName(getValue(row, 1).toString());
+                client.setLastName(getValue(row, 2).toString());
+                client.setFullName(getValue(row, 3).toString());
+                client.setAgencyCode(getValue(row, 4).toString());
+                client.setAgencyLabel(getValue(row, 5).toString());
+                client.setManagerCode(getValue(row, 6).toString());
+                client.setManagerName(getValue(row, 7).toString());
+                client.setFirstAddress(getValue(row, 8).toString());
+                client.setSecondAddress(getValue(row, 9).toString());
+                client.setClientType(getValue(row, 10).toString());
+                client.setDateOfBirth(DateConverterUtils.convertToDate(getValue(row, 11).toString()));
+                client.setPlaceOfBirth(getValue(row, 12).toString());
+                client.setIdNumber(getValue(row, 13).toString());
+                client.setIdDeliveryDate(DateConverterUtils.convertToDate(getValue(row, 14).toString()));
+                client.setIdDeliveryPlace(getValue(row, 15).toString());
+                client.setIdExpirationDate(DateConverterUtils.convertToDate(getValue(row, 16).toString()));
+                client.setCommercialRegNum(getValue(row, 17).toString());
+                client.setTaxPayerNumber(getValue(row, 18).toString());
+                client.setBusinessCreationDate(DateConverterUtils.convertToDate(getValue(row, 19).toString()));
+                client.setNotificationPhoneNumber(getValue(row, 20).toString());
+                client.setPhoneNumber(getValue(row, 21).toString());
+                client.setClientCreationDate(DateConverterUtils.convertToDate(getValue(row, 22).toString()));
+                client.setEmail(getValue(row, 23).toString());
+                client.setAgentCode(getValue(row, 24).toString());
+                client.setAgentName(getValue(row, 25).toString());
                 //         client.setIdDeliveryAuthority(row.getCell(18).getStringCellValue());
 
 //                clientRepository.save(client);
@@ -212,11 +234,11 @@ public class FilesService implements IFilesService {
                 accountHistory.setOperationTitle(row.getCell(5).getStringCellValue());
                 accountHistory.setTransactionReference(row.getCell(6).getStringCellValue());
                 accountHistory.setAmount(BigDecimal.valueOf(row.getCell(12).getNumericCellValue()));
-                accountHistory.setSense(SenseTypeEnum.valueOf(row.getCell(8).getStringCellValue()));
+                accountHistory.setSense(SenseTypeEnum.valueOf(row.getCell(8).getStringCellValue().toUpperCase()));
                 accountHistory.setAccountingDocument(row.getCell(9).getStringCellValue());
-                accountHistory.setAccountingDate(DateConverterUtils.convertToDate(String.valueOf(row.getCell(10).getNumericCellValue())));
-                accountHistory.setValueDate(row.getCell(11).getStringCellValue());
-                accountHistory.setBalance(row.getCell(12).getStringCellValue());
+                accountHistory.setAccountingDate(DateConverterUtils.convertToDate(getValue(row, 10).toString()));
+                accountHistory.setValueDate(getValue(row, 11).toString());
+                accountHistory.setBalance(getValue(row, 12).toString());
 
 
 //                clientRepository.save(client);
@@ -241,5 +263,24 @@ public class FilesService implements IFilesService {
             }
         }
         return true;
+    }
+
+    private Object getValue(Row row, int value) {
+        if (row.getCell(value).getCellType() == CellType.NUMERIC) {
+
+            if (DateUtil.isCellDateFormatted(row.getCell(value))) {
+                // If the cell contains a date, format it as needed
+                Date dateValue = row.getCell(value).getDateCellValue();
+                return new SimpleDateFormat("yyyy-MM-dd").format(dateValue);
+            }
+
+            return String.valueOf((int) row.getCell(value).getNumericCellValue());
+        } else if (row.getCell(value).getCellType() == CellType.STRING) {
+            return row.getCell(value).getStringCellValue();
+        } else {
+            // Handle other possible cell types (optional)
+            System.out.println("Unsupported cell type at row: " + row.getRowNum()+" : "+ row.getCell(value));
+        }
+        throw new GeneralException("something went wrong");
     }
 }
