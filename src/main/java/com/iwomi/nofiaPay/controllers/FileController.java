@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.controllers;
 
+import com.iwomi.nofiaPay.core.enums.FileTypeEnum;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.core.utils.CoreUtils;
 import com.iwomi.nofiaPay.core.utils.DateConverterUtils;
@@ -37,6 +38,7 @@ public class FileController {
     /**
      * This is for client, accounts and account history files import in the DB
      */
+
     @PostMapping(value = "/import", consumes = {"multipart/form-data"})
     public ResponseEntity<?> importClients(@ModelAttribute UploadDto dto) {
 

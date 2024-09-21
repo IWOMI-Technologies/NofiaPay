@@ -1,5 +1,7 @@
 package com.iwomi.nofiaPay.core.utils;
 
+import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -54,5 +56,36 @@ public class DateConverterUtils {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Time string contains invalid numbers", e);
         }
+
     }
+
+
+    public static Date convertToDate(String date) {
+        SimpleDateFormat[] dateFormats = {
+                new SimpleDateFormat("yyyy/dd/MM"),
+                new SimpleDateFormat("yyyy-MM-dd"),
+                new SimpleDateFormat("MM-dd-yyyy"),
+                new SimpleDateFormat("dd-MM-yyyy"),
+                new SimpleDateFormat("yyyy-dd-MM"),
+                new SimpleDateFormat("yyyy/MM/dd"),
+                new SimpleDateFormat("MM/dd/yyyy"),
+                new SimpleDateFormat("dd/MM/yyyy")
+
+        };
+
+        for (SimpleDateFormat dateFormat : dateFormats) {
+            try {
+                return dateFormat.parse(date.trim());
+            } catch (ParseException e) {
+                // continue to next
+            }
+        }
+
+        throw new IllegalArgumentException("Invalid date format: " + date);
+    }
+    public static long convertDateToNumeric(String date) {
+        Date parsedDate = convertToDate(date);
+        return parsedDate.getTime();
+    }
+
 }

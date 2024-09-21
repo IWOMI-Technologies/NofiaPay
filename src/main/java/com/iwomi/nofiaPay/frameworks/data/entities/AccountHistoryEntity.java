@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 
 @AllArgsConstructor
@@ -30,7 +31,7 @@ public class AccountHistoryEntity extends BaseEntity {
     private BigDecimal amount;
     @Enumerated(EnumType.STRING) private SenseTypeEnum sense;
     private String accountingDocument;
-    private String accountingDate;
+    private Date accountingDate;
     private String valueDate;
     private String balance;
 
