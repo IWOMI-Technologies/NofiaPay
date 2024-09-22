@@ -15,11 +15,10 @@ import java.util.UUID;
 public class ClientAccount {
     private String name;
     private String accountNumber;
-    private BigDecimal amount;
     private String phone;
     private String accountTypeLabel;
     private String branchName;
     private String branchCode;
     private Date openingDate;
-    private String balance;
+    private BigDecimal balance;
 }

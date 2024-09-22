@@ -6,8 +6,11 @@ import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.*;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
+import com.iwomi.nofiaPay.services.accounthistory.IAccountHistoryService;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
 import com.iwomi.nofiaPay.core.utils.CombineResults;
+import com.iwomi.nofiaPay.services.accounts.IAccountService;
+import com.iwomi.nofiaPay.services.transactions.ITransactionService;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,9 +33,9 @@ import java.util.stream.Stream;
 @RestController
 public class AccountController {
 
-    private final AccountService accountService;
-    private final AccountHistoryService historyService;
-    private final TransactionService transactionService;
+    private final IAccountService accountService;
+    private final IAccountHistoryService historyService;
+    private final ITransactionService transactionService;
 
     private final AuthClient authClient;
 
@@ -107,15 +110,17 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Balance check successful", HttpStatus.OK, HttpStatus.OK.value(), balances);
     }
 
+    // returns client accounts only
     @GetMapping("/client/{clientCode}")
     public ResponseEntity<?> showAccountsByClientCode(@PathVariable String clientCode) {
         List<Account> result = accountService.getAccountsByClientCode(clientCode);
         return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
+    // returns a merge object of client and account
     @GetMapping("/client-account/{clientCode}")
     public ResponseEntity<?> showClientAccountByClientCode(@PathVariable String clientCode) {
-        ClientAccount result = accountService.getClientAccountByClientCode(clientCode);
+        List<ClientAccount> result = accountService.getClientAccountByClientCode(clientCode);
         return GlobalResponse.responseBuilder("Account ", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 //
@@ -165,15 +170,22 @@ public class AccountController {
 //    }
 
     @GetMapping("/dashboard/{clientCode}")
-    public ResponseEntity<?> dashboard(@PathVariable String clientCode) {
-//        List<String> accountNumbers = accountService.getAccountsByClientCode(clientCode)
-//                .stream()
-//                .map(Account::getAccountNumber)
-//                .toList();
+    public ResponseEntity<?> dashboard(
+            @PathVariable String clientCode,
+            @RequestParam(required = false, defaultValue = "false") boolean fetchAll,
+            @RequestParam(required = false, defaultValue = "10") int limit
+    ) {
+        List<AccountHistory> accountHistories = null;
+        List<Transaction> transactions = null;
 
-        List<AccountHistory> accountHistories = historyService.getLatestTop5AccountHistoryByClientCode(clientCode);
+        if (fetchAll) {
+            accountHistories = historyService.getHistoriesByClientCode(clientCode);
+            transactions = transactionService.viewTransactionsByClientCode(clientCode);
+        } else {
+            accountHistories = historyService.getLatestTop5AccountHistoryByClientCode(clientCode);
+            transactions = transactionService.getLatestTop5TransactionByClientCode(clientCode);
+        }
         System.out.println("+++++++++ " + accountHistories);
-        List<Transaction> transactions = transactionService.getLatestTop5TransactionByClientCode(clientCode);
         System.out.println("_________ " + transactions);
 
         List<Map<String, Object>> historiesMap = accountHistories
@@ -223,8 +235,8 @@ public class AccountController {
                         historyResult.stream().map(combineResults::mapToAccountHistory)
                 )
                 .collect(Collectors.toList());
-        System.out.println("results dataaaaa "+ result);
-        System.out.println("results length "+ result.size());
+        System.out.println("results dataaaaa " + result);
+        System.out.println("results length " + result.size());
 
         return GlobalResponse.responseBuilder("Latest accounts history", HttpStatus.OK, HttpStatus.OK.value(), result);
     }

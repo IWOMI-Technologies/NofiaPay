@@ -87,24 +87,28 @@ public class AccountService  implements  IAccountService{
                 .toList();
     }
 
-    public ClientAccount getClientAccountByClientCode(String clientCode){
-        AccountEntity account = accountRepository.getAccountByClientCode(clientCode);
-        BigDecimal balance = account.getCredit().subtract(account.getDebit());
+    @Override
+    public List<ClientAccount> getClientAccountByClientCode(String clientCode){
+        List<AccountEntity> account = accountRepository.getAccountByClientCode(clientCode);
 
-        ClientEntity client =  clientRepository.getOneByClientCode(clientCode);
+        return account.stream().map(acc -> {
+            BigDecimal balance = acc.getCredit().subtract(acc.getDebit());
 
-         ClientAccount clientAccount = new ClientAccount();
-         clientAccount.setName(client.getFullName());
-         clientAccount.setAccountTypeLabel(account.getAccountTypeLabel());
-         clientAccount.setName(account.getClientCode());
-         clientAccount.setAmount(balance);
-         clientAccount.setAccountNumber(account.getAccountNumber());
-         clientAccount.setPhone(client.getPhoneNumber());
-         clientAccount.setBranchCode(account.getAgencyCode());
-         clientAccount.setBranchName(account.getAgencyName());
-         clientAccount.setOpeningDate(account.getStartDate());
+            ClientEntity client =  clientRepository.getOneByClientCode(clientCode);
 
-        return clientAccount;
+            System.out.println("+++++++++++++++ "+client.getFullName());
+
+            ClientAccount clientAccount = new ClientAccount();
+            clientAccount.setName(client.getFullName());
+            clientAccount.setAccountTypeLabel(acc.getAccountTypeLabel());
+            clientAccount.setAccountNumber(acc.getAccountNumber());
+            clientAccount.setPhone(client.getPhoneNumber());
+            clientAccount.setBranchCode(acc.getAgencyCode());
+            clientAccount.setBranchName(acc.getAgencyName());
+            clientAccount.setOpeningDate(acc.getStartDate());
+            clientAccount.setBalance(balance);
+            return clientAccount;
+        }).toList();
     }
 
     @Override
@@ -163,9 +167,9 @@ public Map<String, List<Double>> viewAccountBalances(String clientCode) {
 
         for (Account account : accounts ) {
 
-            List<AccountHistory> allAccountHistories = historyService.getLatestTop5AccountHistoryByClientCode(account.clientCode());
+            List<AccountHistory> allAccountHistories = historyService.getLatestTop5AccountHistoryByClientCode(account.getClientCode());
 
-            List<Transaction> allTransactions = transactionService.getLatestTop5TransactionByClientCode(account.clientCode());
+            List<Transaction> allTransactions = transactionService.getLatestTop5TransactionByClientCode(account.getClientCode());
 
             accountHistories.addAll(allAccountHistories);
             transactions.addAll(allTransactions);

@@ -53,8 +53,8 @@ public class AccountRepository {
         return repository.findByClientCode(clientCode);
     }
 
-    public  AccountEntity getAccountByClientCode(String clientCode) {
-        return  repository.findAccountByClientCode(clientCode);
+    public  List<AccountEntity> getAccountByClientCode(String clientCode) {
+        return  repository.findAccountsByClientCode(clientCode);
     }
 
     public  AccountEntity getOneByBranchCodeAndType(String branchCode, String type) {

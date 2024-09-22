@@ -27,7 +27,7 @@ public interface IAccountService {
 
     List<Account> getAccountsByClientCode(String clientCode);
 
-    ClientAccount getClientAccountByClientCode(String clientCode);
+    List<ClientAccount> getClientAccountByClientCode(String clientCode);
 
     Map<String, List<Double>> viewAccountBalances(String clientCode);
 

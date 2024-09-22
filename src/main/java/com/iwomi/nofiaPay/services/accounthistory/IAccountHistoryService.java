@@ -15,7 +15,8 @@ public interface IAccountHistoryService {
 
     Map<String, List<AccountHistory>> getAccountHistoriesByClientCode(String clientCode);
 
-//    List<AccountHistory> getLatestTop5ByClientCode(String clientCode);
+    //    List<AccountHistory> getLatestTop5ByClientCode(String clientCode);
+    List<AccountHistory> getHistoriesByClientCode(String clientCode);
 
     List<AccountHistory> getLatestTop5AccountHistoryByClientCode(String clientCode);
 

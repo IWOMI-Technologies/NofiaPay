@@ -46,4 +46,6 @@ public interface ITransactionService {
 
     List<Transaction> getLatestTop5TransactionByClientCode (String clientCode);
 
+    List<Transaction> viewTransactionsByClientCode(String clientCode);
+
 }

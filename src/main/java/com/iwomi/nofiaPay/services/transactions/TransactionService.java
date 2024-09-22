@@ -297,6 +297,28 @@ public class TransactionService implements ITransactionService {
 
     }
 
+    @Override
+    public List<Transaction> viewTransactionsByClientCode(String clientCode) {
+        List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode);
+
+        List<Transaction> issuerAccounts = transactionRepository.getTop5ByIssuerAccount(accounts)
+                .stream()
+//                .filter(Objects::nonNull)
+                .limit(5)
+                .map(mapper::mapToModel)
+                .toList();
+
+        List<Transaction> receiverAccounts = transactionRepository.getTop5ByReceiverAccount(accounts)
+                .stream()
+                .limit(5)
+                .map(mapper::mapToModel)
+                .toList();
+        return Stream.of(issuerAccounts, receiverAccounts)
+                .flatMap(List::stream)
+                .toList();
+    }
+
+
     private String agentBranchCode(String agentCollectionAccount) {
 //        AccountEntity account = accountRepository.getOneByAccount(agentCollectionAccount);
 //        return batchRepository.getTodaysBatchCode(account.getClientId().toString());

@@ -17,12 +17,15 @@ import java.util.UUID;
 
 public interface IAccountRepository extends JpaRepository<AccountEntity, UUID> {
     AccountEntity findByAccountNumber(String account);
-//    Optional<AccountEntity> findByBranchIdAndType(String branchId, AccountTypeEnum type);
+
+    //    Optional<AccountEntity> findByBranchIdAndType(String branchId, AccountTypeEnum type);
 //    Optional<AccountEntity> findByClientIdAndType(String clientId, AccountTypeEnum type);
     Optional<AccountEntity> findByAgencyCodeAndAccountTypeCode(String clientId, String type);
+
     List<AccountEntity> findByClientCode(String clientCode);
 
-    AccountEntity findAccountByClientCode(String clientCode);
+    List<AccountEntity> findAccountsByClientCode(String clientCode);
+
     List<AccountEntity> findByAccountNumberIn(List<String> accountNumbers);
 
     @Query("SELECT a FROM accounts a WHERE  a.createdAt BETWEEN :startDate AND :endDate ORDER BY a.createdAt DESC")
