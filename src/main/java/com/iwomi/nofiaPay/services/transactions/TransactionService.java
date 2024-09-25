@@ -130,6 +130,7 @@ public class TransactionService implements ITransactionService {
         String batchCode = agentBranchCode(dto.agentAccount());
         OperationTypeEnum operationType = OperationTypeUtil
                 .getOperationTypeFromString(dto.operation());
+        System.out.println("CASH :: op type "+operationType);
 
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
@@ -146,12 +147,16 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public Transaction selfService(String authUuid, SelfServiceDto dto) {
+        OperationTypeEnum operationType = OperationTypeUtil
+                .getOperationTypeFromString(dto.operation());
+        System.out.println("CASH :: op type "+operationType);
+
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
                 .reason(dto.reason())
                 .issuerAccount(NomenclatureConstants.CBR)
                 .receiverAccount(dto.clientAccount())
-                .type(dto.operation())
+                .type(operationType)
                 .status(StatusTypeEnum.PENDING)
                 .build();
 
@@ -164,20 +169,16 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public Transaction AgentDigitalCollection(AgentDigitalCollectionDto dto) {
+        OperationTypeEnum operationType = OperationTypeUtil
+                .getOperationTypeFromString(dto.operation());
+        System.out.println("CASH :: op type "+operationType);
 
-//        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
-//        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
-//
-//        DigitalPaymentDto paymentDto = new DigitalPaymentDto("debit", payType, dto.amount(),
-//                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
-//
-//        Map<String, Object> response = payment.pay(paymentDto);
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
                 .reason(dto.reason())
                 .issuerAccount(dto.agentAccount())
                 .receiverAccount(dto.clientAccount())
-                .type(dto.operation())
+                .type(operationType)
                 .status(StatusTypeEnum.COLLECTED)
                 .build();
 
@@ -187,13 +188,16 @@ public class TransactionService implements ITransactionService {
     @Override
     public Transaction merchantCash(MerchantCashDto dto) {
         String batchCode = agentBranchCode(dto.merchantAccount());
+        OperationTypeEnum operationType = OperationTypeUtil
+                .getOperationTypeFromString(dto.operation());
+        System.out.println("CASH :: op type "+operationType);
 
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
                 .reason(dto.reason())
                 .issuerAccount(null)
                 .receiverAccount(dto.merchantAccount())
-                .type(dto.operation())
+                .type(operationType)
                 .status(StatusTypeEnum.PENDING)
                 .build();
 
@@ -205,20 +209,16 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public Transaction merchantDigital(MerchantDigitalDto dto) {
+        OperationTypeEnum operationType = OperationTypeUtil
+                .getOperationTypeFromString(dto.operation());
+        System.out.println("CASH :: op type "+operationType);
 
-//        String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
-//        if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
-//
-//        DigitalPaymentDto paymentDto = new DigitalPaymentDto("debit", payType, dto.amount(),
-//                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
-//
-//        Map<String, Object> response = payment.pay(paymentDto);
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
                 .reason(dto.reason())
                 .issuerAccount(NomenclatureConstants.CBR)
                 .receiverAccount(dto.merchantAccount())
-                .type(dto.operation())
+                .type(operationType)
                 .status(StatusTypeEnum.COLLECTED)
                 .build();
         if (entity.getType().toString().startsWith("MERCHANT_DIGITAL") && !Objects.equals(entity.getIssuerAccount(), NomenclatureConstants.CBR))

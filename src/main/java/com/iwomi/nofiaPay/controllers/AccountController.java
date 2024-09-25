@@ -110,11 +110,19 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Balance check successful", HttpStatus.OK, HttpStatus.OK.value(), balances);
     }
 
+    // get specific type of client account
+    @GetMapping("account/client/{clientCode}")
+    public ResponseEntity<?> accountByTypeFromCode(@PathVariable String clientCode, @RequestParam String accountCode) {
+        List<Account> data = accountService.getAccountsByClientCode(clientCode);
+        var result = data.stream().filter(account -> account.getAccountTypeCode().equals(accountCode)).findFirst();
+        return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
     // returns client accounts only
     @GetMapping("/client/{clientCode}")
     public ResponseEntity<?> showAccountsByClientCode(@PathVariable String clientCode) {
         List<Account> result = accountService.getAccountsByClientCode(clientCode);
-        return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
+        return GlobalResponse.responseBuilder("Accounts found ", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
     // returns a merge object of client and account

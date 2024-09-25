@@ -12,6 +12,6 @@ public record AgentDigitalCollectionDto(
         String amount,
         String sourcePhoneNumber,
         String reason,
-        OperationTypeEnum operation
+        String operation
 ) {
 }

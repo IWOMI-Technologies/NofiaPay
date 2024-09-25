@@ -7,6 +7,7 @@ import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.entities.ValidationEntity;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
+import com.iwomi.nofiaPay.services.transactions.ITransactionService;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import com.iwomi.nofiaPay.services.validations.ValidationService;
 import com.iwomi.nofiaPay.services.wbesocket.IWebsocketService;
@@ -29,7 +30,7 @@ import java.util.UUID;
 @RestController
 public class TransactionController {
 
-    private final TransactionService transactionService;
+    private final ITransactionService transactionService;
     private final AccountHistoryService historyService;
     private final ValidationService validationService;
     private final IWebsocketService websocketService;
@@ -146,16 +147,9 @@ public class TransactionController {
     public ResponseEntity<?> storeSelfService(
             @RequestBody SelfServiceDto dto,
             @PathVariable String userUuid
-//            Principal principal // this is set in WebSocketEventListener
     ) {
-//        String principal = StompPrincipal.class.getName().toString();
-//
-//        System.out.println("Principal found " + principal);
-//        System.out.println("Authenticated user uuid "+authUuid);
         Transaction result = transactionService.selfService(userUuid, dto);
-//        websocketService.sendToUser("8d10a6ab-a403-4e37-a228-91f4be284458", StatusTypeEnum.VALIDATED.toString());
-
-        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), null);
+        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
     @PostMapping("/agent-digital")
@@ -173,7 +167,7 @@ public class TransactionController {
     )
     public ResponseEntity<?> storeAgentDigital(@RequestBody AgentDigitalCollectionDto dto) {
         Transaction result = transactionService.AgentDigitalCollection(dto);
-        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.OK, HttpStatus.OK.value(), result);
+        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
     @PostMapping("/merchant-cash")
@@ -206,7 +200,7 @@ public class TransactionController {
     )
     public ResponseEntity<?> storeMerchantDigital(@RequestBody MerchantDigitalDto dto) {
         Transaction result = transactionService.merchantDigital(dto);
-        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.OK, HttpStatus.OK.value(), result);
+        return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
     @PostMapping("/reversement")
@@ -231,6 +225,6 @@ public class TransactionController {
                 dto.agentAccountNumber(),
                 ValidationTypeEnum.REVERSEMENT
         );
-        return GlobalResponse.responseBuilder("Transactions to teller successful", HttpStatus.OK, HttpStatus.OK.value(), result);
+        return GlobalResponse.responseBuilder("Transactions to teller successful", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 }

@@ -6,6 +6,6 @@ public record MerchantCashDto(
         String merchantAccount,
         String amount,
         String reason,
-        OperationTypeEnum operation
+        String operation
 ) {
 }

@@ -4,10 +4,10 @@ import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 
 public record MerchantDigitalDto(
         String merchantAccount,
-        String paymentMethod,
+//        String paymentMethod,
         String amount,
         String sourcePhoneNumber,
         String reason,
-        OperationTypeEnum operation
+        String operation
 ) {
 }

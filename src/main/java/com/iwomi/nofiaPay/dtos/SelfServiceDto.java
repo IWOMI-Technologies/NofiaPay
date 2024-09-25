@@ -8,6 +8,6 @@ public record SelfServiceDto(
         String amount,
         String sourcePhoneNumber,
         String reason,
-        OperationTypeEnum operation
+        String operation
 ) {
 }
