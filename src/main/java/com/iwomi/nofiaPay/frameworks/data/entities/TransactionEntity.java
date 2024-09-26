@@ -39,4 +39,19 @@ public class TransactionEntity extends BaseEntity {
     private boolean processed = false;
 
     private boolean deleted = false;
+
+    @Override
+    public String toString() {
+        return "TransactionEntity{" +
+                "amount=" + amount +
+                ", reason='" + reason + '\'' +
+                ", batch='" + batch + '\'' +
+                ", issuerAccount='" + issuerAccount + '\'' +
+                ", receiverAccount='" + receiverAccount + '\'' +
+                ", type=" + type +
+                ", status=" + status +
+                ", processed=" + processed +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

@@ -128,7 +128,7 @@ public class Seeder {
                         .reason("Car Purchase")
                         .batch("BATCH028")
                         .issuerAccount("04005857-37227Z")
-                        .receiverAccount("04006024-37227S")
+                        .receiverAccount("04005847-37227W")
                         .type(OperationTypeEnum.MERCHANT_DIGITAL_MOMO)
                         .status(StatusTypeEnum.COLLECTED)
                         .processed(true)

@@ -12,10 +12,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -28,9 +26,11 @@ public class GenerateTransaction {
     private final TransactionRepository repository;
     private final IGeneration generation;
 
+
     public GenerateTransaction(Environment env, TransactionRepository repository, IGeneration generation) {
         this.storagePath = Paths.get(env.getProperty("app.files.downloads", "uploads/files"))
                 .toAbsolutePath().normalize();
+        //Files.createDirectory(this.storagePath);
         this.repository = repository;
         this.generation = generation;
     }
@@ -38,8 +38,9 @@ public class GenerateTransaction {
     public List<TransactionFile> generate(List<TransactionEntity> transactions) {
 //        Date today = CoreUtils.localDateToDate(LocalDate.now());
 //        List<TransactionEntity> result = repository.getTodayTransactions(today);
+        System.out.println("transaction type: ======>>>>>>>"+ transactions.get(0));
 
-        return transactions.stream()
+        List<TransactionFile> data = transactions.stream()
                 .flatMap(entity -> switch (entity.getType()) {
                     case AGENT_CASH_COLLECTION -> generation.agentCashCollection(entity).stream();
                     case AGENT_DIGITAL_COLLECTION_OM, AGENT_DIGITAL_COLLECTION_MOMO ->
@@ -48,11 +49,15 @@ public class GenerateTransaction {
                     default -> generation.merchantDigitalCollection(entity).stream();   // MERCHANT OM and MOMO
                 })
                 .toList();
+        System.out.println("RESPONSE %%%%%% "+ data);
+        return data;
     }
 
     public byte[] toDownloadExcelTransactionFileGeneration(List<TransactionEntity> transacs) {
         List<TransactionFile> transactions = generate(transacs);
 
+
+        System.out.println("transactions to be converted: ================>>>>>>>>>>>>>>"+ transactions);
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Transactions");
 
@@ -76,13 +81,23 @@ public class GenerateTransaction {
                 row.createCell(4).setCellValue(transaction.creditedAmount());
                 row.createCell(5).setCellValue(transaction.referenceLettering());
             }
-
+            System.out.println("sheet display: ================>>>>>>>>>>>>>>"+ sheet);
             // Adjust column widths
             for (int i = 0; i < headers.length; i++) {
                 sheet.autoSizeColumn(i);
             }
-
+            System.out.println("refactored sheet display: ================>>>>>>>>>>>>>>"+ sheet);
             workbook.write(baos);
+
+            Path path = FileStorageUtil.createSubFolder(storagePath, "downloads");
+            String fileExtension = ".xlsx";
+            String fileName = new Date().getTime() + fileExtension;
+            String filePath = path+"/downloads" + fileName;
+
+            System.out.println("the absolute path: "+filePath);
+
+            Files.write(Path.of(filePath), baos.toByteArray());
+
             return baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);

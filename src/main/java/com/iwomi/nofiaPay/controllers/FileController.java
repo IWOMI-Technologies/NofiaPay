@@ -1,6 +1,7 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.enums.FileTypeEnum;
+import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.core.utils.CoreUtils;
 import com.iwomi.nofiaPay.core.utils.DateConverterUtils;
@@ -52,7 +53,7 @@ public class FileController {
      * In case we need to download it
      */
     @GetMapping("/download/excel")
-    public ResponseEntity<InputStreamResource> downloadExcel(
+    public ResponseEntity<?> downloadExcel(
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate
     ) {
@@ -62,6 +63,7 @@ public class FileController {
 
         try {
             List<TransactionEntity> transactions = transactionRepository.getByCreatedAtBetween(start, end);
+            System.out.println("transactions: ================>>>>>>>>>>>>>>"+ transactions);
             byte[] excelData = generateTransaction.toDownloadExcelTransactionFileGeneration(transactions);
 
             ByteArrayInputStream bis = new ByteArrayInputStream(excelData);
@@ -70,7 +72,9 @@ public class FileController {
 
             return new ResponseEntity<>(new InputStreamResource(bis), headers, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            System.out.println("error occurred: ===============>>>>>>>>>>"+ e.getMessage());
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new GeneralException(e.getMessage());
         }
     }
 }

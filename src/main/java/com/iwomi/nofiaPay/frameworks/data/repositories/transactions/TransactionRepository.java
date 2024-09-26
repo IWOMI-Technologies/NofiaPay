@@ -128,6 +128,7 @@ public class TransactionRepository {
 
     public List<TransactionEntity> getByCreatedAtBetween(Date start, Date end) {
         List<TransactionEntity> transactions =  repository.findByCreatedAtBetween(start, end);
+        System.out.println("fetched transactions: ===============>>>>>>>>>>>>"+ transactions);
         if(transactions.isEmpty()) throw  new GeneralException("Transactions not found.");
         return transactions;
     }
