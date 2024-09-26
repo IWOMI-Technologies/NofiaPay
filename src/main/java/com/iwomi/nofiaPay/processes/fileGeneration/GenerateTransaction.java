@@ -21,6 +21,8 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @Component
 public class GenerateTransaction {
@@ -45,8 +47,10 @@ public class GenerateTransaction {
                     case AGENT_DIGITAL_COLLECTION_OM, AGENT_DIGITAL_COLLECTION_MOMO ->
                             generation.agentDigitalCollection(entity).stream();
                     case SELF_SERVICE_OM, SELF_SERVICE_MOMO -> generation.selfService(entity).stream();
-                    default -> generation.merchantDigitalCollection(entity).stream();   // MERCHANT OM and MOMO
+                    case MERCHANT_DIGITAL_OM, MERCHANT_DIGITAL_MOMO -> generation.merchantDigitalCollection(entity).stream();   // MERCHANT OM and MOMO
+                    default -> Stream.empty();
                 })
+                .filter(Objects::nonNull)
                 .toList();
     }
 
