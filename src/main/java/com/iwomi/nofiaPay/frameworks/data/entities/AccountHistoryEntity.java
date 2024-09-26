@@ -36,6 +36,6 @@ public class AccountHistoryEntity extends BaseEntity {
     private String balance;
 
 
-    @Enumerated(EnumType.STRING) private OperationTypeEnum type;
+//    @Enumerated(EnumType.STRING) private OperationTypeEnum type;
 
 }

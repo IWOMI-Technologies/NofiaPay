@@ -32,7 +32,7 @@ public interface IAccountService {
     Map<String, List<Double>> viewAccountBalances(String clientCode);
 
 //    List<Account> viewAccountByDateRange(Date start, Date end)
-    List<CombineHistory> viewAccountByDateRange(Date start, Date end);
+//    List<CombineHistory> viewAccountByDateRange(String start, String end);
 
     List<Map<String, Object>> getAccountsWithLatestTransactions(String clientCode, int limit);
 }

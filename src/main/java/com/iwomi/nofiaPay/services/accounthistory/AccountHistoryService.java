@@ -62,6 +62,8 @@ public class AccountHistoryService implements IAccountHistoryService {
                 .map(AccountEntity::getAccountNumber)
                 .collect(Collectors.toList());
 
+        System.out.println("accountNumbers: ===================" + accountNumbers);
+
         return accountHistoryRepository.getAccountHistory(accountNumbers)
                 .stream()
                 .map(mapper::mapToModel).toList();

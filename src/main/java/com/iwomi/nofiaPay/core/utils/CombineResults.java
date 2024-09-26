@@ -26,7 +26,7 @@ public class CombineResults {
 
         return CombineHistory.builder()
                 .name(client.getFullName())
-                .service(history.type().toString())
+                .service(history.type())
                 .amount(history.amount())
                 .phone(client.getPhoneNumber())
                 .acc(history.accountNumber())

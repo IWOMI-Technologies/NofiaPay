@@ -40,6 +40,7 @@ public interface ITransactionRepository extends JpaRepository<TransactionEntity,
     @Query("SELECT a FROM transactions a WHERE a.receiverAccount IN :receiverAccount ORDER BY a.createdAt DESC")
     List<TransactionEntity> findTransactionsByReceiverAccountsOrderedByCreatedAtDesc(@Param("receiverAccount") List<String> receiverAccount, Pageable pageable);
 
+
     List<TransactionEntity> findByCreatedAtBetween(Date start, Date end);
 
 

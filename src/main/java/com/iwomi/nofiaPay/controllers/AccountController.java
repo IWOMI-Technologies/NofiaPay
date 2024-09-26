@@ -110,19 +110,11 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Balance check successful", HttpStatus.OK, HttpStatus.OK.value(), balances);
     }
 
-    // get specific type of client account
-    @GetMapping("account/client/{clientCode}")
-    public ResponseEntity<?> accountByTypeFromCode(@PathVariable String clientCode, @RequestParam String accountCode) {
-        List<Account> data = accountService.getAccountsByClientCode(clientCode);
-        var result = data.stream().filter(account -> account.getAccountTypeCode().equals(accountCode)).findFirst();
-        return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
-    }
-
     // returns client accounts only
     @GetMapping("/client/{clientCode}")
     public ResponseEntity<?> showAccountsByClientCode(@PathVariable String clientCode) {
         List<Account> result = accountService.getAccountsByClientCode(clientCode);
-        return GlobalResponse.responseBuilder("Accounts found ", HttpStatus.OK, HttpStatus.OK.value(), result);
+        return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
     // returns a merge object of client and account
@@ -249,24 +241,24 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Latest accounts history", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/date-between")
-    public ResponseEntity<?> getAccountsByDateRange(
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate
-    ) {
-        try {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-            Date start = formatter.parse(startDate);
-            Date end = formatter.parse(endDate);
-//           List<Account> result = accountService.viewAccountByDateRange(start, end);
-            List<CombineHistory> result = accountService.viewAccountByDateRange(start, end);
-
-            return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
-        } catch (ParseException e) {
-            return ResponseEntity.badRequest().body("Invalid date format. Please use yyyy-MM-dd.");
-        }
-    }
+//    @GetMapping("/date-between")
+//    public ResponseEntity<?> getAccountsByDateRange(
+//            @RequestParam("startDate") String startDate,
+//            @RequestParam("endDate") String endDate
+//    ) {
+//        try {
+//            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//
+//            Date start = formatter.parse(startDate);
+//            Date end = formatter.parse(endDate);
+////           List<Account> result = accountService.viewAccountByDateRange(start, end);
+//            List<CombineHistory> result = accountService.viewAccountByDateRange(start, end);
+//
+//            return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
+//        } catch (ParseException e) {
+//            return ResponseEntity.badRequest().body("Invalid date format. Please use yyyy-MM-dd.");
+//        }
+//    }
 
     @GetMapping("/latest")
     public ResponseEntity<?> getAccountsByLatestTransactions(@RequestParam("clientCode") String clientCode) {

@@ -153,65 +153,68 @@ public Map<String, List<Double>> viewAccountBalances(String clientCode) {
 //                .collect(Collectors.toList());
 //    }
 
-    @Override
-    public List<CombineHistory> viewAccountByDateRange(Date start, Date end) {
-
-        List<Account> accounts = accountRepository.getAccountByDateRange(start, end)
-                .stream()
-                .filter(account -> account.getCreatedAt().after(start) && account.getCreatedAt().before(end))
-                .map(mapper::mapToModel)
-                .toList();
-
-        List<AccountHistory> accountHistories = new ArrayList<>();
-        List<Transaction> transactions = new ArrayList<>();
-
-        for (Account account : accounts ) {
-
-            List<AccountHistory> allAccountHistories = historyService.getLatestTop5AccountHistoryByClientCode(account.getClientCode());
-
-            List<Transaction> allTransactions = transactionService.getLatestTop5TransactionByClientCode(account.getClientCode());
-
-            accountHistories.addAll(allAccountHistories);
-            transactions.addAll(allTransactions);
-        }
-
-        // Map histories and transactions to a common format
-        List<Map<String, Object>> historiesMap = accountHistories
-                .stream()
-                .map(history -> Map.<String, Object>of(
-                        "uuid", history.uuid(),
-                        "createdAt", history.createdAt()
-                )).toList();
-        List<Map<String, Object>> transactionsMap = transactions
-                .stream()
-                .map(history -> Map.<String, Object>of(
-                        "uuid", history.uuid(),
-                        "createdAt", history.createdAt()
-                )).toList();
-
-        // Combine and sort histories and transactions
-        Set<String> uuids = Stream.of(historiesMap, transactionsMap)
-                .flatMap(List::stream)
-                .sorted(Comparator.comparing(o -> (Date) o.get("createdAt"), Comparator.reverseOrder()))
-                .limit(5)
-                .map(d -> (String) d.get("uuid"))
-                .collect(Collectors.toSet());
-
-        List<AccountHistory> historyResult = accountHistories
-                .stream()
-                .filter(history -> uuids.contains(history.uuid()))
-                .toList();
-
-        List<Transaction> transactionResult = transactions
-                .stream()
-                .filter(transaction -> uuids.contains(transaction.uuid()))
-                .toList();
-
-        // Combine results into a single list
-        return Stream.concat(transactionResult.stream().map(combineResults::mapToTransactionHistory),
-                        historyResult.stream().map(combineResults::mapToAccountHistory))
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<CombineHistory> viewAccountByDateRange(Date start, Date end) {
+//
+//        List<Account> accounts = accountRepository.getAccountByDateRange(start, end)
+//                .stream()
+//                .filter(account -> account.getCreatedAt().after(start) && account.getCreatedAt().before(end))
+//                .map(mapper::mapToModel)
+//                .toList();
+//        System.out.println("////////" +  accounts);
+//
+//
+//
+//        List<AccountHistory> accountHistories = new ArrayList<>();
+//        List<Transaction> transactions = new ArrayList<>();
+//
+//        for (Account account : accounts ) {
+//
+//            List<AccountHistory> allAccountHistories = historyService.getLatestTop5AccountHistoryByClientCode(account.getClientCode());
+//
+//            List<Transaction> allTransactions = transactionService.getLatestTop5TransactionByClientCode(account.getClientCode());
+//
+//            accountHistories.addAll(allAccountHistories);
+//            transactions.addAll(allTransactions);
+//        }
+//
+//        // Map histories and transactions to a common format
+//        List<Map<String, Object>> historiesMap = accountHistories
+//                .stream()
+//                .map(history -> Map.<String, Object>of(
+//                        "uuid", history.uuid(),
+//                        "createdAt", history.createdAt()
+//                )).toList();
+//        List<Map<String, Object>> transactionsMap = transactions
+//                .stream()
+//                .map(history -> Map.<String, Object>of(
+//                        "uuid", history.uuid(),
+//                        "createdAt", history.createdAt()
+//                )).toList();
+//
+//        // Combine and sort histories and transactions
+//        Set<String> uuids = Stream.of(historiesMap, transactionsMap)
+//                .flatMap(List::stream)
+//                .sorted(Comparator.comparing(o -> (Date) o.get("createdAt"), Comparator.reverseOrder()))
+//                .limit(5)
+//                .map(d -> (String) d.get("uuid"))
+//                .collect(Collectors.toSet());
+//
+//        List<AccountHistory> historyResult = accountHistories
+//                .stream()
+//                .filter(history -> uuids.contains(history.uuid().toString()))
+//                .toList();
+//
+//        List<Transaction> transactionResult = transactions
+//                .stream()
+//                .filter(transaction -> uuids.contains(transaction.uuid().toString()))
+//                .toList();
+//
+//        // Combine results into a single list
+//        return Stream.concat(transactionResult.stream().map(combineResults::mapToTransactionHistory),
+//                        historyResult.stream().map(combineResults::mapToAccountHistory))
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public List<Map<String, Object>> getAccountsWithLatestTransactions(String clientCode, int limit) {

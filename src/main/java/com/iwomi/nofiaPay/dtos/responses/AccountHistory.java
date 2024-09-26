@@ -17,7 +17,7 @@ public record AccountHistory(
         String reason,
         BigDecimal amount,
         String accountNumber,
-        OperationTypeEnum type,
+        String type,
         SenseTypeEnum sense,
         StatusTypeEnum status,
         Date createdAt
