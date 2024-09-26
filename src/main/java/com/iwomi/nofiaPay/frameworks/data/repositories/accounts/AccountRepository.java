@@ -44,9 +44,7 @@ public class AccountRepository {
     }
 
     public AccountEntity getOneByAccount(String account) {
-        System.out.println(AccountRepository.class.toString()+  "preparing fetch accounts: "+account);
         AccountEntity entity = repository.findByAccountNumber(account);
-        System.out.println("fetched accouts: "+entity);
         if (entity == null) throw new GeneralException("Account Not Found");
         return entity;
     }

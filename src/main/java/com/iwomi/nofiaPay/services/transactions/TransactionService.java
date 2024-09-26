@@ -59,12 +59,10 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public List<Transaction> viewAllTransactions() {
-
-        List<TransactionEntity> trans = transactionRepository.getAllTransaction();
-        return trans
-            .stream()
-            .map(mapper::mapToModel)
-            .toList();
+        return transactionRepository.getAllTransaction()
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
     }
 
     @Override
@@ -164,7 +162,6 @@ public class TransactionService implements ITransactionService {
 
         Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
 
-        System.out.println("saved transaction: ================>>>>>>>>>>>>"+ savedTransaction);
         handlePaymentProcess(authUuid, dto, savedTransaction);
 
         return mapper.mapToModel(transactionRepository.getOne(savedTransaction.uuid()));

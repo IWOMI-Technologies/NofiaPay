@@ -6,7 +6,7 @@ spring:
   datasource: # db config seems not to be used
     url: jdbc:mysql://localhost:3306/nofia?serverTimezone=Africa/Douala
     username: root
-    password:
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -34,9 +34,7 @@ server:
 
 app:
   files:
-    #downloads: /home/projects-downloads/nofia
-    downloads: C:/Users/parfa/Downloads/nofia
-    dir: uploads/files
+    downloads: /home/projects-downloads/nofia
 
 #springdoc:
 #  swagger-ui:
@@ -53,7 +51,7 @@ eureka:
     #      enabled: true
     lease:
       duration: 5
-    enabled: false  # false value disables discovery request.
+    enabled: true  # false value disables discovery request.
 
 externals:
   iwomi:
@@ -68,7 +66,6 @@ externals:
   base-url:
     auth: http://localhost:8080/api/v1/auth
     iwomiPay: https://www.pay.iwomitechnologies.com/api/iwomipay_sandbox
-
 
 logging:
   level:
