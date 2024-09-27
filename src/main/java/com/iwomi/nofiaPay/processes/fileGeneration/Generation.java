@@ -17,7 +17,8 @@ public class Generation implements IGeneration {
     @Override
     public List<TransactionFile> agentCashCollection(TransactionEntity entity) {
         String agentAccount = entity.getIssuerAccount();
-        String clientAccount = entity.getIssuerAccount();
+        String clientAccount = entity.getReceiverAccount();
+
         String agentBranch = accountRepository.getOneByAccount(agentAccount).getAgencyCode();
         String clientBranch = accountRepository.getOneByAccount(clientAccount).getAgencyCode();
         if (agentBranch.equals(clientBranch)) {
@@ -43,8 +44,8 @@ public class Generation implements IGeneration {
     @Override
     public List<TransactionFile> agentDigitalCollection(TransactionEntity entity) {
         String agentAccount = entity.getIssuerAccount();
-        String clientAccount = entity.getIssuerAccount();
-        String agentBranch = accountRepository.getOneByAccount(agentAccount).getAgencyCode();
+        String clientAccount = entity.getReceiverAccount();
+//        String agentBranch = accountRepository.getOneByAccount(agentAccount).getAgencyCode();
         String clientBranch = accountRepository.getOneByAccount(clientAccount).getAgencyCode();
 
         String siegeBranchCode = NomenclatureConstants.SIEGEBRANCHCODE;
@@ -71,9 +72,9 @@ public class Generation implements IGeneration {
 
     @Override
     public List<TransactionFile> selfService(TransactionEntity entity) {
-        String agentAccount = entity.getIssuerAccount();
-        String clientAccount = entity.getIssuerAccount();
-        String agentBranch = accountRepository.getOneByAccount(agentAccount).getAgencyCode();
+        //String agentAccount = entity.getIssuerAccount();
+        String clientAccount = entity.getReceiverAccount();
+        //String agentBranch = accountRepository.getOneByAccount(agentAccount).getAgencyCode();
         String clientBranch = accountRepository.getOneByAccount(clientAccount).getAgencyCode();
 
         String siegeBranchCode = NomenclatureConstants.SIEGEBRANCHCODE;
@@ -95,9 +96,9 @@ public class Generation implements IGeneration {
 
     @Override
     public List<TransactionFile> merchantDigitalCollection(TransactionEntity entity) {
-        String agentAccount = entity.getIssuerAccount();
-        String clientAccount = entity.getIssuerAccount();
-        String agentBranch = accountRepository.getOneByAccount(agentAccount).getAgencyCode();
+//        String agentAccount = entity.getIssuerAccount();
+        String clientAccount = entity.getReceiverAccount();
+//        String agentBranch = accountRepository.getOneByAccount(agentAccount).getAgencyCode();
         String clientBranch = accountRepository.getOneByAccount(clientAccount).getAgencyCode();
 
         String siegeBranchCode = NomenclatureConstants.SIEGEBRANCHCODE;

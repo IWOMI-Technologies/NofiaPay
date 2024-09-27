@@ -10,7 +10,9 @@ import com.iwomi.nofiaPay.frameworks.data.entities.*;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory.IAccountHistoryRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.IAccountRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.branches.BranchRepository;
+import com.iwomi.nofiaPay.frameworks.data.repositories.branches.IBranchRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.IClientRepository;
+import com.iwomi.nofiaPay.frameworks.data.repositories.tellerBox.ITellerBoxRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.ITransactionRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.validators.IValidatorRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +30,9 @@ import java.util.Set;
 public class Seeder {
     @Bean
     CommandLineRunner initDatabase(
-            ITransactionRepository transactionRepository
+            ITransactionRepository transactionRepository,
+            IBranchRepository branchRepository,
+            ITellerBoxRepository tellerBoxRepository
     ) {
         // Transaction Setup
         List<TransactionEntity> transactions = List.of(
@@ -219,8 +223,57 @@ public class Seeder {
 
         if (transacs.isEmpty()) transactionRepository.saveAll(transactions);
 
+        //Branch setup
+        List<BranchEntity> branches = List.of(
+                BranchEntity.builder()
+                        .code("004")
+                        .name("AGENCE AGIP")
+                        .deleted(false)
+                        .build(),
+                BranchEntity.builder()
+                        .code("001")
+                        .name("AGENCE BONANJO")
+                        .deleted(false)
+                        .build()
+        );
+        List<BranchEntity> branch = branchRepository.findAll();
+
+        if (branch.isEmpty()) branchRepository.saveAll(branches);
+
+        List<TellerBoxEntity> tellerBox = List.of(
+                TellerBoxEntity.builder()
+                        .number("650493269")
+                        .branchCode("004")
+                        .clientCode("01019175")
+                        .deleted(false)
+                        .build(),
+                TellerBoxEntity.builder()
+                        .number("696039895")
+                        .branchCode("004")
+                        .clientCode("01019174")
+                        .deleted(false)
+                        .build(),
+                TellerBoxEntity.builder()
+                        .number("674593631")
+                        .branchCode("001")
+                        .clientCode("01018632")
+                        .deleted(false)
+                        .build(),
+                TellerBoxEntity.builder()
+                        .number("675227131")
+                        .branchCode("001")
+                        .clientCode("01018637")
+                        .deleted(false)
+                        .build()
+        );
+        List<TellerBoxEntity> tellerb = tellerBoxRepository.findAll();
+
+        if (tellerb.isEmpty()) tellerBoxRepository.saveAll(tellerBox);
+
         return args -> {
             log.info("Preloading account " + transactions);
+            log.info("Preloading branch" + branches);
+            log.info("Preloading tellerBox" + tellerBox);
         };
     }
 }
