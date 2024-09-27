@@ -169,7 +169,7 @@ public class TransactionService implements ITransactionService {
 
         Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
 
-//        handlePaymentProcess(authUuid, dto, savedTransaction);
+        handlePaymentProcess(authUuid, dto, savedTransaction);
 
         return mapper.mapToModel(transactionRepository.getOne(savedTransaction.getUuid()));
     }
@@ -260,13 +260,16 @@ public class TransactionService implements ITransactionService {
     @Override
     public Map<String, Object> reversement(ReversementDto dto){
 //        if (!authClient.checkPin(dto.agentClientCode(), dto.pin())) throw new UnAuthorizedException("Invalid Pin");
+        OperationTypeEnum operationType = OperationTypeUtil
+                .getOperationTypeFromString(dto.operation());
+        System.out.println("CASH :: op type "+operationType);
 
         String tellerClientCode = tellerBoxRepository.getOneByNumberAndBranchCode(dto.boxNumber(), dto.branchCode())
                 .getClientCode();
 
         String tellerAccountNumber = accountRepository.getAccountsByClientCode(tellerClientCode)
                 .stream()
-                .filter(acc -> acc.getAccountTypeCode() == NomenclatureConstants.TellerAccountTypeCode)
+                .filter(acc -> Objects.equals(acc.getAccountTypeCode(), NomenclatureConstants.TellerAccountTypeCode))
                 .map(AccountEntity::getAccountNumber)
                 .findFirst()
                 .orElseThrow(() -> new GeneralException("Teller account Not Found"));
@@ -276,7 +279,7 @@ public class TransactionService implements ITransactionService {
                 .reason("Reversement to a teller")
                 .issuerAccount(dto.agentAccountNumber())
                 .receiverAccount(tellerAccountNumber)
-                .type(dto.operation())
+                .type(operationType)
                 .status(StatusTypeEnum.PENDING)
                 .build();
 
@@ -357,6 +360,8 @@ public class TransactionService implements ITransactionService {
         String accountNumber = accountRepository
                 .getOneByClientCodeAndType(clientCode, type)
                 .getAccountNumber();
+
+        System.out.println("FINDINGGGGGGG :::: "+accountNumber);
         // agent collected transactions not processed
         List<TransactionEntity> transactions = transactionRepository
                 .getByIssuerAccountAndTypeAndProcessed(accountNumber, StatusTypeEnum.COLLECTED, false);
@@ -388,8 +393,12 @@ public class TransactionService implements ITransactionService {
         String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
         if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
 
+        final String append = payType.equals(IwomiPayTypesEnum.momo.toString().toLowerCase()) ? "237" : "";
+
         DigitalPaymentDto paymentDto = new DigitalPaymentDto("credit", payType, dto.amount(),
-                "generateMe", dto.reason(), dto.sourcePhoneNumber(), "CM", "xaf");
+                "generateMe", dto.reason(), append + dto.sourcePhoneNumber(), "CM", "xaf");
+
+        System.out.println("IWOMI PAYLOAD :::::: "+paymentDto);
         // make iwomi Pay request
         Map<String, Object> response = payment.pay(paymentDto);
 

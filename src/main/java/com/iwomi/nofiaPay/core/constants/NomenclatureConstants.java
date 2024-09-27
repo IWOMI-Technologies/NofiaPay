@@ -12,5 +12,8 @@ public class NomenclatureConstants {
 
     public static String SIEGEBRANCHCODE = "01";
 
-    public static String TellerAccountTypeCode = "0122";
+    public static String TellerAccountTypeCode = "1111.0";
+    public static String ClientAccountTypeCode = "3333.0";
+    public static String AgentAccountTypeCode = "2222.0";
+    public static String MerchantAccountTypeCode = "4444.0";
 }

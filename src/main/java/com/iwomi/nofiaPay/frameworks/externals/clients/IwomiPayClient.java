@@ -15,8 +15,12 @@ public interface IwomiPayClient {
     ResponseEntity<?> authenticate(@RequestBody IwomiAuthDto dto);
 
     @PostMapping("/iwomipay")
-    Map<String, Object> iwomiPay(@RequestHeader("AccountKey") String apikey, @RequestBody Map<String, Object> payload);
+    Map<String, Object> iwomiPay(
+            @RequestHeader("Authorization") String token,
+            @RequestHeader("AccountKey") String apikey,
+            @RequestBody Map<String, Object> payload
+    );
 
     @GetMapping("/iwomipayStatus/{internal_id}")
-    Map<String, Object> paymentStatus(@PathVariable String internal_id);
+    Map<String, Object> paymentStatus(@RequestHeader("Authorization") String token, @PathVariable String internal_id);
 }

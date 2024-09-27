@@ -242,25 +242,25 @@ public class Seeder {
 
         List<TellerBoxEntity> tellerBox = List.of(
                 TellerBoxEntity.builder()
-                        .number("650493269")
+                        .number("1")
                         .branchCode("004")
                         .clientCode("01019175")
                         .deleted(false)
                         .build(),
                 TellerBoxEntity.builder()
-                        .number("696039895")
+                        .number("2")
                         .branchCode("004")
                         .clientCode("01019174")
                         .deleted(false)
                         .build(),
                 TellerBoxEntity.builder()
-                        .number("674593631")
+                        .number("3")
                         .branchCode("001")
                         .clientCode("01018632")
                         .deleted(false)
                         .build(),
                 TellerBoxEntity.builder()
-                        .number("675227131")
+                        .number("4")
                         .branchCode("001")
                         .clientCode("01018637")
                         .deleted(false)

@@ -13,6 +13,6 @@ public record ReversementDto(
         String branchCode,
         String boxNumber,
 //        String pin,
-        OperationTypeEnum operation // agent to teller
+        String operation // agent to teller
 ) {
 }

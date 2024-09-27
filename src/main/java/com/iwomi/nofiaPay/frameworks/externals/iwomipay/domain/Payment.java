@@ -64,7 +64,7 @@ public class Payment implements IPayment {
     @Override
     public Map<String, Object> pay(DigitalPaymentDto dto) {
         IwomiAuthDto authDto = new IwomiAuthDto(username, password);
-        String token = auth(authDto);
+        String token = "Bearer "+ auth(authDto);
 //        System.out.println("Token ----- "+token);
 
         String key = Objects.equals(dto.type(), "om") ? omKey : momoKey;
@@ -75,15 +75,15 @@ public class Payment implements IPayment {
 
         var object = CoreUtils.objectToMap(dto);
 
-        return client.iwomiPay(encoded, object);
+        return client.iwomiPay(token, encoded, object);
     }
 
     @Async("threadPoolTaskExecutor")
     @Override
     public CompletableFuture<Map<String, Object>> checkPaymentStatusWithBackoff(String internalId) {
         // Define configuration parameters locally
-        long delayPeriodSeconds = 5; // Total retry duration in seconds (3 minutes)
-        long maxInitialDelaySeconds = 1; // Initial delay in seconds
+        long delayPeriodSeconds = 180; // Total retry duration in seconds (3 minutes) = 180 sec
+        long maxInitialDelaySeconds = 1;
 
         Map<String, Object> checking = null;
         int retryCount = 0;
@@ -92,8 +92,10 @@ public class Payment implements IPayment {
         long totalDurationMillis = TimeUnit.SECONDS.toMillis(delayPeriodSeconds); // Total duration in milliseconds
         long startTime = System.currentTimeMillis(); // Record start time
 
+        // iwomi pay auth
+        final String token = "Bearer "+ auth(new IwomiAuthDto(username, password));
         while (true) {
-            checking = client.paymentStatus(internalId); // Make API call
+            checking = client.paymentStatus(token, internalId); // Make API call
 
             if (isPaymentCompleted(checking)) {
                 System.out.println("Payment completed.");
