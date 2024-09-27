@@ -1,5 +1,7 @@
 package com.iwomi.nofiaPay.frameworks.data.repositories.transactions;
 
+import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
+import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,6 +27,8 @@ public interface ITransactionRepository extends JpaRepository<TransactionEntity,
     List<TransactionEntity> findByIssuerAccount(String IssuerAccount);
 
     List<TransactionEntity> findByReceiverAccount(String receiverAccount);
+
+    List<TransactionEntity> findByIssuerAccountAndStatusAndProcessed(String IssuerAccount, StatusTypeEnum type, boolean processed);
 
     boolean existsByIssuerAccount(String IssuerAccount);
 

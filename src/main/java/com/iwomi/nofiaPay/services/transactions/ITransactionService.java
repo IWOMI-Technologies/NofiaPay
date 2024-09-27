@@ -4,6 +4,7 @@ import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -47,5 +48,7 @@ public interface ITransactionService {
     List<Transaction> getLatestTop5TransactionByClientCode (String clientCode);
 
     List<Transaction> viewTransactionsByClientCode(String clientCode);
+
+    BigDecimal viewAgentUnProcessedCollectionAmountByClientCode(String clientCode, String type);
 
 }

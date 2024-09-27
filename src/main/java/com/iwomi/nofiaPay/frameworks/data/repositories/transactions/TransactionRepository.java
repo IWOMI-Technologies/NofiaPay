@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.frameworks.data.repositories.transactions;
 
+import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
@@ -72,6 +73,15 @@ public class TransactionRepository {
         List<Date> dates = CoreUtils.startAndEndOfDay(today);
         List<TransactionEntity> transactions =  repository.findByIssuerAccountAndCreatedAtBetween(acc, dates.getFirst(), dates.getLast());
         if (transactions.isEmpty()) throw  new GeneralException("Transactions not found for fle generation.");
+
+        return transactions;
+    }
+
+    public  List<TransactionEntity> getByIssuerAccountAndTypeAndProcessed(String acc, StatusTypeEnum type, boolean processed) {
+//        Date today = CoreUtils.localDateToDate(LocalDate.now());
+//        List<Date> dates = CoreUtils.startAndEndOfDay(today);
+        List<TransactionEntity> transactions =  repository.findByIssuerAccountAndStatusAndProcessed(acc, type, processed);
+        if (transactions.isEmpty()) throw  new GeneralException("Transactions not found");
 
         return transactions;
     }

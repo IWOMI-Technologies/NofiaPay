@@ -4,6 +4,7 @@ import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.core.mappers.IClientMapper;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.Client;
+import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
@@ -57,10 +58,10 @@ public class ClientService implements IClientService {
     public Client viewOneByPhone(String phone) {
 
         Client client = mapper.mapToModel(clientRepository.getOneByPhone(phone));
-        List<Account> accounts = accountRepository
+        List<String> accounts = accountRepository
                 .getByClientCode(client.getClientCode())
                 .stream()
-                .map(accountMapper::mapToModel)
+                .map(AccountEntity::getAccountNumber)
                 .toList();
         client.setAccounts(accounts);
 
@@ -71,14 +72,20 @@ public class ClientService implements IClientService {
     public Client viewOneByClientCode(String clientCode) {
 
         Client client = mapper.mapToModel(clientRepository.getOneByClientCode(clientCode));
-        List<Account> accounts = accountRepository
+        List<String> accounts = accountRepository
                 .getByClientCode(client.getClientCode())
                 .stream()
-                .map(accountMapper::mapToModel)
+                .map(AccountEntity::getAccountNumber)
                 .toList();
         client.setAccounts(accounts);
 
         return client;
+    }
+
+    @Override
+    public Client viewOneByAccountNumber(String accountNumber) {
+        AccountEntity account = accountRepository.getOneByAccount(accountNumber);
+        return mapper.mapToModel(clientRepository.getOneByClientCode(account.getClientCode()));
     }
 
     @Override

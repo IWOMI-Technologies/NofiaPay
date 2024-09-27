@@ -40,6 +40,7 @@ public class Client {
     private String agentCode;
     private String agentName;
 
-    private List<Account> accounts;
+    private List<String> accounts;
+//    private List<Account> accounts;
 
 }

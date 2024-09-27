@@ -142,7 +142,14 @@ public class TransactionService implements ITransactionService {
                 .status(StatusTypeEnum.COLLECTED)
                 .build();
 
-        return mapper.mapToModel(transactionRepository.createTransaction(entity));
+        Transaction transaction = mapper
+                .mapToModel(transactionRepository.createTransaction(entity));
+        AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
+        ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+
+        transaction.setName(client.getFullName());
+
+        return transaction;
     }
 
     @Override
@@ -162,9 +169,9 @@ public class TransactionService implements ITransactionService {
 
         Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
 
-        handlePaymentProcess(authUuid, dto, savedTransaction);
+//        handlePaymentProcess(authUuid, dto, savedTransaction);
 
-        return mapper.mapToModel(transactionRepository.getOne(savedTransaction.uuid()));
+        return mapper.mapToModel(transactionRepository.getOne(savedTransaction.getUuid()));
     }
 
     @Override
@@ -176,13 +183,21 @@ public class TransactionService implements ITransactionService {
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
                 .reason(dto.reason())
+                .batch("no batch")
                 .issuerAccount(dto.agentAccount())
                 .receiverAccount(dto.clientAccount())
                 .type(operationType)
                 .status(StatusTypeEnum.COLLECTED)
                 .build();
 
-        return mapper.mapToModel(transactionRepository.createTransaction(entity));
+        Transaction transaction = mapper
+                .mapToModel(transactionRepository.createTransaction(entity));
+        AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
+        ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+
+        transaction.setName(client.getFullName());
+
+        return transaction;
     }
 
     @Override
@@ -204,7 +219,14 @@ public class TransactionService implements ITransactionService {
         if (entity.getType() != OperationTypeEnum.MERCHANT_CASH && entity.getIssuerAccount() != null)
             throw new IllegalArgumentException("Issuer account must be null for MERCHANT_CASH type.");
 
-        return mapper.mapToModel(transactionRepository.createTransaction(entity));
+        Transaction transaction = mapper
+                .mapToModel(transactionRepository.createTransaction(entity));
+        AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
+        ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+
+        transaction.setName(client.getFullName());
+
+        return transaction;
     }
 
     @Override
@@ -224,13 +246,20 @@ public class TransactionService implements ITransactionService {
         if (entity.getType().toString().startsWith("MERCHANT_DIGITAL") && !Objects.equals(entity.getIssuerAccount(), NomenclatureConstants.CBR))
             throw new IllegalArgumentException("Issuer account must be " + NomenclatureConstants.CBR + " for MERCHANT_DIGITAL** type.");
 
-        return mapper.mapToModel(transactionRepository.createTransaction(entity));
+        Transaction transaction = mapper
+                .mapToModel(transactionRepository.createTransaction(entity));
+        AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
+        ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+
+        transaction.setName(client.getFullName());
+
+        return transaction;
 
     }
 
     @Override
     public Map<String, Object> reversement(ReversementDto dto){
-        if (!authClient.checkPin(dto.agentClientCode(), dto.pin())) throw new UnAuthorizedException("Invalid Pin");
+//        if (!authClient.checkPin(dto.agentClientCode(), dto.pin())) throw new UnAuthorizedException("Invalid Pin");
 
         String tellerClientCode = tellerBoxRepository.getOneByNumberAndBranchCode(dto.boxNumber(), dto.branchCode())
                 .getClientCode();
@@ -254,7 +283,12 @@ public class TransactionService implements ITransactionService {
         if (entity.getType() != OperationTypeEnum.REVERSEMENT)
             throw new IllegalArgumentException("Operation type must be REVERSEMENT");
 
-        Transaction transaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
+        Transaction transaction = mapper
+                .mapToModel(transactionRepository.createTransaction(entity));
+        AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
+        ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+
+        transaction.setName(client.getFullName());
 
         return Map.of(
                 "transaction", transaction,
@@ -291,7 +325,7 @@ public class TransactionService implements ITransactionService {
 
         return merged
                 .stream()
-                .sorted(Comparator.comparing(Transaction::createdAt).reversed())
+                .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .limit(5)
                 .toList();
 
@@ -316,6 +350,19 @@ public class TransactionService implements ITransactionService {
         return Stream.of(issuerAccounts, receiverAccounts)
                 .flatMap(List::stream)
                 .toList();
+    }
+
+    @Override
+    public BigDecimal viewAgentUnProcessedCollectionAmountByClientCode(String clientCode, String type) {
+        String accountNumber = accountRepository
+                .getOneByClientCodeAndType(clientCode, type)
+                .getAccountNumber();
+        // agent collected transactions not processed
+        List<TransactionEntity> transactions = transactionRepository
+                .getByIssuerAccountAndTypeAndProcessed(accountNumber, StatusTypeEnum.COLLECTED, false);
+        return transactions.stream()
+                .map(TransactionEntity::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
 
@@ -364,11 +411,11 @@ public class TransactionService implements ITransactionService {
                 System.out.println("Transformed result: " + transformedResult);
                 // update status in DB
                 if ("01".equalsIgnoreCase(transformedResult.get("status").toString())) {    // success
-                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.VALIDATED);
-                    websocketService.sendToUser(authUuid, StatusTypeEnum.VALIDATED.toString());
+                    transactionRepository.updateTransactionStatus(savedTransaction.getUuid(), StatusTypeEnum.VALIDATED);
+                    websocketService.sendToUser(authUuid, StatusTypeEnum.COLLECTED.toString());
                 }
                 else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {  // fail
-                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+                    transactionRepository.updateTransactionStatus(savedTransaction.getUuid(), StatusTypeEnum.FAILED);
                     websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
                 }
                 else {  // remain pending
@@ -382,7 +429,7 @@ public class TransactionService implements ITransactionService {
                 return null;
             });
         } else if (Objects.equals(response.get("status").toString(), "100")) {  // 100 means status is fail
-            transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
+            transactionRepository.updateTransactionStatus(savedTransaction.getUuid(), StatusTypeEnum.FAILED);
             websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
         } else {    // this is for status 01 which is surely never called
             System.out.println("******** !!! Payment status is 01 check your code please !!! **********");

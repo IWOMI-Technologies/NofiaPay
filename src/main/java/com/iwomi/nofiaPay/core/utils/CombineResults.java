@@ -40,29 +40,29 @@ public class CombineResults {
     }
 
     public CombineHistory mapToTransactionHistory(Transaction transaction) {
-        System.out.println("@@@@@ "+transaction.issuerAccount());
-        String clientCode = accountRepository.getOneByAccount(transaction.issuerAccount()).getClientCode();
+        System.out.println("@@@@@ "+transaction.getIssuerAccount());
+        String clientCode = accountRepository.getOneByAccount(transaction.getIssuerAccount()).getClientCode();
         System.out.println("@@@@@ CODE"+clientCode);
 
         ClientEntity client = clientRepository.getOneByClientCode(clientCode);
 
         List<String> clientAccounts = accountRepository.getAccountNumbersByClientCode(clientCode);
 
-        SenseTypeEnum sense = clientAccounts.contains(transaction.issuerAccount()) ?
+        SenseTypeEnum sense = clientAccounts.contains(transaction.getIssuerAccount()) ?
                 SenseTypeEnum.DEBIT :
                 SenseTypeEnum.CREDIT;
 
         return CombineHistory.builder()
                 .name(client.getFullName())
-                .service(transaction.type().toString())
-                .amount(transaction.amount())
+                .service(transaction.getType().toString())
+                .amount(transaction.getAmount())
                 .phone(client.getPhoneNumber())
-                .acc(transaction.receiverAccount())
-                .senderAcc(transaction.issuerAccount())
+                .acc(transaction.getReceiverAccount())
+                .senderAcc(transaction.getIssuerAccount())
                 .branchName(client.getAgencyLabel())
-                .transactionId(transaction.uuid())
-                .transactionDate(transaction.createdAt())
-                .status(transaction.status().toString())
+                .transactionId(transaction.getUuid())
+                .transactionDate(transaction.getCreatedAt())
+                .status(transaction.getStatus().toString())
                 .sense(sense)
                 .build();
     }

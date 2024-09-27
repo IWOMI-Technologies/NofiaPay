@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -203,6 +204,24 @@ public class TransactionController {
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
+    @GetMapping("/collected-amount/{clientCode}")
+    @Operation(
+            description = """
+                    """,
+            parameters = {},
+            responses = {
+                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", ref = "successResponse"),
+            }
+    )
+    public ResponseEntity<?> agentCollectedAmount(@PathVariable String clientCode) {
+        String type = "2222.0"; // .0 because of how its in the db
+        BigDecimal result = transactionService.viewAgentUnProcessedCollectionAmountByClientCode(clientCode, type);
+        System.out.println("AMOUNT :: "+result);
+        return GlobalResponse.responseBuilder("Agent collected amount", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
     @PostMapping("/reversement")
     @Operation(
             description = """
@@ -221,7 +240,7 @@ public class TransactionController {
         String tellerCode = (String) result.get("tellerCode");
         ValidationEntity validation = validationService.sendToTellerValidation(
                 tellerCode,
-                transaction.uuid(),
+                transaction.getUuid(),
                 dto.agentAccountNumber(),
                 ValidationTypeEnum.REVERSEMENT
         );

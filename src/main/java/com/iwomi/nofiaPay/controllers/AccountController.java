@@ -198,8 +198,8 @@ public class AccountController {
         List<Map<String, Object>> transactionsMap = transactions
                 .stream()
                 .map(history -> Map.<String, Object>of(
-                        "uuid", history.uuid(),
-                        "createdAt", history.createdAt()
+                        "uuid", history.getUuid(),
+                        "createdAt", history.getCreatedAt()
                 )).toList();
         System.out.println("transaction UUIDssssss " + historiesMap);
 
@@ -223,7 +223,7 @@ public class AccountController {
 
         List<Transaction> transactionResult = transactions
                 .stream()
-                .filter(trans -> uuids.contains(trans.uuid().toString()))
+                .filter(trans -> uuids.contains(trans.getUuid().toString()))
                 .distinct() // remove duplicates
                 .toList();
         System.out.println("tran results!!! " + transactionResult);

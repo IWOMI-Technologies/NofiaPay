@@ -21,6 +21,7 @@ public interface IAccountRepository extends JpaRepository<AccountEntity, UUID> {
     //    Optional<AccountEntity> findByBranchIdAndType(String branchId, AccountTypeEnum type);
 //    Optional<AccountEntity> findByClientIdAndType(String clientId, AccountTypeEnum type);
     Optional<AccountEntity> findByAgencyCodeAndAccountTypeCode(String clientId, String type);
+    Optional<AccountEntity> findByClientCodeAndAccountTypeCode(String clientCode, String type);
 
     List<AccountEntity> findByClientCode(String clientCode);
 

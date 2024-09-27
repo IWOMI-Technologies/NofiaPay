@@ -245,11 +245,11 @@ public Map<String, List<Double>> viewAccountBalances(String clientCode) {
                 .map(accountNumber -> {
                     // Fetch debit and credit transactions
                     List<Transaction> debitTransactions = issuerTransactions.stream()
-                            .filter(history -> accountNumber.equals(history.issuerAccount()))
+                            .filter(history -> accountNumber.equals(history.getIssuerAccount()))
                             .toList();
 
                     List<Transaction> creditTransactions = receiverTransactions.stream()
-                            .filter(history -> accountNumber.equals(history.receiverAccount()))
+                            .filter(history -> accountNumber.equals(history.getReceiverAccount()))
                             .toList();
 
 //            Fetch account history specific to the current account number
