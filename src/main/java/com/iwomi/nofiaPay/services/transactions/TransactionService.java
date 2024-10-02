@@ -52,7 +52,7 @@ public class TransactionService implements ITransactionService {
     private final BranchRepository branchRepository;
     private final TellerBoxRepository tellerBoxRepository;
     private final ValidatorRepository validatorRepository;
-    private  final AuthClient authClient;
+    private final AuthClient authClient;
     private final ITransactionMapper mapper;
     private final IPayment payment;
     private final IWebsocketService websocketService;
@@ -130,7 +130,7 @@ public class TransactionService implements ITransactionService {
         String batchCode = agentBranchCode(dto.agentAccount());
         OperationTypeEnum operationType = OperationTypeUtil
                 .getOperationTypeFromString(dto.operation());
-        System.out.println("CASH :: op type "+operationType);
+        System.out.println("CASH :: op type " + operationType);
 
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
@@ -156,7 +156,7 @@ public class TransactionService implements ITransactionService {
     public Transaction selfService(String authUuid, SelfServiceDto dto) {
         OperationTypeEnum operationType = OperationTypeUtil
                 .getOperationTypeFromString(dto.operation());
-        System.out.println("CASH :: op type "+operationType);
+        System.out.println("CASH :: op type " + operationType);
 
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
@@ -169,16 +169,17 @@ public class TransactionService implements ITransactionService {
 
         Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
 
-        handlePaymentProcess(authUuid, dto, savedTransaction);
+        PaymentProcessDto payDto = new PaymentProcessDto(dto.operation(), dto.reason(), dto.sourcePhoneNumber(), dto.amount());
+        handlePaymentProcess(authUuid, payDto, savedTransaction);
 
         return mapper.mapToModel(transactionRepository.getOne(savedTransaction.getUuid()));
     }
 
     @Override
-    public Transaction AgentDigitalCollection(AgentDigitalCollectionDto dto) {
+    public Transaction AgentDigitalCollection(String authUuid, AgentDigitalCollectionDto dto) {
         OperationTypeEnum operationType = OperationTypeUtil
                 .getOperationTypeFromString(dto.operation());
-        System.out.println("CASH :: op type "+operationType);
+        System.out.println("CASH :: op type " + operationType);
 
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
@@ -190,14 +191,18 @@ public class TransactionService implements ITransactionService {
                 .status(StatusTypeEnum.COLLECTED)
                 .build();
 
-        Transaction transaction = mapper
+        Transaction savedTransaction = mapper
                 .mapToModel(transactionRepository.createTransaction(entity));
-        AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
+
+        AccountEntity account = accountRepository.getOneByAccount(savedTransaction.getReceiverAccount());
         ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
 
-        transaction.setName(client.getFullName());
+        PaymentProcessDto payDto = new PaymentProcessDto(dto.operation(), dto.reason(), dto.sourcePhoneNumber(), dto.amount());
+        handlePaymentProcess(authUuid, payDto, savedTransaction);
 
-        return transaction;
+        savedTransaction.setName(client.getFullName());
+
+        return savedTransaction;
     }
 
     @Override
@@ -205,7 +210,7 @@ public class TransactionService implements ITransactionService {
         String batchCode = agentBranchCode(dto.merchantAccount());
         OperationTypeEnum operationType = OperationTypeUtil
                 .getOperationTypeFromString(dto.operation());
-        System.out.println("CASH :: op type "+operationType);
+        System.out.println("CASH :: op type " + operationType);
 
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
@@ -230,10 +235,10 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public Transaction merchantDigital(MerchantDigitalDto dto) {
+    public Transaction merchantDigital(String authUuid, MerchantDigitalDto dto) {
         OperationTypeEnum operationType = OperationTypeUtil
                 .getOperationTypeFromString(dto.operation());
-        System.out.println("CASH :: op type "+operationType);
+        System.out.println("CASH :: op type " + operationType);
 
         TransactionEntity entity = TransactionEntity.builder()
                 .amount(new BigDecimal(dto.amount()))
@@ -246,25 +251,29 @@ public class TransactionService implements ITransactionService {
         if (entity.getType().toString().startsWith("MERCHANT_DIGITAL") && !Objects.equals(entity.getIssuerAccount(), NomenclatureConstants.CBR))
             throw new IllegalArgumentException("Issuer account must be " + NomenclatureConstants.CBR + " for MERCHANT_DIGITAL** type.");
 
-        Transaction transaction = mapper
-                .mapToModel(transactionRepository.createTransaction(entity));
-        AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
+        Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
+
+        AccountEntity account = accountRepository.getOneByAccount(savedTransaction.getReceiverAccount());
         ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
 
-        transaction.setName(client.getFullName());
+        PaymentProcessDto payDto = new PaymentProcessDto(dto.operation(), dto.reason(), dto.sourcePhoneNumber(), dto.amount());
+        handlePaymentProcess(authUuid, payDto, savedTransaction);
 
-        return transaction;
+        savedTransaction.setName(client.getFullName());
+
+        return savedTransaction;
 
     }
 
     @Override
-    public Map<String, Object> reversement(ReversementDto dto){
+    public Map<String, Object> reversement(String authUuid, ReversementDto dto) {
 //        if (!authClient.checkPin(dto.agentClientCode(), dto.pin())) throw new UnAuthorizedException("Invalid Pin");
         OperationTypeEnum operationType = OperationTypeUtil
                 .getOperationTypeFromString(dto.operation());
-        System.out.println("CASH :: op type "+operationType);
+        System.out.println("CASH :: op type " + operationType);
 
-        String tellerClientCode = tellerBoxRepository.getOneByNumberAndBranchCode(dto.boxNumber(), dto.branchCode())
+        String tellerClientCode = tellerBoxRepository
+                .getOneByNumberAndBranchCode(dto.boxNumber(), dto.branchCode())
                 .getClientCode();
 
         String tellerAccountNumber = accountRepository.getAccountsByClientCode(tellerClientCode)
@@ -303,7 +312,7 @@ public class TransactionService implements ITransactionService {
     public List<Transaction> getLatestTop5TransactionByClientCode(String clientCode) {
 
         List<String> accounts = accountRepository.getAccountNumbersByClientCode(clientCode);
-        System.out.println("-------- _+____ accounts"+ accounts);
+        System.out.println("-------- _+____ accounts" + accounts);
 
         List<Transaction> issuerAccounts = transactionRepository.getTop5ByIssuerAccount(accounts)
                 .stream()
@@ -319,8 +328,8 @@ public class TransactionService implements ITransactionService {
                 .map(mapper::mapToModel)
                 .toList();
 
-        System.out.println("issuer data ***** "+issuerAccounts);
-        System.out.println("receiver data ***** "+issuerAccounts);
+        System.out.println("issuer data ***** " + issuerAccounts);
+        System.out.println("receiver data ***** " + issuerAccounts);
         List<Transaction> merged = Stream.of(issuerAccounts, receiverAccounts)
                 .flatMap(List::stream)
                 .toList();
@@ -361,7 +370,7 @@ public class TransactionService implements ITransactionService {
                 .getOneByClientCodeAndType(clientCode, type)
                 .getAccountNumber();
 
-        System.out.println("FINDINGGGGGGG :::: "+accountNumber);
+        System.out.println("FINDINGGGGGGG :::: " + accountNumber);
         // agent collected transactions not processed
         List<TransactionEntity> transactions = transactionRepository
                 .getByIssuerAccountAndTypeAndProcessed(accountNumber, StatusTypeEnum.COLLECTED, false);
@@ -388,8 +397,8 @@ public class TransactionService implements ITransactionService {
         return iTransactionRepository.existsByIssuerAccount(account);
     }
 
-    private void handlePaymentProcess(String authUuid, SelfServiceDto dto, Transaction savedTransaction) {
-        System.out.println("handle authUUID //////////// "+authUuid);
+    private void handlePaymentProcess(String authUuid, PaymentProcessDto dto, Transaction savedTransaction) {
+        System.out.println("handle authUUID //////////// " + authUuid);
         String payType = IwomiPayTypesEnum.om.toString().toLowerCase();
         if (dto.operation().toString().contains("MOMO")) payType = IwomiPayTypesEnum.momo.toString().toLowerCase();
 
@@ -398,12 +407,12 @@ public class TransactionService implements ITransactionService {
         DigitalPaymentDto paymentDto = new DigitalPaymentDto("credit", payType, dto.amount(),
                 "generateMe", dto.reason(), append + dto.sourcePhoneNumber(), "CM", "xaf");
 
-        System.out.println("IWOMI PAYLOAD :::::: "+paymentDto);
+        System.out.println("IWOMI PAYLOAD :::::: " + paymentDto);
         // make iwomi Pay request
         Map<String, Object> response = payment.pay(paymentDto);
 
-        System.out.println("payment---------- "+response);
-        System.out.println("--- stat -- "+response.get("status"));
+        System.out.println("payment---------- " + response);
+        System.out.println("--- stat -- " + response.get("status"));
 
         if (Objects.equals(response.get("status").toString(), "1000")) { // 1000 means request pending made, awaiting client confirmation
             // Extract internal ID from response
@@ -422,12 +431,10 @@ public class TransactionService implements ITransactionService {
                 if ("01".equalsIgnoreCase(transformedResult.get("status").toString())) {    // success
                     transactionRepository.updateTransactionStatus(savedTransaction.getUuid(), StatusTypeEnum.VALIDATED);
                     websocketService.sendToUser(authUuid, StatusTypeEnum.COLLECTED.toString());
-                }
-                else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {  // fail
+                } else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {  // fail
                     transactionRepository.updateTransactionStatus(savedTransaction.getUuid(), StatusTypeEnum.FAILED);
                     websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
-                }
-                else {  // remain pending
+                } else {  // remain pending
 //                    transactionRepository.updateTransactionStatus(savedTransaction.uuid(), StatusTypeEnum.FAILED);
                     websocketService.sendToUser(authUuid, StatusTypeEnum.PENDING.toString());
                     System.out.println("******** !!! Transaction remained pending in checkStatus iwomipay check your code please !!! **********");

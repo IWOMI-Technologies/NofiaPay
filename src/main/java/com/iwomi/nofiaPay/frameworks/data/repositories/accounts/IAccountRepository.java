@@ -21,7 +21,7 @@ public interface IAccountRepository extends JpaRepository<AccountEntity, UUID> {
     //    Optional<AccountEntity> findByBranchIdAndType(String branchId, AccountTypeEnum type);
 //    Optional<AccountEntity> findByClientIdAndType(String clientId, AccountTypeEnum type);
     Optional<AccountEntity> findByAgencyCodeAndAccountTypeCode(String clientId, String type);
-    Optional<AccountEntity> findByClientCodeAndAccountTypeCode(String clientCode, String type);
+//    Optional<AccountEntity> findByClientCodeAndAccountTypeCode(String clientCode, String type);
 
     List<AccountEntity> findByClientCode(String clientCode);
 
@@ -31,6 +31,9 @@ public interface IAccountRepository extends JpaRepository<AccountEntity, UUID> {
 
     @Query("SELECT a FROM accounts a WHERE  a.createdAt BETWEEN :startDate AND :endDate ORDER BY a.createdAt DESC")
     List<AccountEntity> findAccountByDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    // should not be a list since client should have one of each acc types
+    List<AccountEntity> findByClientCodeAndAccountTypeCode(String clientCode, String type);
 
 
 }

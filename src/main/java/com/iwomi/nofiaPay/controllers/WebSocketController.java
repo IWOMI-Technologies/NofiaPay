@@ -15,7 +15,7 @@ import java.util.Map;
 
 //@RequestMapping("${apiV1Prefix}/transactions")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class WebSocketController {
 

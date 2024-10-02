@@ -35,4 +35,6 @@ public interface IAccountService {
 //    List<CombineHistory> viewAccountByDateRange(String start, String end);
 
     List<Map<String, Object>> getAccountsWithLatestTransactions(String clientCode, int limit);
+    Account getMainAccount(String clientCode, String role);
+
 }

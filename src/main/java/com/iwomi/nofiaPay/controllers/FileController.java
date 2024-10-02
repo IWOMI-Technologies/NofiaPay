@@ -1,6 +1,7 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.enums.FileTypeEnum;
+import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.core.utils.CoreUtils;
 import com.iwomi.nofiaPay.core.utils.DateConverterUtils;
@@ -28,7 +29,7 @@ import java.util.List;
 
 @RequestMapping("${apiV1Prefix}/files")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class FileController {
     private final IFilesService filesService;
@@ -66,12 +67,26 @@ public class FileController {
 
             ByteArrayInputStream bis = new ByteArrayInputStream(excelData);
             HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=transactions_"+ today +".xlsx");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=transactions_" + today + ".xlsx");
 
             return new ResponseEntity<>(new InputStreamResource(bis), headers, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("error occured: "+ e.getMessage());
+            System.out.println("error occured: " + e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/generate/transactions")
+    public ResponseEntity<?> transactionsGeneration(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate
+    ) {
+        Date today = CoreUtils.localDateToDate(LocalDate.now());
+        Date start = DateConverterUtils.stringToDate(startDate);
+        Date end = DateConverterUtils.stringToDate(endDate);
+
+        List<TransactionEntity> transactions = transactionRepository.getByCreatedAtBetween(start, end);
+
+        return GlobalResponse.responseBuilder("Found generated transactions", HttpStatus.OK, HttpStatus.OK.value(), transactions);
     }
 }

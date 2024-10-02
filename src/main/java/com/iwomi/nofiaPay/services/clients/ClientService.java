@@ -90,7 +90,9 @@ public class ClientService implements IClientService {
 
     @Override
     public List<Client> findAllByClientCode(UserTypeEnum role) {
+        System.out.println("before call ___________________");
         ResponseEntity<?> response = authClient.getUsersByRole(role);
+        System.out.println("AFTER call ___________________");
         List<String> codes = (List<String>) response.getBody();
 
         return clientRepository.getAllByClientCodes(codes)

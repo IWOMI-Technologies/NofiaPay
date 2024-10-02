@@ -17,6 +17,6 @@ public interface AuthClient {
    @GetMapping("/users/{role}/deleted")
    ResponseEntity<?>  getUsersByRoleAndDeleted(@RequestParam String role);
 
-   @GetMapping()
+   @GetMapping("/users")
    ResponseEntity<?> getUsersByRole(@RequestParam UserTypeEnum role);
 }

@@ -35,15 +35,15 @@ public interface ITransactionService {
 
     Transaction selfService(String authUuid, SelfServiceDto dto);
 
-    Transaction AgentDigitalCollection(AgentDigitalCollectionDto dto);
+    Transaction AgentDigitalCollection(String authUuid, AgentDigitalCollectionDto dto);
 
     //TODO very similar to agentCashCollection above (arrange better)
     Transaction merchantCash(MerchantCashDto dto);
 
 //    //TODO similar to agentDigitalCollection above
-    Transaction merchantDigital(MerchantDigitalDto dto);
+    Transaction merchantDigital(String authUuid, MerchantDigitalDto dto);
 
-    Map<String, Object> reversement(ReversementDto dto);
+    Map<String, Object> reversement(String authUuid, ReversementDto dto);
 
     List<Transaction> getLatestTop5TransactionByClientCode (String clientCode);
 

@@ -21,14 +21,14 @@ import java.util.Map;
 
 @RequestMapping("${apiV1Prefix}/validations")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class ValidationController {
     private final IvalidationService validationService;
 
     @GetMapping()
     @Operation(
-            description = "List of clients by user type (in auth ms) and validation status",
+            description = "List of clients by user type (in auth ms) and validation status. check canValidate for val btn display",
             responses = {
                     @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
                     @ApiResponse(responseCode = "201", ref = "successResponse",

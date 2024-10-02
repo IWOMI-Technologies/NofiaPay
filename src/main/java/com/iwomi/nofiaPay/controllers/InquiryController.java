@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @RequestMapping("${apiV1Prefix}/inquiries")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class InquiryController {
 

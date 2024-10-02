@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.services.accounts;
 
+import com.iwomi.nofiaPay.core.constants.NomenclatureConstants;
 import com.iwomi.nofiaPay.core.mappers.IAccountHistoryMapper;
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
@@ -24,7 +25,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService  implements  IAccountService{
+public class AccountService  implements  IAccountService {
 
     private  final AccountRepository accountRepository;
 
@@ -271,6 +272,17 @@ public Map<String, List<Double>> viewAccountBalances(String clientCode) {
                     );
                 })
                 .toList();
+    }
+
+    @Override
+    public Account getMainAccount(String clientCode, String role) {
+        String accountType = null;
+        if (Objects.equals(role, "AGENT")) accountType = NomenclatureConstants.AgentAccountTypeCode;
+        if (Objects.equals(role, "CLIENT")) accountType = NomenclatureConstants.ClientAccountTypeCode;
+        if (Objects.equals(role, "MERCHANT")) accountType = NomenclatureConstants.MerchantAccountTypeCode;
+        if (Objects.equals(role, "TELLER")) accountType = NomenclatureConstants.TellerAccountTypeCode;    // may not be needed
+
+        return mapper.mapToModel(accountRepository.getOneByClientCodeAndType(clientCode, accountType));
     }
 
 

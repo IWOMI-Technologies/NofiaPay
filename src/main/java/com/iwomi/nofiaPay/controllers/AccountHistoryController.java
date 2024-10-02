@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @RequestMapping("${apiV1Prefix}/account-history")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class AccountHistoryController {
 

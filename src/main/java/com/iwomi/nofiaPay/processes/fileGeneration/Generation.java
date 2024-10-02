@@ -52,19 +52,25 @@ public class Generation implements IGeneration {
         return List.of(
                 produceTransactionFile(NomenclatureConstants.CBR, entity.getAmount().toString(),
                         "0", entity),
+
                 produceTransactionFile(siegeBranchCode + NomenclatureConstants.CL, "0",
                         entity.getAmount().toString(), entity),
+
                 produceTransactionFile(clientBranch + NomenclatureConstants.CL,
                         entity.getAmount().toString(), "0", entity),
-                produceTransactionFile(clientAccount, "0", entity.getAmount().toString(),
-                        entity),
                 // additions
-                produceTransactionFile(NomenclatureConstants.CDA,
-                        entity.getAmount().toString(), "0",entity),
                 produceTransactionFile(NomenclatureConstants.CDA, "0",
-                        entity.getAmount().toString(), entity),
-                produceTransactionFile(agentAccount,  entity.getAmount().toString(), "0",
+                        entity.getAmount().toString(),entity),
+
+                produceTransactionFile(NomenclatureConstants.CDA,
+                        entity.getAmount().toString(), "0", entity),
+
+                produceTransactionFile(agentAccount, "0", entity.getAmount().toString(),
                         entity),
+
+                produceTransactionFile(agentAccount, entity.getAmount().toString(), "0",
+                        entity),
+
                 produceTransactionFile(clientAccount, "0", entity.getAmount().toString(),
                         entity)
         );

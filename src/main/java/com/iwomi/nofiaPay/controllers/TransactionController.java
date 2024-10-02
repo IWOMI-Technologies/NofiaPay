@@ -27,7 +27,7 @@ import java.util.UUID;
 
 @RequestMapping("${apiV1Prefix}/transactions")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class TransactionController {
 
@@ -153,7 +153,7 @@ public class TransactionController {
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
-    @PostMapping("/agent-digital")
+    @PostMapping("/agent-digital/{userUuid}")
     @Operation(
             description = """
                     Agent digital collection transaction ::: use -> AGENT_DIGITAL_COLLECTION_MOMO, AGENT_DIGITAL_COLLECTION_OM
@@ -166,8 +166,11 @@ public class TransactionController {
                     @ApiResponse(responseCode = "200", ref = "successResponse"),
             }
     )
-    public ResponseEntity<?> storeAgentDigital(@RequestBody AgentDigitalCollectionDto dto) {
-        Transaction result = transactionService.AgentDigitalCollection(dto);
+    public ResponseEntity<?> storeAgentDigital(
+            @RequestBody AgentDigitalCollectionDto dto,
+            @PathVariable String userUuid
+    ) {
+        Transaction result = transactionService.AgentDigitalCollection(userUuid, dto);
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
@@ -186,7 +189,7 @@ public class TransactionController {
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
-    @PostMapping("/merchant-digital")
+    @PostMapping("/merchant-digital/{userUuid}")
     @Operation(
             description = """
                     Agent digital collection transaction ::: use -> MERCHANT_DIGITAL_COLLECTION_MOMO, AGENT_DIGITAL_COLLECTION_OM
@@ -199,8 +202,8 @@ public class TransactionController {
                     @ApiResponse(responseCode = "200", ref = "successResponse"),
             }
     )
-    public ResponseEntity<?> storeMerchantDigital(@RequestBody MerchantDigitalDto dto) {
-        Transaction result = transactionService.merchantDigital(dto);
+    public ResponseEntity<?> storeMerchantDigital(@RequestBody MerchantDigitalDto dto, @PathVariable String userUuid) {
+        Transaction result = transactionService.merchantDigital(userUuid, dto);
         return GlobalResponse.responseBuilder("Transaction created successfully", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
     }
 
@@ -218,11 +221,11 @@ public class TransactionController {
     public ResponseEntity<?> agentCollectedAmount(@PathVariable String clientCode) {
         String type = "2222.0"; // .0 because of how its in the db
         BigDecimal result = transactionService.viewAgentUnProcessedCollectionAmountByClientCode(clientCode, type);
-        System.out.println("AMOUNT :: "+result);
+        System.out.println("AMOUNT :: " + result);
         return GlobalResponse.responseBuilder("Agent collected amount", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @PostMapping("/reversement")
+    @PostMapping("/reversement/{userUuid}")
     @Operation(
             description = """
                     Agent to teller transaction reversement
@@ -234,8 +237,8 @@ public class TransactionController {
                     @ApiResponse(responseCode = "200", ref = "successResponse"),
             }
     )
-    public ResponseEntity<?> reversal(@RequestBody ReversementDto dto) {
-        Map<String, Object> result = transactionService.reversement(dto);
+    public ResponseEntity<?> reversal(@RequestBody ReversementDto dto, @PathVariable String userUuid) {
+        Map<String, Object> result = transactionService.reversement(userUuid, dto);
         Transaction transaction = (Transaction) result.get("transaction");
         String tellerCode = (String) result.get("tellerCode");
         ValidationEntity validation = validationService.sendToTellerValidation(

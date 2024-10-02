@@ -14,6 +14,21 @@ services:
       - nofia_network
     restart: unless-stopped
 
+  springboot-app:
+    build: .
+    container_name: nofia_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/$MYSQL_DATABASE
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: $MYSQL_ROOT_PASSWORD
+    ports:
+      - "8082:8080"
+    depends_on:
+      - mysql
+    networks:
+      - nofia_network
+    restart: unless-stopped
+
 networks:
   nofia_network:
     driver: bridge

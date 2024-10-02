@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @RequestMapping("${apiV1Prefix}/branches")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class BranchController {
     private final BranchService branchService;

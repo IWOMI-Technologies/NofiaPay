@@ -63,8 +63,8 @@ public class AccountRepository {
     }
 
     public  AccountEntity getOneByClientCodeAndType(String clientCode, String type) {
-        return  repository.findByClientCodeAndAccountTypeCode(clientCode, type)
-                .orElseThrow(() -> new GeneralException("Account Not Found"));
+        return  repository.findByClientCodeAndAccountTypeCode(clientCode, type).getFirst();
+//                .orElseThrow(() -> new GeneralException("Account Not Found"));
     }
 
 //    public  AccountEntity getOneByBranchAndType(String branchid, AccountTypeEnum type) {

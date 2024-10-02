@@ -19,12 +19,12 @@ import java.util.UUID;
 
 @RequestMapping("${apiV1Prefix}/clients")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class ClientController {
     private final ClientService clientService;
 
-    private  final AuthClient authClient;
+    private final AuthClient authClient;
 
     @GetMapping("/all")
     @Operation(
@@ -43,13 +43,13 @@ public class ClientController {
     @GetMapping("/role/{role}")
     public ResponseEntity<?> show(@PathVariable UserTypeEnum role) {
         System.out.println("trying ****************** to get client by role");
-        List <Client> result = clientService.findAllByClientCode(role);
+        List<Client> result = clientService.findAllByClientCode(role);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
     @GetMapping("/deleted")
     public ResponseEntity<?> showByDeleted(@RequestParam("role") String role) {
-        List <Client> result = clientService.findAllDeletedByClientCode(role);
+        List<Client> result = clientService.findAllDeletedByClientCode(role);
         return GlobalResponse.responseBuilder("Found clients", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 

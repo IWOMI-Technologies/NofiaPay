@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RequestMapping("${apiV1Prefix}/enrolls")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class EnrollController {
 

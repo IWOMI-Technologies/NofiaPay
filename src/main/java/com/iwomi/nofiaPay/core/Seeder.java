@@ -1,29 +1,30 @@
 package com.iwomi.nofiaPay.core;
 
-import com.iwomi.nofiaPay.core.constants.AppConst;
+import com.iwomi.nofiaPay.core.enums.FileTypeEnum;
 import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
-import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
-import com.iwomi.nofiaPay.core.utils.DateConverterUtils;
-import com.iwomi.nofiaPay.dtos.BranchDto;
-import com.iwomi.nofiaPay.frameworks.data.entities.*;
-import com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory.IAccountHistoryRepository;
-import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.IAccountRepository;
-import com.iwomi.nofiaPay.frameworks.data.repositories.branches.BranchRepository;
+import com.iwomi.nofiaPay.dtos.UploadDto;
+import com.iwomi.nofiaPay.frameworks.data.entities.BranchEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.TellerBoxEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.branches.IBranchRepository;
-import com.iwomi.nofiaPay.frameworks.data.repositories.clients.IClientRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.tellerBox.ITellerBoxRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.ITransactionRepository;
-import com.iwomi.nofiaPay.frameworks.data.repositories.validators.IValidatorRepository;
+import com.iwomi.nofiaPay.services.filesService.IFilesService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Configuration
 @Slf4j
@@ -32,8 +33,19 @@ public class Seeder {
     CommandLineRunner initDatabase(
             ITransactionRepository transactionRepository,
             IBranchRepository branchRepository,
-            ITellerBoxRepository tellerBoxRepository
+            ITellerBoxRepository tellerBoxRepository,
+            IFilesService filesService
     ) {
+
+        // FILE UPLOAD for client, account and account history
+        List<UploadDto> dtos = List.of(
+                new UploadDto(FileTypeEnum.CLIENT_FILE, convertFileToMultipartFile("clients")),
+        new UploadDto(FileTypeEnum.ACCOUNT_FILE, convertFileToMultipartFile("accounts")),
+        new UploadDto(FileTypeEnum.ACCOUNT_HISTORY_FILE, convertFileToMultipartFile("accounts-history"))
+        );
+        dtos.forEach(filesService::importFile);
+
+
         // Transaction Setup
         List<TransactionEntity> transactions = List.of(
                 // Transaction Setup for client
@@ -276,4 +288,19 @@ public class Seeder {
             log.info("Preloading tellerBox" + tellerBox);
         };
     }
+
+    @SneakyThrows
+    public MultipartFile convertFileToMultipartFile(String fileName) {
+        File file = new File("src/main/resources/data/"+fileName+".xlsx");
+        FileInputStream input = new FileInputStream(file);
+
+        // Create a MockMultipartFile with the content of the file
+        return new MockMultipartFile(
+                "file", // Name of the file parameter (used in forms, can be anything)
+                file.getName(), // Original filename
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // Content type (adjust for your use case)
+                input // FileInputStream containing file data
+        );
+    }
+
 }

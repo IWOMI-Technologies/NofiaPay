@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 @RequestMapping("${apiV1Prefix}/accounts")
 @RequiredArgsConstructor
-@CrossOrigin("*")
+//@CrossOrigin("*")
 @RestController
 public class AccountController {
 
@@ -175,18 +175,24 @@ public class AccountController {
             @RequestParam(required = false, defaultValue = "false") boolean fetchAll,
             @RequestParam(required = false, defaultValue = "10") int limit
     ) {
+        System.out.println("IN DASHBOARD CONTROLLER ++++++++ "+clientCode);
         List<AccountHistory> accountHistories = null;
         List<Transaction> transactions = null;
 
         if (fetchAll) {
             accountHistories = historyService.getHistoriesByClientCode(clientCode);
             transactions = transactionService.viewTransactionsByClientCode(clientCode);
+            System.out.println("______ IF LENGTH" + transactions.size());
+
         } else {
             accountHistories = historyService.getLatestTop5AccountHistoryByClientCode(clientCode);
             transactions = transactionService.getLatestTop5TransactionByClientCode(clientCode);
+            System.out.println("_____ ELSE LENGTH" + transactions.size());
+
         }
         System.out.println("+++++++++ " + accountHistories);
         System.out.println("_________ " + transactions);
+        System.out.println("_________ LENGTH OUT" + transactions.size());
 
         List<Map<String, Object>> historiesMap = accountHistories
                 .stream()
@@ -265,6 +271,23 @@ public class AccountController {
         int limit = 5;
         List<Map<String, Object>> result = accountService.getAccountsWithLatestTransactions(clientCode, limit);
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @GetMapping("/main-account/{clientCode}/{role}")
+    @Operation(
+            description = "Find client main account by role",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Client.class))}),
+            }
+    )
+    public ResponseEntity<String> getMainAccount(@PathVariable String clientCode, @PathVariable String role) {
+        System.out.println("_________________ "+ clientCode + "   "+ role);
+        Account result = accountService.getMainAccount(clientCode, role);
+
+//        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
+        return ResponseEntity.ok(result.getAccountNumber());
     }
 
 }
