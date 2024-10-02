@@ -3,6 +3,7 @@ package com.iwomi.nofiaPay.services.validations;
 import com.iwomi.nofiaPay.core.constants.AppConst;
 import com.iwomi.nofiaPay.core.enums.ValidationStatusEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
+import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.ValidationEntity;
@@ -12,6 +13,7 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.Validation.ValidationRepo
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.TransactionRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.validators.ValidatorRepository;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
+import com.iwomi.nofiaPay.frameworks.externals.enums.UserStatusEnum;
 import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,11 +37,23 @@ public class ValidationService implements IvalidationService {
 
     @Override
     public ValidationEntity sendToSubscriptionValidation(String clientCode) {
+//        System.out.println("IN SERVICE sendToSubscriptionValidation");
+//        ValidationEntity found = repository.getByClientCode(clientCode);
+//        System.out.println("IN SERVICE sendToSubscriptionValidation 22222 "+found);
+//
+//        if (found != null) {
+//            System.out.println("Client already exists and awaiting validation");
+//            return found;
+//        }
+//        System.out.println("AFTERRRRRR sendToSubscriptionValidation");
+
         ValidationEntity validation = ValidationEntity.builder()
                 .subscriberClientCode(clientCode)
                 .status(ValidationStatusEnum.PENDING)
                 .type(ValidationTypeEnum.SUBSCRIPTION)
                 .build();
+        System.out.println("BEFORE RETURNING VALIDATION");
+
         return repository.createValidation(validation);
     }
 
@@ -62,11 +76,17 @@ public class ValidationService implements IvalidationService {
     }
 
     @Override
-    public ValidationEntity validate(String clientCode, String userid) {
+    public ValidationEntity validate(String clientCode, String userid, ValidationStatusEnum status) {
         ValidationEntity entity = repository.getByClientCode(clientCode);
-        if (entity.getStatus() != ValidationStatusEnum.VALIDATED) {
-            entity.setStatus(ValidationStatusEnum.VALIDATED);
+        if (entity.getStatus() == ValidationStatusEnum.PENDING) {
+            entity.setStatus(status);
             entity.setValidatedBy(userid);
+
+            // Activate user when validated
+            if (entity.getType() == ValidationTypeEnum.SUBSCRIPTION)
+                authClient.changeStatus(clientCode, UserStatusEnum.ACTIVE);
+
+
             return repository.updateSubscription(entity);
         }
 
@@ -77,18 +97,22 @@ public class ValidationService implements IvalidationService {
     public List<ClientEntity> viewByStatus(UserTypeEnum role, ValidationStatusEnum status) {
         // get client codes from auth ms with specific role
         List<String> clientCodes = (List<String>) authClient.getUsersByRole(role).getBody();
+        System.out.println("clientCodes: " + clientCodes);
         // get appropriate client codes
         List<String> inValidationCodes = repository.getAllByClientCodes(clientCodes)
                 .stream()
                 .filter(entity -> entity.getStatus() == status && entity.getType() == ValidationTypeEnum.SUBSCRIPTION) // filter or get those with wanted status
                 .map(ValidationEntity::getSubscriberClientCode)// get client codes
                 .toList();
+        System.out.println("inValidationCodes: " + inValidationCodes);
         return clientRepository.getAllByClientCodes(inValidationCodes);
     }
 
     @Override
     public Boolean canValidate(String profile) {
+        System.out.println("IN CAN VALIDATE SERVICE");
         ValidatorEntity validator = validatorRepository.getOneByProcess(AppConst.SUBCRIPTION);
+        System.out.println("validator: " + validator);
         if (validator.getProfiles() == null) return false;
 
         return validator.getProfiles().contains(profile.toLowerCase());

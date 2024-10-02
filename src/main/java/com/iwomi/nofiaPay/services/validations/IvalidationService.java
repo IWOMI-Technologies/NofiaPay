@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface IvalidationService {
     ValidationEntity sendToSubscriptionValidation(String clientCode);
     ValidationEntity sendToTellerValidation(String tellerClientCode, UUID transactionId, String agentAccount, ValidationTypeEnum type);
-    ValidationEntity validate(String clientCode, String userid);
+    ValidationEntity validate(String clientCode, String userid, ValidationStatusEnum status);
     List<ClientEntity> viewByStatus(UserTypeEnum role, ValidationStatusEnum status);
     Boolean canValidate(String profile);
     Map<String, Object> tellerValidationRequests(String tellerClientCode);

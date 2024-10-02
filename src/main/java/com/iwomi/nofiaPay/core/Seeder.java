@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.core;
 
+import com.iwomi.nofiaPay.core.constants.AppConst;
 import com.iwomi.nofiaPay.core.enums.FileTypeEnum;
 import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
@@ -7,9 +8,11 @@ import com.iwomi.nofiaPay.dtos.UploadDto;
 import com.iwomi.nofiaPay.frameworks.data.entities.BranchEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.TellerBoxEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.ValidatorEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.branches.IBranchRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.tellerBox.ITellerBoxRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.ITransactionRepository;
+import com.iwomi.nofiaPay.frameworks.data.repositories.validators.IValidatorRepository;
 import com.iwomi.nofiaPay.services.filesService.IFilesService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Configuration
 @Slf4j
@@ -34,8 +38,16 @@ public class Seeder {
             ITransactionRepository transactionRepository,
             IBranchRepository branchRepository,
             ITellerBoxRepository tellerBoxRepository,
-            IFilesService filesService
+            IFilesService filesService,
+            IValidatorRepository validatorRepository
     ) {
+        // DO NOT REMOVE
+        ValidatorEntity validatorOne = ValidatorEntity.builder()
+                .process(AppConst.SUBCRIPTION)
+                .profiles(Set.of("agent", "client", "merchant"))
+                .build();
+        if (!validatorRepository.existsValidatorEntityByProcess(AppConst.SUBCRIPTION))
+            validatorRepository.save(validatorOne);
 
         // FILE UPLOAD for client, account and account history
         List<UploadDto> dtos = List.of(

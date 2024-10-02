@@ -28,8 +28,12 @@ public class ValidationRepository {
     }
 
     public ValidationEntity getByClientCode(String code) {
+        System.out.println("IN GET CLIENT________");
         return validationRepository.findBySubscriberClientCode(code)
-                .orElseThrow(() -> new GeneralException("subscription validation not found."));
+                .orElseThrow(() -> {
+                    System.out.println("Before throw");
+                    return new GeneralException("subscription validation not found.");
+                });
     }
 
     public ValidationEntity getByStatus(ValidationStatusEnum status) {

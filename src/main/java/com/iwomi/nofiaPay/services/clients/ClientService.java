@@ -1,10 +1,14 @@
 package com.iwomi.nofiaPay.services.clients;
 
+import com.iwomi.nofiaPay.core.enums.ValidationStatusEnum;
+import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.core.mappers.IClientMapper;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.Client;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.ValidationEntity;
+import com.iwomi.nofiaPay.frameworks.data.repositories.Validation.ValidationRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
@@ -22,6 +26,7 @@ public class ClientService implements IClientService {
 
     private final ClientRepository clientRepository;
     private final AccountRepository accountRepository;
+    private final ValidationRepository validationRepository;
     private final IClientMapper mapper;
     private final IAccountMapper accountMapper;
     private final AuthClient authClient;
@@ -95,7 +100,14 @@ public class ClientService implements IClientService {
         System.out.println("AFTER call ___________________");
         List<String> codes = (List<String>) response.getBody();
 
-        return clientRepository.getAllByClientCodes(codes)
+        // Get only validated clients
+        List<String> validatedCodes = validationRepository.getAllByClientCodes(codes)
+                .stream()
+                .filter(entity -> entity.getStatus() == ValidationStatusEnum.VALIDATED) // filter or get those with wanted status
+                .map(ValidationEntity::getSubscriberClientCode)// get client codes
+                .toList();
+
+        return clientRepository.getAllByClientCodes(validatedCodes)
                 .stream()
                 .map(mapper::mapToModel)
                 .toList();

@@ -1,6 +1,7 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.enums.ValidationStatusEnum;
+import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.responses.Enroll;
 import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
@@ -42,9 +43,13 @@ public class ValidationController {
 //            @RequestParam("type")ValidationTypeEnum type
     ) {
         List<ClientEntity> data = validationService.viewByStatus(role, status);
+        System.out.println("data: " + data);
         Boolean canValidate = validationService.canValidate(role.toString());
-        Map<String, Object> result = Map.of("data", data, "canValidate", canValidate);
-        return GlobalResponse.responseBuilder("List of enroll users", HttpStatus.OK, HttpStatus.OK.value(), result);
+        if (!canValidate) throw new UnAuthorizedException("You are not permitted to validate this role");
+//        System.out.println("canValidate: " + canValidate);
+//        Map<String, Object> result = Map.of("data", data, "canValidate", canValidate);
+
+        return GlobalResponse.responseBuilder("List of pending validations", HttpStatus.OK, HttpStatus.OK.value(), data);
     }
 
     @GetMapping("/awaiting")
@@ -88,8 +93,12 @@ public class ValidationController {
                             schema = @Schema(implementation = ValidationEntity.class))}),
             }
     )
-    public ResponseEntity<?> validate(@RequestParam String clientCode, @RequestParam String userId) {
-        ValidationEntity result = validationService.validate(clientCode, userId);
+    public ResponseEntity<?> validate(
+            @RequestParam String clientCode,
+            @RequestParam String userId,
+            @RequestParam ValidationStatusEnum validationStatus
+    ) {
+        ValidationEntity result = validationService.validate(clientCode, userId, validationStatus);
         return GlobalResponse.responseBuilder("Validation successful", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 

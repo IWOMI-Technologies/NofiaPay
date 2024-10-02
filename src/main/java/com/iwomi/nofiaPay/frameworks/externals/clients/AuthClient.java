@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.frameworks.externals.clients;
 
+import com.iwomi.nofiaPay.frameworks.externals.enums.UserStatusEnum;
 import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -19,4 +20,7 @@ public interface AuthClient {
 
    @GetMapping("/users")
    ResponseEntity<?> getUsersByRole(@RequestParam UserTypeEnum role);
+
+   @PostMapping("/users/change-status/{clientCode}")
+   ResponseEntity<?> changeStatus(@PathVariable String clientCode, @RequestParam("status") UserStatusEnum status);
 }

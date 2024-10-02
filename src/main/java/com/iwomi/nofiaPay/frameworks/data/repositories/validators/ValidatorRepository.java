@@ -13,7 +13,7 @@ public class ValidatorRepository {
 
     public ValidatorEntity getOneByProcess(String process) {
         return repository.findByProcess(process)
-                .orElseThrow(() -> new GeneralException("Branch not found."));
+                .orElseThrow(() -> new GeneralException("Validator not found."));
     }
 
 //    public ValidatorEntity getOneByProcess(String process) {
