@@ -6,7 +6,7 @@ spring:
   datasource: # db config seems not to be used
     url: jdbc:mysql://localhost:3306/nofia?serverTimezone=Africa/Douala
     username: root
-    password: root
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -51,7 +51,7 @@ eureka:
     #      enabled: true
     lease:
       duration: 5
-    enabled: true  # false value disables discovery request.
+    enabled: false  # false value disables discovery request.
 
 externals:
   iwomi:
