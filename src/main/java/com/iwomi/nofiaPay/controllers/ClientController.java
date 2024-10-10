@@ -1,9 +1,14 @@
 package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
+import com.iwomi.nofiaPay.dtos.AccountDto;
+import com.iwomi.nofiaPay.dtos.ClientAttachedAccountDto;
+import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.Client;
+import com.iwomi.nofiaPay.dtos.responses.ClientAttachedAccounts;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
+import com.iwomi.nofiaPay.services.AttachedAccounts.IClientAttachedAccountService;
 import com.iwomi.nofiaPay.services.clients.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +28,8 @@ import java.util.UUID;
 @RestController
 public class ClientController {
     private final ClientService clientService;
+
+    private  final IClientAttachedAccountService iClientAttachedAccountService;
 
     private final AuthClient authClient;
 
@@ -87,4 +94,24 @@ public class ClientController {
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
+
+    @PostMapping("/attached-account")
+    @Operation(
+            description = "Account creation",
+            responses = {
+                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "successResponse"),
+            }
+    )
+    public ResponseEntity<?> store(@RequestBody ClientAttachedAccountDto dto) {
+        ClientAttachedAccounts result = iClientAttachedAccountService.saveAccount(dto);
+        return GlobalResponse.responseBuilder("Account successfully created", HttpStatus.CREATED, HttpStatus.CREATED.value(), result);
+    }
+
+    @GetMapping("/accounts/{clientCode}")
+    public ResponseEntity<?> showAccountsByClientCode(@PathVariable String clientCode) {
+        List<ClientAttachedAccounts> result = iClientAttachedAccountService.getAccountsByClientCode(clientCode);
+        return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
 }

@@ -1,34 +1,34 @@
-services:
-  mysql:
-    image: mysql:8.0-oracle
-    env_file: ./.env
-    container_name: nofia_db
-    environment:
-      MYSQL_DATABASE: $MYSQL_DATABASE   # from .env file
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    volumes:
-      - ./volumes/mysql:/var/lib/mysql
-    ports:
-      - "3308:3306"
-    networks:
-      - nofia_network
-    restart: unless-stopped
-
-  springboot-app:
-    build: .
-    container_name: nofia_app
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/$MYSQL_DATABASE
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: $MYSQL_ROOT_PASSWORD
-    ports:
-      - "8082:8080"
-    depends_on:
-      - mysql
-    networks:
-      - nofia_network
-    restart: unless-stopped
-
-networks:
-  nofia_network:
-    driver: bridge
+#services:
+#  mysql:
+#    image: mysql:8.0-oracle
+#    env_file: ./.env
+#    container_name: nofia_db
+#    environment:
+#      MYSQL_DATABASE: $MYSQL_DATABASE   # from .env file
+#      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+#    volumes:
+#      - ./volumes/mysql:/var/lib/mysql
+#    ports:
+#      - "3308:3306"
+#    networks:
+#      - nofia_network
+#    restart: unless-stopped
+#
+#  springboot-app:
+#    build: .
+#    container_name: nofia_app
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/$MYSQL_DATABASE
+#      SPRING_DATASOURCE_USERNAME: root
+#      SPRING_DATASOURCE_PASSWORD: $MYSQL_ROOT_PASSWORD
+#    ports:
+#      - "8082:8080"
+#    depends_on:
+#      - mysql
+#    networks:
+#      - nofia_network
+#    restart: unless-stopped
+#
+#networks:
+#  nofia_network:
+#    driver: bridge
