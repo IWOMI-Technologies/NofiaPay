@@ -285,5 +285,14 @@ public Map<String, List<Double>> viewAccountBalances(String clientCode) {
         return mapper.mapToModel(accountRepository.getOneByClientCodeAndType(clientCode, accountType));
     }
 
+    @Override
+    public List<Account> viewClientAccountsByCode(String clientCode, String accountCode) {
+        return accountRepository
+                .getByClientCodeAndType(clientCode, accountCode)
+                .stream()
+                .map(mapper::mapToModel)
+                .toList();
+    }
+
 
 }

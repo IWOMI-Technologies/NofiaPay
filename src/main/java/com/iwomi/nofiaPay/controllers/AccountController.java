@@ -290,4 +290,18 @@ public class AccountController {
         return ResponseEntity.ok(result.getAccountNumber());
     }
 
+    @GetMapping("/client/{clientCode}/{accountCode}")
+    @Operation(
+            description = "Find client accounts by account type code",
+            responses = {
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Client.class))}),
+            }
+    )
+    public ResponseEntity<?> clientAccounts(@PathVariable String clientCode, @PathVariable String accountCode) {
+        List<Account> result = accountService.viewClientAccountsByCode(clientCode, accountCode);
+        return GlobalResponse.responseBuilder("Found client accounts", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
 }

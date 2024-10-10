@@ -10,5 +10,6 @@ public class AppConst {
     public static final String BACKEND_TIME_ZONE = "Africa/Douala";
 
     public static final String SUBCRIPTION = "subscription";
+//    public static final String SUBCRIPTION = "subscription";
 
 }

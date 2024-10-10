@@ -13,6 +13,7 @@ public interface IValidationRepository extends JpaRepository<ValidationEntity, U
     Optional<ValidationEntity> findByStatus(ValidationStatusEnum status);
 
     Optional<ValidationEntity> findBySubscriberClientCode(String clientCode);
+    Optional<ValidationEntity> findByTellerClientCode(String tellerCode);
 
     Optional<ValidationEntity> findByValidatedBy(String validator);
 

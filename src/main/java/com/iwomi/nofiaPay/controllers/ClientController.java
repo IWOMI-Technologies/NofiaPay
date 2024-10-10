@@ -5,6 +5,7 @@ import com.iwomi.nofiaPay.dtos.responses.Client;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
 import com.iwomi.nofiaPay.services.clients.ClientService;
+import com.iwomi.nofiaPay.services.clients.IClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,7 +23,7 @@ import java.util.UUID;
 //@CrossOrigin("*")
 @RestController
 public class ClientController {
-    private final ClientService clientService;
+    private final IClientService clientService;
 
     private final AuthClient authClient;
 
@@ -86,5 +87,19 @@ public class ClientController {
         Client result = clientService.viewOneByClientCode(clientCode);
         return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
+
+//    @GetMapping("/accounts/{clientCode}/{accountCode}")
+//    @Operation(
+//            description = "Find client accounts by account type code",
+//            responses = {
+//                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+//                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = Client.class))}),
+//            }
+//    )
+//    public ResponseEntity<?> clientAccounts(@PathVariable String clientCode, @PathVariable String accountCode) {
+//        Client result = clientService.viewOneByClientCode(clientCode);
+//        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
+//    }
 
 }

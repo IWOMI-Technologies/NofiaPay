@@ -50,12 +50,12 @@ public class Seeder {
             validatorRepository.save(validatorOne);
 
         // FILE UPLOAD for client, account and account history
-        List<UploadDto> dtos = List.of(
-                new UploadDto(FileTypeEnum.CLIENT_FILE, convertFileToMultipartFile("clients")),
-        new UploadDto(FileTypeEnum.ACCOUNT_FILE, convertFileToMultipartFile("accounts")),
-        new UploadDto(FileTypeEnum.ACCOUNT_HISTORY_FILE, convertFileToMultipartFile("accounts-history"))
-        );
-        dtos.forEach(filesService::importFile);
+//        List<UploadDto> dtos = List.of(
+//                new UploadDto(FileTypeEnum.CLIENT_FILE, convertFileToMultipartFile("clients")),
+//        new UploadDto(FileTypeEnum.ACCOUNT_FILE, convertFileToMultipartFile("accounts")),
+//        new UploadDto(FileTypeEnum.ACCOUNT_HISTORY_FILE, convertFileToMultipartFile("accounts-history"))
+//        );
+//        dtos.forEach(filesService::importFile);
 
 
         // Transaction Setup
@@ -219,17 +219,17 @@ public class Seeder {
                         .processed(true)
                         .deleted(false)
                         .build(),
-                TransactionEntity.builder()
-                        .amount(new BigDecimal("7000.00"))
-                        .reason("money transfer")
-                        .batch("BATCH032")
-                        .issuerAccount("04005861-37227R")
-                        .receiverAccount("04005860-37227K")
-                        .type(OperationTypeEnum.REVERSEMENT)
-                        .status(StatusTypeEnum.COLLECTED)
-                        .processed(true)
-                        .deleted(false)
-                        .build(),
+//                TransactionEntity.builder()
+//                        .amount(new BigDecimal("7000.00"))
+//                        .reason("money transfer")
+//                        .batch("BATCH032")
+//                        .issuerAccount("04005861-37227R")
+//                        .receiverAccount("04005860-37227K")
+//                        .type(OperationTypeEnum.REVERSEMENT)
+//                        .status(StatusTypeEnum.COLLECTED)
+//                        .processed(true)
+//                        .deleted(false)
+//                        .build(),
                 TransactionEntity.builder()
                         .amount(new BigDecimal("7000.00"))
                         .reason("Invoice payment")
@@ -243,9 +243,9 @@ public class Seeder {
                         .build()
         );
 
-        List<TransactionEntity> transacs = transactionRepository.findAll();
-
-        if (transacs.isEmpty()) transactionRepository.saveAll(transactions);
+//        List<TransactionEntity> transacs = transactionRepository.findAll();
+//
+//        if (transacs.isEmpty()) transactionRepository.saveAll(transactions);
 
         //Branch setup
         List<BranchEntity> branches = List.of(

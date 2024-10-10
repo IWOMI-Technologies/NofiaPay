@@ -3,6 +3,7 @@ package com.iwomi.nofiaPay.services.accounts;
 
 import com.iwomi.nofiaPay.dtos.AccountDto;
 import com.iwomi.nofiaPay.dtos.responses.Account;
+import com.iwomi.nofiaPay.dtos.responses.Client;
 import com.iwomi.nofiaPay.dtos.responses.ClientAccount;
 import com.iwomi.nofiaPay.dtos.responses.CombineHistory;
 
@@ -36,5 +37,7 @@ public interface IAccountService {
 
     List<Map<String, Object>> getAccountsWithLatestTransactions(String clientCode, int limit);
     Account getMainAccount(String clientCode, String role);
+
+    List<Account> viewClientAccountsByCode(String clientCode, String accountCode);
 
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -29,11 +30,11 @@ public class ValidationRepository {
 
     public ValidationEntity getByClientCode(String code) {
         System.out.println("IN GET CLIENT________");
-        return validationRepository.findBySubscriberClientCode(code)
-                .orElseThrow(() -> {
-                    System.out.println("Before throw");
-                    return new GeneralException("subscription validation not found.");
-                });
+        Optional<ValidationEntity> subVal = validationRepository.findBySubscriberClientCode(code);
+        if (subVal.isPresent()) return subVal.get();
+
+        Optional<ValidationEntity> tellerVal = validationRepository.findByTellerClientCode(code);
+        return tellerVal.orElseThrow(() -> new GeneralException("Validation not found."));
     }
 
     public ValidationEntity getByStatus(ValidationStatusEnum status) {

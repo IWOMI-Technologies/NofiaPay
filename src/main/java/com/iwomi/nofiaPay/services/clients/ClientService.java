@@ -77,12 +77,18 @@ public class ClientService implements IClientService {
     public Client viewOneByClientCode(String clientCode) {
 
         Client client = mapper.mapToModel(clientRepository.getOneByClientCode(clientCode));
-        List<String> accounts = accountRepository
+        List<Account> accounts = accountRepository
                 .getByClientCode(client.getClientCode())
                 .stream()
-                .map(AccountEntity::getAccountNumber)
+                .map(accountMapper::mapToModel)
                 .toList();
-        client.setAccounts(accounts);
+        List<String> accountNumbers = accounts
+                .stream()
+                .map(Account::getAccountNumber)
+                .toList();
+
+        client.setAccounts(accountNumbers);
+//        client.setClientAccounts(accounts);
 
         return client;
     }
@@ -92,6 +98,11 @@ public class ClientService implements IClientService {
         AccountEntity account = accountRepository.getOneByAccount(accountNumber);
         return mapper.mapToModel(clientRepository.getOneByClientCode(account.getClientCode()));
     }
+
+//    @Override
+//    public Client viewAccountsByCode(String clientCode, String accountCode) {
+//        return null;
+//    }
 
     @Override
     public List<Client> findAllByClientCode(UserTypeEnum role) {

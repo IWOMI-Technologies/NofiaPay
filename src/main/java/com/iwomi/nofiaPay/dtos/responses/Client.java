@@ -41,6 +41,6 @@ public class Client {
     private String agentName;
 
     private List<String> accounts;
-//    private List<Account> accounts;
+//    private List<Account> clientAccounts;
 
 }

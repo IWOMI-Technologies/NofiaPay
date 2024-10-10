@@ -1,6 +1,7 @@
 package com.iwomi.nofiaPay.services.validations;
 
 import com.iwomi.nofiaPay.core.constants.AppConst;
+import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationStatusEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
@@ -59,10 +60,16 @@ public class ValidationService implements IvalidationService {
 
     @Override
     public ValidationEntity sendToTellerValidation(String tellerClientCode, UUID transactionId, String agentAccount, ValidationTypeEnum type) {
-        List<TransactionEntity> transactions = transactionRepository.getByIssuerAndCreatedAtBtw(agentAccount);
+        List<TransactionEntity> transactions = transactionRepository
+                .getByIssuerAndCreatedAtBtw(agentAccount)
+                .stream().filter(trans -> trans.getType() != OperationTypeEnum.REVERSEMENT) // remove all reversement transactions
+                .toList();
         BigDecimal total = transactions.stream()
                 .map(TransactionEntity::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        System.out.println("transactions done by agent today"+ transactions.stream().map(TransactionEntity::getAmount).toList());
+        System.out.println("Total amount done by agent today"+ total.toPlainString());
 
         ValidationEntity validation = ValidationEntity.builder()
                 .tellerClientCode(tellerClientCode)
@@ -72,7 +79,9 @@ public class ValidationService implements IvalidationService {
                 .status(ValidationStatusEnum.PENDING)
                 .build();
 
-        return repository.createValidation(validation);
+        System.out.println("BEFORE RETURNING VALIDATION  "+validation.getExpectedAmount());
+        ValidationEntity saved = repository.createValidation(validation);
+        return saved;
     }
 
     @Override

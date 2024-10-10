@@ -17,6 +17,7 @@ public interface IClientService {
     Client viewOneByPhone(String phone);
     Client viewOneByClientCode(String clientCode);
     Client viewOneByAccountNumber(String accountNumber);
+//    Client viewAccountsByCode(String clientCode, String accountCode);
 
     List<Client> findAllByClientCode(UserTypeEnum role);
 
