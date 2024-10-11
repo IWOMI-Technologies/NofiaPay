@@ -1,4 +1,4 @@
-package com.iwomi.nofiaPay.frameworks.externals.iwomipay.dto;
+package com.iwomi.nofiaPay.frameworks.externals.dto;
 
 public record DigitalPaymentDto(
         String op_type,

@@ -1,19 +1,14 @@
 package com.iwomi.nofiaPay.services.transactions;
 
 import com.iwomi.nofiaPay.core.constants.NomenclatureConstants;
-import com.iwomi.nofiaPay.core.enums.AccountTypeEnum;
 import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
-import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
-import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
 import com.iwomi.nofiaPay.core.utils.OperationTypeUtil;
 import com.iwomi.nofiaPay.dtos.*;
-import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
-import com.iwomi.nofiaPay.frameworks.data.entities.BatchEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
@@ -27,17 +22,14 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.validators.ValidatorRepos
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.frameworks.externals.enums.IwomiPayTypesEnum;
 import com.iwomi.nofiaPay.frameworks.externals.iwomipay.domain.IPayment;
-import com.iwomi.nofiaPay.frameworks.externals.iwomipay.dto.DigitalPaymentDto;
+import com.iwomi.nofiaPay.frameworks.externals.dto.DigitalPaymentDto;
 import com.iwomi.nofiaPay.services.wbesocket.IWebsocketService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service

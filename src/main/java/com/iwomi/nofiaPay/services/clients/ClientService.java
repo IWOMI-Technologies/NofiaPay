@@ -1,5 +1,6 @@
 package com.iwomi.nofiaPay.services.clients;
 
+import com.iwomi.nofiaPay.core.constants.NomenclatureConstants;
 import com.iwomi.nofiaPay.core.enums.ValidationStatusEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
 import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
@@ -12,12 +13,15 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.Validation.ValidationRepo
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
+import com.iwomi.nofiaPay.frameworks.externals.dto.NomenclatureDto;
 import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
+import com.iwomi.nofiaPay.frameworks.externals.nomenclature.NomenclatureClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -30,6 +34,7 @@ public class ClientService implements IClientService {
     private final IClientMapper mapper;
     private final IAccountMapper accountMapper;
     private final AuthClient authClient;
+    private final NomenclatureClient nomenclatureClient;
 
     @Override
     public List<Client> findAllClient() {
@@ -77,6 +82,15 @@ public class ClientService implements IClientService {
     public Client viewOneByClientCode(String clientCode) {
 
         Client client = mapper.mapToModel(clientRepository.getOneByClientCode(clientCode));
+
+
+        Map<String, Object> nomenclatureResponse = nomenclatureClient.getSanmByTabcd(NomenclatureConstants.TellerAccountTypeCode);
+
+
+        List<NomenclatureDto> data = (List<NomenclatureDto>) nomenclatureResponse.get("data");
+
+       
+
         List<Account> accounts = accountRepository
                 .getByClientCode(client.getClientCode())
                 .stream()

@@ -16,4 +16,6 @@ public class NomenclatureConstants {
     public static String ClientAccountTypeCode = "3333.0";
     public static String AgentAccountTypeCode = "2222.0";
     public static String MerchantAccountTypeCode = "4444.0";
+
+
 }

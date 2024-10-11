@@ -1,4 +1,4 @@
-package com.iwomi.nofiaPay.frameworks.externals.iwomipay.dto;
+package com.iwomi.nofiaPay.frameworks.externals.dto;
 
 import java.io.Serializable;
 

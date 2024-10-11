@@ -1,8 +1,7 @@
 package com.iwomi.nofiaPay.frameworks.externals.iwomipay.domain;
 
-import com.iwomi.nofiaPay.frameworks.externals.iwomipay.dto.DigitalPaymentDto;
-import com.iwomi.nofiaPay.frameworks.externals.iwomipay.dto.IwomiAuthDto;
-import org.springframework.http.ResponseEntity;
+import com.iwomi.nofiaPay.frameworks.externals.dto.DigitalPaymentDto;
+import com.iwomi.nofiaPay.frameworks.externals.dto.IwomiAuthDto;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
