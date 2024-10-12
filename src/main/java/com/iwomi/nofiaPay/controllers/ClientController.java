@@ -32,7 +32,7 @@ public class ClientController {
 
     private  final IClientAttachedAccountService iClientAttachedAccountService;
 
-    private final AuthClient authClient;
+//    private final AuthClient authClient;
 
     @GetMapping("/all")
     @Operation(

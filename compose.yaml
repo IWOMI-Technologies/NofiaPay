@@ -14,7 +14,7 @@ services:
       - nofia_network
     restart: unless-stopped
 
-#  springboot-app:
+#  app:
 #    build: .
 #    container_name: nofia_app
 #    environment:
