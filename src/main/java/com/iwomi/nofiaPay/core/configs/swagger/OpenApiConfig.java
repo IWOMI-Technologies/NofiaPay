@@ -3,7 +3,6 @@ package com.iwomi.nofiaPay.core.configs.swagger;
 import com.iwomi.nofiaPay.core.utils.ReadJsonFileUtil;
 
 
-import com.iwomi.nofiaPay.core.utils.ReadJsonFileToJsonObject;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -54,22 +53,22 @@ public class OpenApiConfig {
 
         ApiResponse badRequestApi = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                        new io.swagger.v3.oas.models.media.MediaType().addExamples("bad",
                                 new Example().value(readJsonFileToJsonObject.read().get("badRequestResponse").toString())))
         ).description("Bad Request!");
         ApiResponse internalServerErrorApi = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                        new io.swagger.v3.oas.models.media.MediaType().addExamples("internal",
                                 new Example().value(readJsonFileToJsonObject.read().get("internalServerErrorResponse").toString())))
         ).description("Internal server error");
         ApiResponse assetSuccessResponse = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                        new io.swagger.v3.oas.models.media.MediaType().addExamples("Method...",
                                 new Example().value(readJsonFileToJsonObject.read().get("successResponse").toString())))
         ).description("Successfully registered");
         ApiResponse createdApiResponse = new ApiResponse().content(
                 new Content().addMediaType(MediaType.APPLICATION_JSON_VALUE,
-                        new io.swagger.v3.oas.models.media.MediaType().addExamples("default",
+                        new io.swagger.v3.oas.models.media.MediaType().addExamples("created",
                                 new Example().value(readJsonFileToJsonObject.read().get("createdResponse").toString())))
         ).description("Successfully registered");
 

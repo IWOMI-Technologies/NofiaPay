@@ -19,13 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
@@ -303,13 +301,15 @@ public class Seeder {
 
     @SneakyThrows
     public MultipartFile convertFileToMultipartFile(String fileName) {
-        File file = new File("src/main/resources/data/"+fileName+".xlsx");
-        FileInputStream input = new FileInputStream(file);
+        ClassPathResource resource = new ClassPathResource("data/" + fileName + ".xlsx");
+
+        // Get the InputStream from the resource
+        InputStream input = resource.getInputStream();
 
         // Create a MockMultipartFile with the content of the file
         return new MockMultipartFile(
                 "file", // Name of the file parameter (used in forms, can be anything)
-                file.getName(), // Original filename
+                resource.getFilename(), // Original filename
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // Content type (adjust for your use case)
                 input // FileInputStream containing file data
         );

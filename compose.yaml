@@ -2,7 +2,7 @@ services:
   mysql:
     image: mysql:8.0-oracle
     env_file: ./.env
-    container_name: nofia_db
+    container_name: db_nofia
     environment:
       MYSQL_DATABASE: $MYSQL_DATABASE   # from .env file
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
