@@ -137,11 +137,21 @@ public class TransactionRepository {
     }
 
     public List<TransactionEntity> getByCreatedAtBetween(Date start, Date end) {
-        List<TransactionEntity> transactions =  repository.findByCreatedAtBetween(start, end);
+        List<TransactionEntity> transactions =  repository.findByCreatedAtBetween(start, end)
+                .stream()
+                .filter(trans -> (trans.getType() != OperationTypeEnum.REVERSEMENT &&
+                        trans.getType() != OperationTypeEnum.MERCHANT_CASH) && !trans.isProcessed()
+                )   // exclude reversements and merchant cash. Only take unprocessed transactions
+                .toList();
         if(transactions.isEmpty())
             throw new GeneralException("No transactions found for the period " + start + " - " + end);
 
         return transactions;
+    }
+
+    public boolean markTransactionsProcessed(List<UUID> uuid) {
+        int updated = repository.markAsProcessed(uuid);
+        return updated > 0;
     }
 
 }

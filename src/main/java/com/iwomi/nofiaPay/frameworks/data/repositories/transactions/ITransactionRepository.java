@@ -3,8 +3,10 @@ package com.iwomi.nofiaPay.frameworks.data.repositories.transactions;
 import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -46,6 +48,11 @@ public interface ITransactionRepository extends JpaRepository<TransactionEntity,
 
 
     List<TransactionEntity> findByCreatedAtBetween(Date start, Date end);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE transactions t SET t.processed = true WHERE t.uuid IN :uuids")
+    int markAsProcessed(List<UUID> uuids);
 
 
 }
