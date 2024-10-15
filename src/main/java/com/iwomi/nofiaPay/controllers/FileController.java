@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RequestMapping("${apiV1Prefix}/files")
 @RequiredArgsConstructor
@@ -61,17 +62,21 @@ public class FileController {
         Date start = DateConverterUtils.stringToDate(startDate);
         Date end = DateConverterUtils.stringToDate(endDate);
 
+        List<TransactionEntity> transactions = transactionRepository.getByCreatedAtBetween(start, end);
+        List<UUID> uuids = transactions.stream().map(TransactionEntity::getUuid).toList();
         try {
-            List<TransactionEntity> transactions = transactionRepository.getByCreatedAtBetween(start, end);
             byte[] excelData = generateTransaction.toDownloadExcelTransactionFileGeneration(transactions);
 
             ByteArrayInputStream bis = new ByteArrayInputStream(excelData);
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=transactions_" + today + ".xlsx");
 
+            // update all transactions to processed
+            transactionRepository.markTransactionsProcessed(uuids);
+
             return new ResponseEntity<>(new InputStreamResource(bis), headers, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println("error occured: " + e.getMessage());
+            System.out.println("error occurred: " + e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -86,7 +91,8 @@ public class FileController {
         Date end = DateConverterUtils.stringToDate(endDate);
 
         List<TransactionEntity> transactions = transactionRepository.getByCreatedAtBetween(start, end);
+        List<TransactionFile> results = generateTransaction.generate(transactions);
 
-        return GlobalResponse.responseBuilder("Found generated transactions", HttpStatus.OK, HttpStatus.OK.value(), transactions);
+        return GlobalResponse.responseBuilder("Found generated transactions", HttpStatus.OK, HttpStatus.OK.value(), results);
     }
 }
