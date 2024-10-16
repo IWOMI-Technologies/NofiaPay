@@ -53,7 +53,7 @@ public class Seeder {
         new UploadDto(FileTypeEnum.ACCOUNT_FILE, convertFileToMultipartFile("accounts")),
         new UploadDto(FileTypeEnum.ACCOUNT_HISTORY_FILE, convertFileToMultipartFile("accounts-history"))
         );
-        dtos.forEach(filesService::importFile);
+//        dtos.forEach(filesService::importFile);
 
 
         // Transaction Setup
