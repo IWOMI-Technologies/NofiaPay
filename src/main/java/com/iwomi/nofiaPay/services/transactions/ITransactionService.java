@@ -1,5 +1,7 @@
 package com.iwomi.nofiaPay.services.transactions;
 
+import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
+import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
@@ -17,6 +19,8 @@ public interface ITransactionService {
 
     List<Transaction> viewByReceiverAccount(String receiver);
     Boolean isIssuerAccount(String account);
+
+    Boolean isPendingReversement(String account, OperationTypeEnum type, StatusTypeEnum status);
     Transaction SaveTransaction(TransactionDto dto);
 
     Transaction viewOne(UUID uuid);

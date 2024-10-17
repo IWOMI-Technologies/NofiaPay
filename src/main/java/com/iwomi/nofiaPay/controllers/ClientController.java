@@ -61,6 +61,7 @@ public class ClientController {
         return GlobalResponse.responseBuilder("Found clients", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> destroy(@PathVariable UUID id) {
         clientService.deleteOne(id);
@@ -113,5 +114,11 @@ public class ClientController {
     public ResponseEntity<?> showAccountsByClientCode(@PathVariable String clientCode) {
         List<ClientAttachedAccounts> result = iClientAttachedAccountService.getAccountsByClientCode(clientCode);
         return GlobalResponse.responseBuilder("Account found ", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @GetMapping("/name/{accountNumber}")
+    public ResponseEntity<?> showClientNameByAccountNumber(@PathVariable String accountNumber) {
+        String clientName = clientService.getClientNameByAccountNumber(accountNumber);
+        return GlobalResponse.responseBuilder("client name found", HttpStatus.OK, HttpStatus.OK.value(), clientName);
     }
 }

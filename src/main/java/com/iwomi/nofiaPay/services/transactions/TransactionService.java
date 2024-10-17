@@ -267,7 +267,15 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public Map<String, Object> reversement(String authUuid, ReversementDto dto) {
+
 //        if (!authClient.checkPin(dto.agentClientCode(), dto.pin())) throw new UnAuthorizedException("Invalid Pin");
+        if (isPendingReversement(
+                dto.agentAccountNumber(),
+                OperationTypeEnum.REVERSEMENT,
+                StatusTypeEnum.PENDING
+        )) {
+            throw new GeneralException("There is already a reversement in progress");
+        }
         OperationTypeEnum operationType = OperationTypeUtil
                 .getOperationTypeFromString(dto.operation());
         System.out.println("CASH :: op type " + operationType);
@@ -396,6 +404,12 @@ public class TransactionService implements ITransactionService {
     public Boolean isIssuerAccount(String account) {
         return iTransactionRepository.existsByIssuerAccount(account);
     }
+
+    public Boolean isPendingReversement(String issuerAccount, OperationTypeEnum type, StatusTypeEnum status) {
+        return iTransactionRepository.existsByIssuerAccountAndTypeAndStatus(issuerAccount, OperationTypeEnum.REVERSEMENT, StatusTypeEnum.PENDING);
+    }
+
+
 
     private void handlePaymentProcess(String authUuid, PaymentProcessDto dto, Transaction savedTransaction) {
         System.out.println("handle authUUID //////////// " + authUuid);

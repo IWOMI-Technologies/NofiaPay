@@ -7,6 +7,7 @@ import com.iwomi.nofiaPay.core.mappers.IClientMapper;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.Client;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.ValidationEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.Validation.ValidationRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
@@ -133,6 +134,13 @@ public class ClientService implements IClientService {
                 .stream()
                 .map(mapper::mapToModel)
                 .toList();
+    }
+
+    @Override
+    public String getClientNameByAccountNumber(String accountNumber) {
+        AccountEntity account = accountRepository.getOneByAccount(accountNumber);
+        ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+        return client.getFullName();
     }
 
 }
