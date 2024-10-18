@@ -23,5 +23,6 @@ public interface IClientService {
 
     List<Client> findAllDeletedByClientCode(String role);
 
+    String getClientNameByAccountNumber(String accountNumber);
 
 }

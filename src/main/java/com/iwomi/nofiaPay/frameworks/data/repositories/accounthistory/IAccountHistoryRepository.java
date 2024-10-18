@@ -19,6 +19,9 @@ public interface IAccountHistoryRepository extends JpaRepository<AccountHistoryE
 
     List<AccountHistoryEntity> findByAccountNumberIn(List<String> accountNumbers);
 
+//    @Query("SELECT a FROM accounts_history a WHERE a.accountNumber IN :accountNumbers ORDER BY a.createdAt DESC")
+//    List<AccountHistoryEntity> findAccountsHis(@Param("accountNumbers") List<String> accountNumbers);
+
     //    List<AccountHistoryEntity> findTop5ByOrderByCreatedAtDesc(String );
     @Query("SELECT a FROM accounts_history a WHERE a.accountNumber IN :accountNumbers ORDER BY a.createdAt DESC")
     List<AccountHistoryEntity> findLatestTop5ByAccountNumbers(@Param("accountNumbers") List<String> accountNumbers);

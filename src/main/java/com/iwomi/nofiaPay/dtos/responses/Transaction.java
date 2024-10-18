@@ -23,5 +23,6 @@ public class Transaction {
     private OperationTypeEnum type;
     private StatusTypeEnum status;
     private Date createdAt;
+    private String sense;
 
 }

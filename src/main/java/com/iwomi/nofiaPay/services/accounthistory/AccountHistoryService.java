@@ -5,8 +5,10 @@ import com.iwomi.nofiaPay.core.mappers.IAccountMapper;
 import com.iwomi.nofiaPay.dtos.responses.Account;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounthistory.AccountHistoryRepository;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
+import com.iwomi.nofiaPay.frameworks.data.repositories.clients.ClientRepository;
 import com.iwomi.nofiaPay.services.accounts.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class AccountHistoryService implements IAccountHistoryService {
     private  final IAccountHistoryMapper mapper;
 
     private  final AccountRepository accountRepository;
+    private  final ClientRepository clientRepository;
 
 
 
@@ -43,6 +46,7 @@ public class AccountHistoryService implements IAccountHistoryService {
     }
 
 
+    @Override
     public Map<String, List<AccountHistory>> getAccountHistoriesByClientCode(String clientCode) {
         List<String> accountNumbers = accountRepository.getAccountsByClientCode(clientCode)
                 .stream()
@@ -52,7 +56,30 @@ public class AccountHistoryService implements IAccountHistoryService {
         return accountHistoryRepository.getAccountHistory(accountNumbers)
                 .stream()
                 .map(mapper::mapToModel)
-                .collect(Collectors.groupingBy(AccountHistory::accountNumber));
+                .collect(Collectors.groupingBy(AccountHistory::getAccountNumber));
+    }
+
+    @Override
+    public List<AccountHistory> getClientHistory(String clientCode) {
+//        AccountEntity account = accountRepository.getOneByAccount(accountNumber);
+//        ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+//        String name = client.getFullName();
+
+        List<String> accountNumbers = accountRepository.getAccountsByClientCode(clientCode)
+                .stream()
+                .map(AccountEntity::getAccountNumber)
+                .collect(Collectors.toList());
+
+        System.out.println("GOTTEN ACCS ___ "+accountNumbers);
+
+        return accountHistoryRepository.getAccountHistory(accountNumbers)
+                .stream()
+                .map(mapper::mapToModel)
+                .peek(model -> {
+                    AccountEntity account = accountRepository.getOneByAccount(model.getAccountNumber());
+                    ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+                    model.setName(client.getFullName());
+                }).toList();
     }
 
     @Override

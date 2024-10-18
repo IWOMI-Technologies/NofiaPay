@@ -37,7 +37,9 @@ public class AccountHistoryRepository {
                 .orElseThrow(() -> new GeneralException("Account Not Found"));
     }
     public  List<AccountHistoryEntity> getAccountHistory(List<String> accountNumbers){
-        return repository.findByAccountNumberIn(accountNumbers);
+        var response = repository.findByAccountNumberIn(accountNumbers);
+        System.out.println("REPO :::: "+response);
+        return response;
 
     }
 

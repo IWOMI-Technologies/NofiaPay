@@ -21,21 +21,21 @@ public class CombineResults {
     private final ClientRepository clientRepository;
 
     public CombineHistory mapToAccountHistory(AccountHistory history) {
-        String clientCode = accountRepository.getOneByAccount(history.accountNumber()).getClientCode();
+        String clientCode = accountRepository.getOneByAccount(history.getAccountNumber()).getClientCode();
         ClientEntity client = clientRepository.getOneByClientCode(clientCode);
 
         return CombineHistory.builder()
                 .name(client.getFullName())
-                .service(history.type())
-                .amount(history.amount())
+                .service(history.getOperationCode())
+                .amount(history.getAmount())
                 .phone(client.getPhoneNumber())
-                .acc(history.accountNumber())
-                .senderAcc(history.accountNumber())
+                .acc(history.getAccountNumber())
+                .senderAcc(history.getAccountNumber())
                 .branchName(client.getAgencyLabel())
-                .transactionId(history.uuid())
-                .transactionDate(history.createdAt())
+                .transactionId(history.getUuid())
+                .transactionDate(history.getCreatedAt())
                 .status("VALIDATED")
-                .sense(history.sense())
+                .sense(history.getSense())
                 .build();
     }
 

@@ -34,6 +34,8 @@ public interface ITransactionRepository extends JpaRepository<TransactionEntity,
 
     boolean existsByIssuerAccount(String IssuerAccount);
 
+    boolean existsByIssuerAccountAndTypeAndStatus(String IssuerAccount,OperationTypeEnum type, StatusTypeEnum status);
+
     @Query("SELECT a FROM transactions a WHERE a.issuerAccount IN :issuerAccounts ORDER BY a.createdAt DESC")
     List<TransactionEntity> findTop5ByIssuerAccount(@Param("issuerAccounts") List<String> issuerAccounts);
 

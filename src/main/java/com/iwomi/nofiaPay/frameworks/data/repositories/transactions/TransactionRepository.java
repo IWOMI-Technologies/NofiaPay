@@ -88,14 +88,14 @@ public class TransactionRepository {
 
     public  List<TransactionEntity> getByIssuerAccount(String issuerAccount) {
         List<TransactionEntity> transactions =  repository.findByIssuerAccount(issuerAccount);
-         if(transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
+//         if(transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
          return transactions;
 
     }
 
     public  List<TransactionEntity> getByReceiverAccount(String receiverAccount) {
         List<TransactionEntity> transactions =  repository.findByReceiverAccount(receiverAccount);
-        if(transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
+//        if(transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
         return transactions;
     }
     public  TransactionEntity updateTransaction (TransactionDto dto, UUID uuid){
@@ -142,6 +142,7 @@ public class TransactionRepository {
                 .filter(trans -> (trans.getType() != OperationTypeEnum.REVERSEMENT &&
                         trans.getType() != OperationTypeEnum.MERCHANT_CASH) && !trans.isProcessed()
                 )   // exclude reversements and merchant cash. Only take unprocessed transactions
+                .filter(entity -> entity.getStatus() == StatusTypeEnum.COLLECTED || entity.getStatus() == StatusTypeEnum.VALIDATED)
                 .toList();
         if(transactions.isEmpty())
             throw new GeneralException("No transactions found for the period " + start + " - " + end);

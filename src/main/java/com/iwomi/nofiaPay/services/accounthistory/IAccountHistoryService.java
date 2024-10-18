@@ -14,6 +14,7 @@ public interface IAccountHistoryService {
     AccountHistory viewOne(UUID uuid);
 
     Map<String, List<AccountHistory>> getAccountHistoriesByClientCode(String clientCode);
+    List<AccountHistory> getClientHistory(String clientCode);
 
     //    List<AccountHistory> getLatestTop5ByClientCode(String clientCode);
     List<AccountHistory> getHistoriesByClientCode(String clientCode);

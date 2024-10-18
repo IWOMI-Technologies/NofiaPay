@@ -255,7 +255,7 @@ public Map<String, List<Double>> viewAccountBalances(String clientCode) {
 
 //            Fetch account history specific to the current account number
                     List<AccountHistory> accountHistory = allAccountHistories.stream()
-                            .filter(history -> accountNumber.equals(history.accountNumber()))
+                            .filter(history -> accountNumber.equals(history.getAccountNumber()))
                             .toList();
 
 //           Use Map.of to create the transactions map
