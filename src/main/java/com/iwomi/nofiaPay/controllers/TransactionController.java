@@ -1,12 +1,16 @@
 package com.iwomi.nofiaPay.controllers;
 
+import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
+import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.ValidationEntity;
+import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
+import com.iwomi.nofiaPay.services.clients.IClientService;
 import com.iwomi.nofiaPay.services.transactions.ITransactionService;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import com.iwomi.nofiaPay.services.validations.ValidationService;
@@ -21,9 +25,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RequestMapping("${apiV1Prefix}/transactions")
 @RequiredArgsConstructor
@@ -33,8 +40,10 @@ public class TransactionController {
 
     private final ITransactionService transactionService;
     private final AccountHistoryService historyService;
+    private final IClientService clientService;
     private final ValidationService validationService;
     private final IWebsocketService websocketService;
+    private final AccountRepository accountRepository;
 
 
     @GetMapping()
@@ -49,6 +58,40 @@ public class TransactionController {
     public ResponseEntity<?> index() {
         List<Transaction> result = transactionService.viewAllTransactions();
         return GlobalResponse.responseBuilder("List of  transactions", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    //    History of account
+    @GetMapping("/history/{clientCode}")
+    public ResponseEntity<?> getAccountHistory(@PathVariable String clientCode) {
+        System.out.println("Inside getAccountHistory ---------- /history/{clientCode}");
+        List<String> clientAccounts = accountRepository.getAccountsByClientCode(clientCode)
+                .stream()
+                .map(AccountEntity::getAccountNumber)
+                .toList();
+
+        List<Map<String, List<Transaction>>> transactions = clientAccounts.stream()
+                .map(account -> {
+                    var name = clientService.getClientNameByAccountNumber(account);
+                    List<Transaction> transactionList = Stream.concat(
+                                    transactionService.viewByIssuerAccount(account).stream(),
+                                    transactionService.viewByReceiverAccount(account).stream()
+                            )
+                            .peek(transaction -> {
+                                if (transactionService.isIssuerAccount(transaction.getIssuerAccount())) {
+                                    transaction.setSense(SenseTypeEnum.DEBIT.toString());
+                                    transaction.setName(name);
+                                } else {
+                                    transaction.setSense(SenseTypeEnum.CREDIT.toString());
+                                    transaction.setName(name);
+                                }
+                            })
+                            .toList();
+                    return Map.of(account, transactionList);
+                })
+                .toList();
+        System.out.println("==== result" + transactions);
+
+        return GlobalResponse.responseBuilder("List of account transactions", HttpStatus.OK, HttpStatus.OK.value(), transactions);
     }
 
     @GetMapping("/account-history")
@@ -237,7 +280,12 @@ public class TransactionController {
                     @ApiResponse(responseCode = "200", ref = "successResponse"),
             }
     )
-    public ResponseEntity<?> reversal(@RequestBody ReversementDto dto, @PathVariable String userUuid) {
+    public ResponseEntity<?> reversal(
+            @RequestBody ReversementDto dto,
+            @PathVariable String userUuid,
+            @RequestHeader(value = "authUuid", required = false) String authUuid
+    ) {
+        System.out.println("HEADER :: " + authUuid);
         Map<String, Object> result = transactionService.reversement(userUuid, dto);
         Transaction transaction = (Transaction) result.get("transaction");
         String tellerCode = (String) result.get("tellerCode");

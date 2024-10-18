@@ -56,16 +56,26 @@ eureka:
 externals:
   iwomi:
     apiKeys:
-      momo: "6fa7e10d-6e8b-4403-a4be-a8d64589b893"
-      om: "d199e96b-0ef4-4824-ad3b-9e10b07b6c67"
+      momo: "5e016fb8-ef10-458c-80c4-442e94708eee"
+      om: "36f4b65b-bbcf-4ca6-b881-1ba76b95ac39"
     apiSecrets:
-      momo: "51a9aeb8-4711-4f95-93e9-01fe40bf8f65"
-      om: "eb2a6803-447f-4be7-8db3-290c689167fc"
-    username: "2039NOF605IWOPAY"
-    password: "202409FIA27PAY9098"
+      momo: "6ef3965f-ccb9-4f70-8864-1ca1de8e7c7d"
+      om: "0cf40e83-e3eb-4bc1-9504-8d6cd3878343"
+    username: "iwomipay2021"
+    password: "iwomipay@2020"
+
+#    apiKeys:
+#      momo: "6fa7e10d-6e8b-4403-a4be-a8d64589b893"
+#      om: "d199e96b-0ef4-4824-ad3b-9e10b07b6c67"
+#    apiSecrets:
+#      momo: "51a9aeb8-4711-4f95-93e9-01fe40bf8f65"
+#      om: "eb2a6803-447f-4be7-8db3-290c689167fc"
+#    username: "2039NOF605IWOPAY"
+#    password: "202409FIA27PAY9098"
   base-url:
     auth: http://localhost:8080/api/v1/auth
-    iwomiPay: https://www.pay.iwomitechnologies.com/api/iwomipay_prodv1
+#    iwomiPay: https://www.pay.iwomitechnologies.com/api/iwomipay_prodv1
+    iwomiPay: https://www.pay.iwomitechnologies.com/api/iwomipay_sandbox
 
 logging:
   level:

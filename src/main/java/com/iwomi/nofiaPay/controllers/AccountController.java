@@ -197,8 +197,8 @@ public class AccountController {
         List<Map<String, Object>> historiesMap = accountHistories
                 .stream()
                 .map(history -> Map.<String, Object>of(
-                        "uuid", history.uuid(),
-                        "createdAt", history.createdAt()
+                        "uuid", history.getUuid(),
+                        "createdAt", history.getCreatedAt()
                 )).toList();
         System.out.println("history UUIDssssss " + historiesMap);
         List<Map<String, Object>> transactionsMap = transactions
@@ -221,7 +221,7 @@ public class AccountController {
 
         List<AccountHistory> historyResult = accountHistories
                 .stream()
-                .filter(history -> uuids.contains(history.uuid().toString()))
+                .filter(history -> uuids.contains(history.getUuid().toString()))
                 .toList();
         System.out.println("his results!!! " + historyResult);
         System.out.println("his length!!! " + historyResult.size());
@@ -273,22 +273,43 @@ public class AccountController {
         return GlobalResponse.responseBuilder("Account deleted", HttpStatus.OK, HttpStatus.OK.value(), result);
     }
 
-    @GetMapping("/main-account/{clientCode}/{role}")
+    @GetMapping("/main-account/{clientCode}")
     @Operation(
-            description = "Find client main account by role",
+            description = "Find client accounts",
             responses = {
                     @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
                     @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Client.class))}),
             }
     )
-    public ResponseEntity<String> getMainAccount(@PathVariable String clientCode, @PathVariable String role) {
-        System.out.println("_________________ "+ clientCode + "   "+ role);
-        Account result = accountService.getMainAccount(clientCode, role);
+    public ResponseEntity<List<Map<String, String>>> getClientAccounts(@PathVariable String clientCode) {
+        System.out.println("_________________ "+ clientCode);
+        List<Account> accounts = accountService.getAccountsByClientCode(clientCode);
+        List<Map<String, String>> results = accounts
+                .stream()
+                .map(account -> Map.of(account.getAccountTypeCode(), account.getAccountNumber()))
+                .toList();
 
 //        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
-        return ResponseEntity.ok(result.getAccountNumber());
+        return ResponseEntity.ok(results);
     }
+
+//    @GetMapping("/main-account/{clientCode}/{role}")
+//    @Operation(
+//            description = "Find client main accounts by role",
+//            responses = {
+//                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+//                    @ApiResponse(responseCode = "200", content = {@Content(mediaType = "application/json",
+//                            schema = @Schema(implementation = Client.class))}),
+//            }
+//    )
+//    public ResponseEntity<String> getMainAccount(@PathVariable String clientCode, @PathVariable String role) {
+//        System.out.println("_________________ "+ clientCode + "   "+ role);
+//        Account result = accountService.getMainAccount(clientCode, role);
+//
+////        return GlobalResponse.responseBuilder("Found client", HttpStatus.OK, HttpStatus.OK.value(), result);
+//        return ResponseEntity.ok(result.getAccountNumber());
+//    }
 
     @GetMapping("/client/{clientCode}/{accountCode}")
     @Operation(

@@ -144,6 +144,13 @@ public class TransactionService implements ITransactionService {
 
         Transaction transaction = mapper
                 .mapToModel(transactionRepository.createTransaction(entity));
+        if (isIssuerAccount(transaction.getIssuerAccount())) {
+            transaction.setSense(SenseTypeEnum.DEBIT.toString());
+//            transaction.setName(name);
+        } else {
+            transaction.setSense(SenseTypeEnum.CREDIT.toString());
+//            transaction.setName(name);
+        }
         AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
         ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
 
@@ -163,11 +170,19 @@ public class TransactionService implements ITransactionService {
                 .reason(dto.reason())
                 .issuerAccount(NomenclatureConstants.CBR)
                 .receiverAccount(dto.clientAccount())
+                .batch("009")
                 .type(operationType)
                 .status(StatusTypeEnum.PENDING)
                 .build();
 
         Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
+        if (isIssuerAccount(savedTransaction.getIssuerAccount())) {
+            savedTransaction.setSense(SenseTypeEnum.DEBIT.toString());
+//            transaction.setName(name);
+        } else {
+            savedTransaction.setSense(SenseTypeEnum.CREDIT.toString());
+//            transaction.setName(name);
+        }
 
         PaymentProcessDto payDto = new PaymentProcessDto(dto.operation(), dto.reason(), dto.sourcePhoneNumber(), dto.amount());
         handlePaymentProcess(authUuid, payDto, savedTransaction);
@@ -188,11 +203,18 @@ public class TransactionService implements ITransactionService {
                 .issuerAccount(dto.agentAccount())
                 .receiverAccount(dto.clientAccount())
                 .type(operationType)
-                .status(StatusTypeEnum.COLLECTED)
+                .status(StatusTypeEnum.PENDING)
                 .build();
 
         Transaction savedTransaction = mapper
                 .mapToModel(transactionRepository.createTransaction(entity));
+        if (isIssuerAccount(savedTransaction.getIssuerAccount())) {
+            savedTransaction.setSense(SenseTypeEnum.DEBIT.toString());
+//            transaction.setName(name);
+        } else {
+            savedTransaction.setSense(SenseTypeEnum.CREDIT.toString());
+//            transaction.setName(name);
+        }
 
         AccountEntity account = accountRepository.getOneByAccount(savedTransaction.getReceiverAccount());
         ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
@@ -217,6 +239,7 @@ public class TransactionService implements ITransactionService {
                 .reason(dto.reason())
                 .issuerAccount(null)
                 .receiverAccount(dto.merchantAccount())
+                .batch("009")
                 .type(operationType)
                 .status(StatusTypeEnum.PENDING)
                 .build();
@@ -226,6 +249,13 @@ public class TransactionService implements ITransactionService {
 
         Transaction transaction = mapper
                 .mapToModel(transactionRepository.createTransaction(entity));
+        if (isIssuerAccount(transaction.getIssuerAccount())) {
+            transaction.setSense(SenseTypeEnum.DEBIT.toString());
+//            transaction.setName(name);
+        } else {
+            transaction.setSense(SenseTypeEnum.CREDIT.toString());
+//            transaction.setName(name);
+        }
         AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
         ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
 
@@ -244,6 +274,7 @@ public class TransactionService implements ITransactionService {
                 .amount(new BigDecimal(dto.amount()))
                 .reason(dto.reason())
                 .issuerAccount(NomenclatureConstants.CBR)
+                .batch("009")
                 .receiverAccount(dto.merchantAccount())
                 .type(operationType)
                 .status(StatusTypeEnum.COLLECTED)
@@ -252,6 +283,13 @@ public class TransactionService implements ITransactionService {
             throw new IllegalArgumentException("Issuer account must be " + NomenclatureConstants.CBR + " for MERCHANT_DIGITAL** type.");
 
         Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
+        if (isIssuerAccount(savedTransaction.getIssuerAccount())) {
+            savedTransaction.setSense(SenseTypeEnum.DEBIT.toString());
+//            transaction.setName(name);
+        } else {
+            savedTransaction.setSense(SenseTypeEnum.CREDIT.toString());
+//            transaction.setName(name);
+        }
 
         AccountEntity account = accountRepository.getOneByAccount(savedTransaction.getReceiverAccount());
         ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
@@ -296,6 +334,7 @@ public class TransactionService implements ITransactionService {
                 .reason("Reversement to a teller")
                 .issuerAccount(dto.agentAccountNumber())
                 .receiverAccount(tellerAccountNumber)
+                .batch("009")
                 .type(operationType)
                 .status(StatusTypeEnum.PENDING)
                 .build();
@@ -305,6 +344,13 @@ public class TransactionService implements ITransactionService {
 
         Transaction transaction = mapper
                 .mapToModel(transactionRepository.createTransaction(entity));
+        if (isIssuerAccount(transaction.getIssuerAccount())) {
+            transaction.setSense(SenseTypeEnum.DEBIT.toString());
+//            transaction.setName(name);
+        } else {
+            transaction.setSense(SenseTypeEnum.CREDIT.toString());
+//            transaction.setName(name);
+        }
         AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
         ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
 
@@ -444,7 +490,7 @@ public class TransactionService implements ITransactionService {
                 // update status in DB
                 if ("01".equalsIgnoreCase(transformedResult.get("status").toString())) {    // success
                     transactionRepository.updateTransactionStatus(savedTransaction.getUuid(), StatusTypeEnum.VALIDATED);
-                    websocketService.sendToUser(authUuid, StatusTypeEnum.COLLECTED.toString());
+                    websocketService.sendToUser(authUuid, StatusTypeEnum.VALIDATED.toString());
                 } else if ("100".equalsIgnoreCase(transformedResult.get("status").toString())) {  // fail
                     transactionRepository.updateTransactionStatus(savedTransaction.getUuid(), StatusTypeEnum.FAILED);
                     websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
@@ -462,7 +508,9 @@ public class TransactionService implements ITransactionService {
             transactionRepository.updateTransactionStatus(savedTransaction.getUuid(), StatusTypeEnum.FAILED);
             websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
         } else {    // this is for status 01 which is surely never called
-            System.out.println("******** !!! Payment status is 01 check your code please !!! **********");
+            transactionRepository.updateTransactionStatus(savedTransaction.getUuid(), StatusTypeEnum.FAILED);
+            websocketService.sendToUser(authUuid, StatusTypeEnum.FAILED.toString());
+            System.out.println("******** !!! Payment status is "+response.get("status")+" check your code please !!! **********");
         }
     }
 

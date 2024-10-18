@@ -15,7 +15,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("http://localhost:3000/");
+                .setAllowedOrigins("*");
+//                .setAllowedOriginPatterns("http://localhost:3000/");
+
 //        registry.addEndpoint("/ws")
 //                .setAllowedOrigins("*")
 ////                .setHandshakeHandler(new CustomHandshakeHandler())

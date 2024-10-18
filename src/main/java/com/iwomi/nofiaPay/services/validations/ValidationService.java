@@ -2,6 +2,7 @@ package com.iwomi.nofiaPay.services.validations;
 
 import com.iwomi.nofiaPay.core.constants.AppConst;
 import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
+import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationStatusEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
@@ -62,14 +63,16 @@ public class ValidationService implements IvalidationService {
     public ValidationEntity sendToTellerValidation(String tellerClientCode, UUID transactionId, String agentAccount, ValidationTypeEnum type) {
         List<TransactionEntity> transactions = transactionRepository
                 .getByIssuerAndCreatedAtBtw(agentAccount)
-                .stream().filter(trans -> trans.getType() != OperationTypeEnum.REVERSEMENT) // remove all reversement transactions
+                .stream()
+                .filter(trans -> trans.getType() != OperationTypeEnum.REVERSEMENT) // remove all reversement transactions
+                .filter(entity -> entity.getStatus() == StatusTypeEnum.COLLECTED || entity.getStatus() == StatusTypeEnum.VALIDATED)
                 .toList();
         BigDecimal total = transactions.stream()
                 .map(TransactionEntity::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        System.out.println("transactions done by agent today"+ transactions.stream().map(TransactionEntity::getAmount).toList());
-        System.out.println("Total amount done by agent today"+ total.toPlainString());
+        System.out.println("transactions done by agent today" + transactions.stream().map(TransactionEntity::getAmount).toList());
+        System.out.println("Total amount done by agent today" + total.toPlainString());
 
         ValidationEntity validation = ValidationEntity.builder()
                 .tellerClientCode(tellerClientCode)
@@ -79,7 +82,7 @@ public class ValidationService implements IvalidationService {
                 .status(ValidationStatusEnum.PENDING)
                 .build();
 
-        System.out.println("BEFORE RETURNING VALIDATION  "+validation.getExpectedAmount());
+        System.out.println("BEFORE RETURNING VALIDATION  " + validation.getExpectedAmount());
         ValidationEntity saved = repository.createValidation(validation);
         return saved;
     }
@@ -98,6 +101,9 @@ public class ValidationService implements IvalidationService {
 
             return repository.updateSubscription(entity);
         }
+//        if (status == ValidationStatusEnum.VALIDATED)
+//            websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());
+//        else websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());
 
         return entity;
     }
@@ -136,10 +142,13 @@ public class ValidationService implements IvalidationService {
 
         List<UUID> ids = validations.stream().map(ValidationEntity::getTransactionId).toList();
 
-        List<TransactionEntity> transactions = transactionRepository.getAllByTransactionIds(ids);
+        List<TransactionEntity> transactions = transactionRepository.getAllByTransactionIds(ids)
+                .stream()
+                .filter(entity -> entity.getStatus() == StatusTypeEnum.COLLECTED || entity.getStatus() == StatusTypeEnum.VALIDATED)
+                .toList();
 
         // put similar id in a map
-        List<Map<String, Object>> result =   new ArrayList<>();
+        List<Map<String, Object>> result = new ArrayList<>();
 
         return Map.of(
                 "validations", validations,
