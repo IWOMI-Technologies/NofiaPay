@@ -91,7 +91,18 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public Transaction viewOne(UUID uuid) {
-        return mapper.mapToModel(transactionRepository.getOne(uuid));
+        Transaction transaction = mapper.mapToModel(transactionRepository.getOne(uuid));
+        if (isIssuerAccount(transaction.getIssuerAccount())) {
+            transaction.setSense(SenseTypeEnum.DEBIT.toString());
+        } else {
+            transaction.setSense(SenseTypeEnum.CREDIT.toString());
+        }
+        AccountEntity account = accountRepository.getOneByAccount(transaction.getReceiverAccount());
+        ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+
+        transaction.setName(client.getFullName());
+        
+        return transaction;
     }
 
     @Override
