@@ -277,7 +277,7 @@ public class TransactionService implements ITransactionService {
                 .batch("009")
                 .receiverAccount(dto.merchantAccount())
                 .type(operationType)
-                .status(StatusTypeEnum.COLLECTED)
+                .status(StatusTypeEnum.PENDING)
                 .build();
         if (entity.getType().toString().startsWith("MERCHANT_DIGITAL") && !Objects.equals(entity.getIssuerAccount(), NomenclatureConstants.CBR))
             throw new IllegalArgumentException("Issuer account must be " + NomenclatureConstants.CBR + " for MERCHANT_DIGITAL** type.");
