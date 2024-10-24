@@ -2,6 +2,7 @@ package com.iwomi.nofiaPay.controllers;
 
 import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
+import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
@@ -263,9 +264,23 @@ public class TransactionController {
     )
     public ResponseEntity<?> agentCollectedAmount(@PathVariable String clientCode) {
         String type = "2222.0"; // .0 because of how its in the db
-        BigDecimal result = transactionService.viewAgentUnProcessedCollectionAmountByClientCode(clientCode, type);
-        System.out.println("AMOUNT :: " + result);
-        return GlobalResponse.responseBuilder("Agent collected amount", HttpStatus.OK, HttpStatus.OK.value(), result);
+        try {
+            BigDecimal result = transactionService.viewAgentUnProcessedCollectionAmountByClientCode(clientCode, type);
+            System.out.println("AMOUNT :: " + result);
+            return GlobalResponse.responseBuilder("Agent collected amount", HttpStatus.OK, HttpStatus.OK.value(), result);
+        } catch (GeneralException e) {
+            System.out.println("GeneralException occurred.");
+            return GlobalResponse.responseBuilder(e.getMessage(),
+                    HttpStatus.ACCEPTED,
+                    HttpStatus.ACCEPTED.value(),
+                    null);
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred ");
+            return GlobalResponse.responseBuilder("An unexpected error occurred",
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    null);
+        }
     }
 
     @PostMapping("/reversement/{userUuid}")

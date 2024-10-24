@@ -101,7 +101,7 @@ public class TransactionService implements ITransactionService {
         ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
 
         transaction.setName(client.getFullName());
-        
+
         return transaction;
     }
 
@@ -150,7 +150,7 @@ public class TransactionService implements ITransactionService {
                 .issuerAccount(dto.agentAccount())
                 .receiverAccount(dto.clientAccount())
                 .type(operationType)
-                .status(StatusTypeEnum.COLLECTED)
+                .status(StatusTypeEnum.VALIDATED)
                 .build();
 
         Transaction transaction = mapper
@@ -252,7 +252,7 @@ public class TransactionService implements ITransactionService {
                 .receiverAccount(dto.merchantAccount())
                 .batch("009")
                 .type(operationType)
-                .status(StatusTypeEnum.PENDING)
+                .status(StatusTypeEnum.VALIDATED)
                 .build();
 
         if (entity.getType() != OperationTypeEnum.MERCHANT_CASH && entity.getIssuerAccount() != null)
@@ -431,15 +431,26 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public BigDecimal viewAgentUnProcessedCollectionAmountByClientCode(String clientCode, String type) {
+
         String accountNumber = accountRepository
                 .getOneByClientCodeAndType(clientCode, type)
                 .getAccountNumber();
 
+        if (isPendingReversement(
+                accountNumber,
+                OperationTypeEnum.REVERSEMENT,
+                StatusTypeEnum.PENDING
+        )) {
+            throw new GeneralException("There is already a reversement in progress");
+        }
+
         System.out.println("FINDINGGGGGGG :::: " + accountNumber);
         // agent collected transactions not processed
         List<TransactionEntity> transactions = transactionRepository
-                .getByIssuerAccountAndTypeAndProcessed(accountNumber, StatusTypeEnum.COLLECTED, false);
+                .getByIssuerAccountAndTypeAndProcessed(accountNumber, StatusTypeEnum.VALIDATED, false);
+
         return transactions.stream()
+                .filter(entity -> entity.getType().toString().contains("AGENT_DIGITAL"))
                 .map(TransactionEntity::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
