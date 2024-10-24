@@ -94,12 +94,34 @@ public class ValidationController {
                             schema = @Schema(implementation = ValidationEntity.class))}),
             }
     )
-    public ResponseEntity<?> validate(
+    public ResponseEntity<?> validateSubscription(
             @RequestParam String clientCode,
             @RequestParam String userId,
             @RequestParam ValidationStatusEnum validationStatus
     ) {
         ValidationEntity result = validationService.validate(clientCode, userId, validationStatus);
+//        if (validationStatus == ValidationStatusEnum.VALIDATED)
+//            websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());   // to teller
+//        else websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());
+        return GlobalResponse.responseBuilder("Validation successful", HttpStatus.OK, HttpStatus.OK.value(), result);
+    }
+
+    @PostMapping("/validate/transfer")
+    @Operation(
+            description = "perform transfer validation",
+            responses = {
+                    @ApiResponse(responseCode = "400", ref = "badRequest"),
+                    @ApiResponse(responseCode = "500", ref = "internalServerErrorApi"),
+                    @ApiResponse(responseCode = "201", ref = "createdResponse", content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ValidationEntity.class))}),
+            }
+    )
+    public ResponseEntity<?> validateTransfer(
+            @RequestParam String clientCode,
+            @RequestParam String userId,
+            @RequestParam ValidationStatusEnum validationStatus
+    ) {
+        ValidationEntity result = validationService.validateTransfer(clientCode, userId, validationStatus);
 //        if (validationStatus == ValidationStatusEnum.VALIDATED)
 //            websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());   // to teller
 //        else websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());

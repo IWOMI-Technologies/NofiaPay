@@ -17,6 +17,7 @@ import com.iwomi.nofiaPay.frameworks.data.repositories.validators.ValidatorRepos
 import com.iwomi.nofiaPay.frameworks.externals.clients.AuthClient;
 import com.iwomi.nofiaPay.frameworks.externals.enums.UserStatusEnum;
 import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
+import com.iwomi.nofiaPay.services.transactions.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +37,7 @@ public class ValidationService implements IvalidationService {
     private final ValidationRepository validation;
     private final TransactionRepository transactionRepository;
     private final AuthClient authClient;
+    private final TransactionService transactionService;
 
     @Override
     public ValidationEntity sendToSubscriptionValidation(String clientCode) {
@@ -104,6 +106,21 @@ public class ValidationService implements IvalidationService {
 //        if (status == ValidationStatusEnum.VALIDATED)
 //            websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());
 //        else websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());
+
+        return entity;
+    }
+
+    @Override
+    public ValidationEntity validateTransfer(String clientCode, String userid, ValidationStatusEnum status) {
+        ValidationEntity entity = repository.getByClientCode(clientCode);
+        if (entity.getStatus() == ValidationStatusEnum.PENDING) {
+            entity.setStatus(status);
+            entity.setValidatedBy(userid);
+
+            // Update transaction status
+            transactionRepository.updateTransactionStatus(entity.getTransactionId(), StatusTypeEnum.COLLECTED);
+            return repository.updateSubscription(entity);
+        }
 
         return entity;
     }
