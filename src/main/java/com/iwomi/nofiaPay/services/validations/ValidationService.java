@@ -6,6 +6,8 @@ import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationStatusEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
+import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.ValidationEntity;
@@ -38,6 +40,7 @@ public class ValidationService implements IvalidationService {
     private final TransactionRepository transactionRepository;
     private final AuthClient authClient;
     private final TransactionService transactionService;
+    private final ITransactionMapper transactionMapper;
 
     @Override
     public ValidationEntity sendToSubscriptionValidation(String clientCode) {
@@ -63,11 +66,26 @@ public class ValidationService implements IvalidationService {
 
     @Override
     public ValidationEntity sendToTellerValidation(String tellerClientCode, UUID transactionId, String agentAccount, ValidationTypeEnum type) {
-        List<TransactionEntity> transactions = transactionRepository
+//        List<String> transactionsUuid = transactionRepository
+//                .getByIssuerAndCreatedAtBtw(dto.agentAccountNumber())
+//                .stream()
+//                .map(entity -> entity.getUuid().toString())
+//                .toList();
+        List<TransactionEntity> transactionEntities = transactionRepository
                 .getByIssuerAndCreatedAtBtw(agentAccount)
                 .stream()
-                .filter(trans -> trans.getType() != OperationTypeEnum.REVERSEMENT) // remove all reversement transactions
-                .filter(entity -> entity.getStatus() == StatusTypeEnum.COLLECTED || entity.getStatus() == StatusTypeEnum.VALIDATED)
+                .filter(trans -> trans.getType() != OperationTypeEnum.REVERSEMENT)  // remove all reversement transactions
+                .toList();
+
+        List<String> transactionsUuid = transactionEntities
+                .stream()
+                .map(entity -> entity.getUuid().toString())
+                .toList();
+
+        List<TransactionEntity> transactions = transactionEntities
+                .stream()
+//                .filter(trans -> trans.getType() != OperationTypeEnum.REVERSEMENT) // remove all reversement transactions
+                .filter(entity -> entity.getStatus() == StatusTypeEnum.VALIDATED)
                 .toList();
         BigDecimal total = transactions.stream()
                 .map(TransactionEntity::getAmount)
@@ -83,6 +101,7 @@ public class ValidationService implements IvalidationService {
                 .transactionId(transactionId)
                 .status(ValidationStatusEnum.PENDING)
                 .build();
+        validation.setImpactedTransactionIds(transactionsUuid); // adding impacted transactions
 
         System.out.println("BEFORE RETURNING VALIDATION  " + validation.getExpectedAmount());
         ValidationEntity saved = repository.createValidation(validation);
@@ -111,18 +130,26 @@ public class ValidationService implements IvalidationService {
     }
 
     @Override
-    public ValidationEntity validateTransfer(String clientCode, String userid, ValidationStatusEnum status) {
+    public Transaction validateTransfer(String clientCode, String userid, ValidationStatusEnum status) {
         ValidationEntity entity = repository.getByClientCode(clientCode);
+        Transaction transaction = transactionMapper
+                .mapToModel(transactionRepository.getOne(entity.getTransactionId()));
+
         if (entity.getStatus() == ValidationStatusEnum.PENDING) {
             entity.setStatus(status);
             entity.setValidatedBy(userid);
 
             // Update transaction status
-            transactionRepository.updateTransactionStatus(entity.getTransactionId(), StatusTypeEnum.COLLECTED);
-            return repository.updateSubscription(entity);
+            Transaction updatedTransaction = transactionMapper
+                    .mapToModel(transactionRepository.updateTransactionStatus(entity.getTransactionId(), StatusTypeEnum.VALIDATED));
+            // update impacted transactions
+            entity.getImpactedTransactionIds().forEach(uuid ->
+                    transactionRepository.updateTransactionStatus(UUID.fromString(uuid), StatusTypeEnum.COLLECTED)
+                    );
+            repository.updateSubscription(entity);
         }
 
-        return entity;
+        return transaction;
     }
 
     @Override
@@ -161,7 +188,7 @@ public class ValidationService implements IvalidationService {
 
         List<TransactionEntity> transactions = transactionRepository.getAllByTransactionIds(ids)
                 .stream()
-                .filter(entity -> entity.getStatus() == StatusTypeEnum.COLLECTED || entity.getStatus() == StatusTypeEnum.VALIDATED)
+                .filter(entity -> entity.getStatus() == StatusTypeEnum.PENDING)
                 .toList();
 
         // put similar id in a map

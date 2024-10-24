@@ -82,7 +82,7 @@ public class Payment implements IPayment {
     @Override
     public CompletableFuture<Map<String, Object>> checkPaymentStatusWithBackoff(String internalId) {
         // Define configuration parameters locally
-        long delayPeriodSeconds = 40; // Total retry duration in seconds (3 minutes) = 180 sec
+        long delayPeriodSeconds = 10; // Total retry duration in seconds (3 minutes) = 180 sec
         long maxInitialDelaySeconds = 1;
 
         Map<String, Object> checking = null;

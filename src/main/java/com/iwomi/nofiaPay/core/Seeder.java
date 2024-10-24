@@ -68,7 +68,7 @@ public class Seeder {
                         .issuerAccount("04005818-37227T")
                         .receiverAccount("04005857-37227Z")
                         .type(OperationTypeEnum.SELF_SERVICE_MOMO)
-                        .status(StatusTypeEnum.SUCCESSFUL)
+                        .status(StatusTypeEnum.VALIDATED)
                         .processed(true)
                         .deleted(false)
                         .build(),
@@ -79,7 +79,7 @@ public class Seeder {
                         .issuerAccount("04005897-37227L")
                         .receiverAccount("04005818-37227T")
                         .type(OperationTypeEnum.SELF_SERVICE_OM)
-                        .status(StatusTypeEnum.SUCCESSFUL)
+                        .status(StatusTypeEnum.VALIDATED)
                         .processed(true)
                         .deleted(false)
                         .build(),
@@ -90,7 +90,7 @@ public class Seeder {
                         .issuerAccount("04005833-37227U")
                         .receiverAccount("04005824-37227X")
                         .type(OperationTypeEnum.SELF_SERVICE_MOMO)
-                        .status(StatusTypeEnum.SUCCESSFUL)
+                        .status(StatusTypeEnum.VALIDATED)
                         .processed(true)
                         .deleted(false)
                         .build(),

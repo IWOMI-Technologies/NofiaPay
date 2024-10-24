@@ -6,6 +6,7 @@ import com.iwomi.nofiaPay.core.enums.OperationTypeEnum;
 import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.core.enums.StatusTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
+import com.iwomi.nofiaPay.core.errors.exceptions.PendingValidationException;
 import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
 import com.iwomi.nofiaPay.core.mappers.ITransactionMapper;
 import com.iwomi.nofiaPay.core.utils.OperationTypeUtil;
@@ -187,18 +188,29 @@ public class TransactionService implements ITransactionService {
                 .build();
 
         Transaction savedTransaction = mapper.mapToModel(transactionRepository.createTransaction(entity));
+//        if (isIssuerAccount(savedTransaction.getIssuerAccount())) {
+//            savedTransaction.setSense(SenseTypeEnum.DEBIT.toString());
+////            transaction.setName(name);
+//        } else {
+//            savedTransaction.setSense(SenseTypeEnum.CREDIT.toString());
+////            transaction.setName(name);
+//        }
+
         if (isIssuerAccount(savedTransaction.getIssuerAccount())) {
             savedTransaction.setSense(SenseTypeEnum.DEBIT.toString());
-//            transaction.setName(name);
         } else {
             savedTransaction.setSense(SenseTypeEnum.CREDIT.toString());
-//            transaction.setName(name);
         }
+        AccountEntity account = accountRepository.getOneByAccount(savedTransaction.getReceiverAccount());
+        ClientEntity client = clientRepository.getOneByClientCode(account.getClientCode());
+
+        savedTransaction.setName(client.getFullName());
 
         PaymentProcessDto payDto = new PaymentProcessDto(dto.operation(), dto.reason(), dto.sourcePhoneNumber(), dto.amount());
         handlePaymentProcess(authUuid, payDto, savedTransaction);
 
-        return mapper.mapToModel(transactionRepository.getOne(savedTransaction.getUuid()));
+//        return mapper.mapToModel(transactionRepository.getOne(savedTransaction.getUuid()));
+        return savedTransaction;
     }
 
     @Override
@@ -288,7 +300,7 @@ public class TransactionService implements ITransactionService {
                 .batch("009")
                 .receiverAccount(dto.merchantAccount())
                 .type(operationType)
-                .status(StatusTypeEnum.COLLECTED)
+                .status(StatusTypeEnum.PENDING)
                 .build();
         if (entity.getType().toString().startsWith("MERCHANT_DIGITAL") && !Objects.equals(entity.getIssuerAccount(), NomenclatureConstants.CBR))
             throw new IllegalArgumentException("Issuer account must be " + NomenclatureConstants.CBR + " for MERCHANT_DIGITAL** type.");
@@ -323,7 +335,7 @@ public class TransactionService implements ITransactionService {
                 OperationTypeEnum.REVERSEMENT,
                 StatusTypeEnum.PENDING
         )) {
-            throw new GeneralException("There is already a reversement in progress");
+            throw new PendingValidationException("There is already a reversement in progress");
         }
         OperationTypeEnum operationType = OperationTypeUtil
                 .getOperationTypeFromString(dto.operation());
@@ -441,7 +453,7 @@ public class TransactionService implements ITransactionService {
                 OperationTypeEnum.REVERSEMENT,
                 StatusTypeEnum.PENDING
         )) {
-            throw new GeneralException("There is already a reversement in progress");
+            throw new PendingValidationException("There is already a reversement in progress");
         }
 
         System.out.println("FINDINGGGGGGG :::: " + accountNumber);
@@ -450,7 +462,7 @@ public class TransactionService implements ITransactionService {
                 .getByIssuerAccountAndTypeAndProcessed(accountNumber, StatusTypeEnum.VALIDATED, false);
 
         return transactions.stream()
-                .filter(entity -> entity.getType().toString().contains("AGENT_DIGITAL"))
+                .filter(entity -> entity.getType().toString().contains("AGENT_"))
                 .map(TransactionEntity::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -474,7 +486,10 @@ public class TransactionService implements ITransactionService {
     }
 
     public Boolean isPendingReversement(String issuerAccount, OperationTypeEnum type, StatusTypeEnum status) {
-        return iTransactionRepository.existsByIssuerAccountAndTypeAndStatus(issuerAccount, OperationTypeEnum.REVERSEMENT, StatusTypeEnum.PENDING);
+        var val = iTransactionRepository.existsByIssuerAccountAndTypeAndStatus(issuerAccount, OperationTypeEnum.REVERSEMENT, StatusTypeEnum.PENDING);
+        System.out.println("CHEKING PENDING ISSUER ACC "+issuerAccount);
+        System.out.println("CHEKING PENDING "+val);
+        return val;
     }
 
 

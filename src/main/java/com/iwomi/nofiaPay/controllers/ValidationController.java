@@ -5,6 +5,7 @@ import com.iwomi.nofiaPay.core.enums.ValidationStatusEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.UnAuthorizedException;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.responses.Enroll;
+import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.entities.ClientEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.ValidationEntity;
 import com.iwomi.nofiaPay.frameworks.externals.enums.UserTypeEnum;
@@ -121,7 +122,7 @@ public class ValidationController {
             @RequestParam String userId,
             @RequestParam ValidationStatusEnum validationStatus
     ) {
-        ValidationEntity result = validationService.validateTransfer(clientCode, userId, validationStatus);
+        Transaction result = validationService.validateTransfer(clientCode, userId, validationStatus);
 //        if (validationStatus == ValidationStatusEnum.VALIDATED)
 //            websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());   // to teller
 //        else websocketService.sendToUser(userid, StatusTypeEnum.VALIDATED.toString());

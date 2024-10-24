@@ -3,17 +3,21 @@ package com.iwomi.nofiaPay.controllers;
 import com.iwomi.nofiaPay.core.enums.SenseTypeEnum;
 import com.iwomi.nofiaPay.core.enums.ValidationTypeEnum;
 import com.iwomi.nofiaPay.core.errors.exceptions.GeneralException;
+import com.iwomi.nofiaPay.core.errors.exceptions.PendingValidationException;
 import com.iwomi.nofiaPay.core.response.GlobalResponse;
 import com.iwomi.nofiaPay.dtos.*;
 import com.iwomi.nofiaPay.dtos.responses.AccountHistory;
 import com.iwomi.nofiaPay.dtos.responses.Transaction;
 import com.iwomi.nofiaPay.frameworks.data.entities.AccountEntity;
+import com.iwomi.nofiaPay.frameworks.data.entities.TransactionEntity;
 import com.iwomi.nofiaPay.frameworks.data.entities.ValidationEntity;
 import com.iwomi.nofiaPay.frameworks.data.repositories.accounts.AccountRepository;
+import com.iwomi.nofiaPay.frameworks.data.repositories.transactions.TransactionRepository;
 import com.iwomi.nofiaPay.services.accounthistory.AccountHistoryService;
 import com.iwomi.nofiaPay.services.clients.IClientService;
 import com.iwomi.nofiaPay.services.transactions.ITransactionService;
 import com.iwomi.nofiaPay.services.transactions.TransactionService;
+import com.iwomi.nofiaPay.services.validations.IvalidationService;
 import com.iwomi.nofiaPay.services.validations.ValidationService;
 import com.iwomi.nofiaPay.services.wbesocket.IWebsocketService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,9 +46,10 @@ public class TransactionController {
     private final ITransactionService transactionService;
     private final AccountHistoryService historyService;
     private final IClientService clientService;
-    private final ValidationService validationService;
+    private final IvalidationService validationService;
     private final IWebsocketService websocketService;
     private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
 
 
     @GetMapping()
@@ -268,7 +273,7 @@ public class TransactionController {
             BigDecimal result = transactionService.viewAgentUnProcessedCollectionAmountByClientCode(clientCode, type);
             System.out.println("AMOUNT :: " + result);
             return GlobalResponse.responseBuilder("Agent collected amount", HttpStatus.OK, HttpStatus.OK.value(), result);
-        } catch (GeneralException e) {
+        } catch (PendingValidationException e) {
             System.out.println("GeneralException occurred.");
             return GlobalResponse.responseBuilder(e.getMessage(),
                     HttpStatus.ACCEPTED,
@@ -302,6 +307,7 @@ public class TransactionController {
     ) {
         System.out.println("HEADER :: " + authUuid);
         Map<String, Object> result = transactionService.reversement(userUuid, dto);
+
         Transaction transaction = (Transaction) result.get("transaction");
         String tellerCode = (String) result.get("tellerCode");
         ValidationEntity validation = validationService.sendToTellerValidation(

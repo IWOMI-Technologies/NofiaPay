@@ -81,7 +81,7 @@ public class TransactionRepository {
 //        Date today = CoreUtils.localDateToDate(LocalDate.now());
 //        List<Date> dates = CoreUtils.startAndEndOfDay(today);
         List<TransactionEntity> transactions =  repository.findByIssuerAccountAndStatusAndProcessed(acc, type, processed);
-        if (transactions.isEmpty()) throw  new GeneralException("Transactions not found");
+        if (transactions.isEmpty()) throw new GeneralException("Transactions not found");
 
         return transactions;
     }
@@ -90,7 +90,6 @@ public class TransactionRepository {
         List<TransactionEntity> transactions =  repository.findByIssuerAccount(issuerAccount);
 //         if(transactions.isEmpty()) throw  new GeneralException("Transaction not found.");
          return transactions;
-
     }
 
     public  List<TransactionEntity> getByReceiverAccount(String receiverAccount) {
